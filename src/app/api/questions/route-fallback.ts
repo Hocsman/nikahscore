@@ -26,15 +26,13 @@ const QUESTIONS = [
 
 export async function GET() {
   try {
-    console.log('🚀 API Questions - Mode fallback activé v2')
-    console.log('📊 Retour de', QUESTIONS.length, 'questions en dur')
+    console.log('🚀 API Questions - Mode fallback activé')
+    console.log('📊 Retour de', QUESTIONS.length, 'questions')
     
-    // Force un nouveau déploiement
     return NextResponse.json({ 
       questions: QUESTIONS,
-      source: 'fallback-v2',
-      count: QUESTIONS.length,
-      timestamp: new Date().toISOString()
+      source: 'fallback',
+      count: QUESTIONS.length 
     })
   } catch (error) {
     console.error('❌ Erreur API fallback:', error)
