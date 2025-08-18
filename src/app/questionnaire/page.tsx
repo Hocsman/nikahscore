@@ -56,16 +56,34 @@ export default function QuestionnairePage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Mode debug: utiliser les questions statiques
-    console.log('🚀 Chargement questionnaire...')
+    // Vraie API maintenant !
+    console.log('🚀 Chargement questionnaire depuis API...')
     setLoading(true)
     
-    // Simuler un appel API
-    setTimeout(() => {
-      setQuestions(STATIC_QUESTIONS)
-      setLoading(false)
-      console.log('✅ Questions chargées:', STATIC_QUESTIONS.length)
-    }, 1000)
+    // Appel API réel
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch('/api/questions')
+        const data = await response.json()
+        
+        if (data.questions && data.questions.length > 0) {
+          setQuestions(data.questions)
+          console.log('✅ Questions chargées depuis API:', data.questions.length, '(source:', data.source + ')')
+        } else {
+          // Fallback vers les questions statiques en cas de problème
+          setQuestions(STATIC_QUESTIONS)
+          console.log('⚠️ Fallback vers questions statiques')
+        }
+      } catch (err) {
+        console.error('❌ Erreur API, fallback:', err)
+        setQuestions(STATIC_QUESTIONS)
+        setError('Connexion limitée - mode hors ligne')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuestions()
 
     // Charger les réponses sauvegardées
     const saved = localStorage.getItem('nikahscore-responses')
