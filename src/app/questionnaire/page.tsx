@@ -7,118 +7,71 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
 interface Question {
-  id: string
+  id: number
+  axis: string
   text: string
-  type: 'boolean' | 'scale'
-  dealBreaker?: boolean
+  category: 'bool' | 'scale'
+  weight: number
+  is_dealbreaker: boolean
+  order_index: number
 }
 
-const questions: Question[] = [
-  {
-    id: 'q1',
-    text: 'Cherchez-vous un mariage dans un but religieux et spirituel ?',
-    type: 'boolean',
-    dealBreaker: true
-  },
-  {
-    id: 'q2', 
-    text: 'La pratique religieuse quotidienne est-elle importante pour vous ?',
-    type: 'scale',
-    dealBreaker: true
-  },
-  {
-    id: 'q3',
-    text: 'Acceptez-vous une répartition traditionnelle des rôles dans le couple ?',
-    type: 'boolean'
-  },
-  {
-    id: 'q4',
-    text: 'Souhaitez-vous avoir des enfants dans les 3 prochaines années ?',
-    type: 'boolean',
-    dealBreaker: true
-  },
-  {
-    id: 'q5',
-    text: 'Quelle importance accordez-vous à la stabilité financière ? (1=Peu important, 5=Très important)',
-    type: 'scale'
-  },
-  {
-    id: 'q6',
-    text: 'Préférez-vous un style de vie simple et modeste ?',
-    type: 'boolean'
-  },
-  {
-    id: 'q7',
-    text: 'Quelle importance accordez-vous à la communication quotidienne ? (1=Peu important, 5=Très important)',
-    type: 'scale'
-  },
-  {
-    id: 'q8',
-    text: 'Vous considérez-vous comme une personne introvertie ?',
-    type: 'boolean'
-  },
-  {
-    id: 'q9',
-    text: 'Êtes-vous prêt(e) à déménager pour le mariage ?',
-    type: 'boolean'
-  },
-  {
-    id: 'q10',
-    text: 'Quelle importance accordez-vous aux traditions familiales ? (1=Peu important, 5=Très important)',
-    type: 'scale'
-  },
-  {
-    id: 'q11',
-    text: 'Acceptez-vous que votre conjoint(e) travaille à l\'extérieur ?',
-    type: 'boolean',
-    dealBreaker: true
-  },
-  {
-    id: 'q12',
-    text: 'Êtes-vous à l\'aise avec les discussions sur les sujets sensibles ?',
-    type: 'boolean'
-  },
-  {
-    id: 'q13',
-    text: 'Les sorties et activités sociales sont-elles importantes pour vous ?',
-    type: 'boolean',
-    dealBreaker: true
-  },
-  {
-    id: 'q14',
-    text: 'Quelle importance accordez-vous à l\'humour dans une relation ? (1=Peu important, 5=Très important)',
-    type: 'scale'
-  },
-  {
-    id: 'q15',
-    text: 'Envisagez-vous le mariage comme un engagement à vie ?',
-    type: 'boolean'
-  }
-]
-
 export default function QuestionnairePage() {
+  const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [responses, setResponses] = useState<{[key: string]: boolean | number}>({})
+  const [responses, setResponses] = useState<{[key: number]: boolean | number}>({})
   const [isCompleted, setIsCompleted] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    fetchQuestions()
     // Charger les réponses sauvegardées
     const saved = localStorage.getItem('nikahscore-responses')
     if (saved) {
-      const parsedResponses = JSON.parse(saved)
-      setResponses(parsedResponses)
-      
+      try {
+        const parsedResponses = JSON.parse(saved)
+        setResponses(parsedResponses)
+      } catch (e) {
+        console.error('Erreur lors du chargement des réponses:', e)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (questions.length > 0) {
       // Déterminer la question actuelle basée sur les réponses
-      const answeredCount = Object.keys(parsedResponses).length
+      const answeredCount = Object.keys(responses).length
       if (answeredCount >= questions.length) {
         setIsCompleted(true)
       } else {
         setCurrentQuestion(answeredCount)
       }
     }
-  }, [])
+  }, [questions, responses])
+
+  const fetchQuestions = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/questions')
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des questions')
+      }
+      
+      const data = await response.json()
+      setQuestions(data.questions || [])
+    } catch (err) {
+      console.error('Erreur:', err)
+      setError(err instanceof Error ? err.message : 'Erreur inconnue')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleResponse = (response: boolean | number) => {
+    if (questions.length === 0) return
+    
     const questionId = questions[currentQuestion].id
     const newResponses = { ...responses, [questionId]: response }
     
@@ -132,7 +85,47 @@ export default function QuestionnairePage() {
     }
   }
 
-  const progress = ((currentQuestion + Object.keys(responses).length) / questions.length) * 100
+  const progress = questions.length > 0 ? ((currentQuestion + Object.keys(responses).length) / questions.length) * 100 : 0
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement des questions...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Erreur de chargement
+          </h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button onClick={fetchQuestions} className="w-full">
+            Réessayer
+          </Button>
+        </Card>
+      </div>
+    )
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Aucune question disponible</p>
+        </div>
+      </div>
+    )
+  }
 
   if (isCompleted) {
     return (
@@ -145,7 +138,7 @@ export default function QuestionnairePage() {
             Questionnaire terminé !
           </h2>
           <p className="text-gray-600 mb-6">
-            Merci d'avoir complété le questionnaire NikahScore. 
+            Merci d'avoir complété les {questions.length} questions NikahScore. 
             Découvrez maintenant vos résultats détaillés.
           </p>
           <div className="space-y-3">
@@ -173,6 +166,7 @@ export default function QuestionnairePage() {
   }
 
   const currentQ = questions[currentQuestion]
+  if (!currentQ) return null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -187,6 +181,9 @@ export default function QuestionnairePage() {
           <p className="text-gray-600">
             Question {currentQuestion + 1} sur {questions.length}
           </p>
+          <p className="text-sm text-blue-600 font-medium">
+            Axe : {currentQ.axis}
+          </p>
         </div>
 
         <div className="mb-6">
@@ -198,7 +195,7 @@ export default function QuestionnairePage() {
 
         <Card className="p-8">
           <div className="mb-6">
-            {currentQ.dealBreaker && (
+            {currentQ.is_dealbreaker && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
                 <p className="text-red-700 text-sm font-medium">
                   ⚠️ Question critique - Important pour la compatibilité
@@ -211,7 +208,7 @@ export default function QuestionnairePage() {
           </div>
 
           <div className="space-y-3">
-            {currentQ.type === 'boolean' ? (
+            {currentQ.category === 'bool' ? (
               <>
                 <Button
                   onClick={() => handleResponse(true)}
@@ -251,7 +248,7 @@ export default function QuestionnairePage() {
 
           {currentQuestion > 0 && (
             <Button
-              onClick={() => setCurrentQuestion(currentQuestion - 1)}
+              onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
               variant="ghost"
               className="mt-6 w-full"
             >
