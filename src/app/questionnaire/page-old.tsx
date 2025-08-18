@@ -6,37 +6,6 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
-// Questions statiques temporaires pour debug
-const STATIC_QUESTIONS = [
-  {
-    id: 1,
-    axis: 'Intentions',
-    text: 'Je souhaite me marier dans les 12 prochains mois.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 1
-  },
-  {
-    id: 2,
-    axis: 'Valeurs',
-    text: 'La pratique religieuse régulière est importante pour moi.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 2
-  },
-  {
-    id: 3,
-    axis: 'Enfants',
-    text: 'Je souhaite des enfants.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 3
-  }
-]
-
 interface Question {
   id: number
   axis: string
@@ -56,41 +25,49 @@ export default function QuestionnairePage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Mode debug: utiliser les questions statiques
-    console.log('🚀 Chargement questionnaire...')
-    setLoading(true)
-    
-    // Simuler un appel API
-    setTimeout(() => {
-      setQuestions(STATIC_QUESTIONS)
-      setLoading(false)
-      console.log('✅ Questions chargées:', STATIC_QUESTIONS.length)
-    }, 1000)
-
+    fetchQuestions()
     // Charger les réponses sauvegardées
     const saved = localStorage.getItem('nikahscore-responses')
     if (saved) {
       try {
         const parsedResponses = JSON.parse(saved)
         setResponses(parsedResponses)
-        console.log('📝 Réponses restaurées:', parsedResponses)
       } catch (e) {
-        console.error('❌ Erreur réponses:', e)
+        console.error('Erreur lors du chargement des réponses:', e)
       }
     }
   }, [])
 
   useEffect(() => {
     if (questions.length > 0) {
+      // Déterminer la question actuelle basée sur les réponses
       const answeredCount = Object.keys(responses).length
       if (answeredCount >= questions.length) {
         setIsCompleted(true)
       } else {
         setCurrentQuestion(answeredCount)
       }
-      console.log(`📊 Questions: ${questions.length}, Réponses: ${answeredCount}`)
     }
   }, [questions, responses])
+
+  const fetchQuestions = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/questions')
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des questions')
+      }
+      
+      const data = await response.json()
+      setQuestions(data.questions || [])
+    } catch (err) {
+      console.error('Erreur:', err)
+      setError(err instanceof Error ? err.message : 'Erreur inconnue')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleResponse = (response: boolean | number) => {
     if (questions.length === 0) return
@@ -106,26 +83,21 @@ export default function QuestionnairePage() {
     } else {
       setIsCompleted(true)
     }
-    
-    console.log('💾 Réponse sauvée:', { questionId, response })
   }
 
   const progress = questions.length > 0 ? ((currentQuestion + Object.keys(responses).length) / questions.length) * 100 : 0
 
-  // État de chargement
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement des questions...</p>
-          <p className="text-sm text-gray-500 mt-2">Mode debug activé</p>
         </div>
       </div>
     )
   }
 
-  // État d'erreur
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -137,7 +109,7 @@ export default function QuestionnairePage() {
             Erreur de chargement
           </h2>
           <p className="text-gray-600 mb-6">{error}</p>
-          <Button onClick={() => window.location.reload()} className="w-full">
+          <Button onClick={fetchQuestions} className="w-full">
             Réessayer
           </Button>
         </Card>
@@ -145,7 +117,16 @@ export default function QuestionnairePage() {
     )
   }
 
-  // Questionnaire terminé
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Aucune question disponible</p>
+        </div>
+      </div>
+    )
+  }
+
   if (isCompleted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -157,13 +138,13 @@ export default function QuestionnairePage() {
             Questionnaire terminé !
           </h2>
           <p className="text-gray-600 mb-6">
-            Merci d'avoir complété les {questions.length} questions. 
-            Version de test terminée !
+            Merci d'avoir complété les {questions.length} questions NikahScore. 
+            Découvrez maintenant vos résultats détaillés.
           </p>
           <div className="space-y-3">
             <Link href="/resultats">
               <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                Voir les résultats →
+                Voir mes résultats →
               </Button>
             </Link>
             <Button 
@@ -184,18 +165,8 @@ export default function QuestionnairePage() {
     )
   }
 
-  // Questionnaire principal
   const currentQ = questions[currentQuestion]
-  if (!currentQ) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Aucune question disponible</p>
-          <p className="text-sm text-gray-500">Questions chargées: {questions.length}</p>
-        </div>
-      </div>
-    )
-  }
+  if (!currentQ) return null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -205,7 +176,7 @@ export default function QuestionnairePage() {
             ← Retour à l'accueil
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 mt-4 mb-2">
-            Questionnaire NikahScore (Debug)
+            Questionnaire NikahScore
           </h1>
           <p className="text-gray-600">
             Question {currentQuestion + 1} sur {questions.length}
