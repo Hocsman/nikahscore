@@ -26,10 +26,37 @@ const QUESTIONS = [
 
 export async function GET() {
   try {
-    console.log('🚀 API Questions - Mode fallback activé v2')
-    console.log('📊 Retour de', QUESTIONS.length, 'questions en dur')
+    // Essayer d'abord Supabase
+    console.log('🚀 API Questions - Tentative Supabase...')
     
-    // Force un nouveau déploiement
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      )
+      
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .order('order_index')
+      
+      if (!error && data && data.length > 0) {
+        console.log('✅ Supabase connecté:', data.length, 'questions')
+        return NextResponse.json({ 
+          questions: data,
+          source: 'supabase',
+          count: data.length 
+        })
+      } else {
+        console.log('⚠️ Supabase vide ou erreur:', error?.message)
+      }
+    } else {
+      console.log('⚠️ Variables Supabase manquantes')
+    }
+    
+    // Fallback vers les questions en dur
+    console.log('📊 Fallback vers questions hardcodées')
     return NextResponse.json({ 
       questions: QUESTIONS,
       source: 'fallback-v2',
@@ -37,10 +64,12 @@ export async function GET() {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('❌ Erreur API fallback:', error)
-    return NextResponse.json(
-      { error: 'Erreur serveur fallback' },
-      { status: 500 }
-    )
+    console.error('❌ Erreur API:', error)
+    // Fallback final
+    return NextResponse.json({ 
+      questions: QUESTIONS,
+      source: 'fallback-error',
+      count: QUESTIONS.length 
+    })
   }
 }
