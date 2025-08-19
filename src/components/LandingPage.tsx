@@ -80,6 +80,9 @@ export default function LandingPage() {
             <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               Contact
             </Link>
+            <Link href="/auth" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              Connexion
+            </Link>
             <Link 
               href="/questionnaire"
               className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ArrowLeft, 
+  ArrowRight, 
   CheckCircle, 
   Circle, 
   Heart,
@@ -22,7 +23,7 @@ import {
   Home
 } from 'lucide-react'
 
-// Questions statiques améliorées
+// Questions statiques temporaires pour debug
 const STATIC_QUESTIONS = [
   {
     id: 1,
@@ -68,33 +69,6 @@ const STATIC_QUESTIONS = [
     weight: 1,
     is_dealbreaker: false,
     order_index: 5
-  },
-  {
-    id: 6,
-    axis: 'Communication',
-    text: 'Je préfère résoudre les conflits par la discussion.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 6
-  },
-  {
-    id: 7,
-    axis: 'Style de vie',
-    text: 'Je refuse l\'alcool dans le foyer.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 7
-  },
-  {
-    id: 8,
-    axis: 'Personnalité',
-    text: 'Je me considère comme une personne patiente.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 8
   }
 ]
 
@@ -108,7 +82,7 @@ interface Question {
   order_index: number
 }
 
-export default function QuestionnairePage() {
+export default function EnhancedQuestionnairePage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [responses, setResponses] = useState<{[key: number]: boolean | number}>({})
@@ -126,17 +100,94 @@ export default function QuestionnairePage() {
       x: direction > 0 ? 300 : -300,
       opacity: 0,
       scale: 0.9,
+      rotateY: direction > 0 ? 15 : -15
     }),
     center: {
       x: 0,
       opacity: 1,
       scale: 1,
+      rotateY: 0,
+      transition: {
+        duration: 0.6,
+        type: "spring",
+        stiffness: 120,
+        damping: 20
+      }
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 300 : -300,
       opacity: 0,
       scale: 0.9,
+      rotateY: direction < 0 ? 15 : -15,
+      transition: {
+        duration: 0.4
+      }
     })
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  }
+
+  const buttonVariants = {
+    rest: { scale: 1, y: 0 },
+    hover: { 
+      scale: 1.02, 
+      y: -2,
+      transition: { duration: 0.2 }
+    },
+    tap: { 
+      scale: 0.98,
+      transition: { duration: 0.1 }
+    },
+    selected: {
+      scale: 1.05,
+      backgroundColor: '#3b82f6',
+      boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)',
+      transition: { duration: 0.3 }
+    }
+  }
+
+  const progressVariants = {
+    initial: { width: 0 },
+    animate: (progress: number) => ({
+      width: `${progress}%`,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    })
+  }
+
+  const confettiVariants = {
+    hidden: { scale: 0, rotate: 0 },
+    visible: {
+      scale: [0, 1, 0.8],
+      rotate: [0, 180, 360],
+      transition: {
+        duration: 1.5,
+        ease: "easeOut"
+      }
+    }
   }
 
   useEffect(() => {
@@ -150,7 +201,7 @@ export default function QuestionnairePage() {
         
         if (data.questions && data.questions.length > 0) {
           setQuestions(data.questions)
-          console.log('✅ Questions chargées depuis API:', data.questions.length)
+          console.log('✅ Questions chargées depuis API:', data.questions.length, '(source:', data.source + ')')
         } else {
           setQuestions(STATIC_QUESTIONS)
           console.log('⚠️ Fallback vers questions statiques')
@@ -240,45 +291,46 @@ export default function QuestionnairePage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <motion.div 
           className="text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <div className="relative mb-8">
-            <motion.div 
-              className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div 
-              className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-16 border-4 border-purple-400 border-b-transparent rounded-full"
-              animate={{ rotate: -360 }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            />
-          </div>
-          
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            Préparation de votre questionnaire...
-          </h2>
-          <p className="text-gray-600 mb-4">Chargement des questions personnalisées</p>
-          
-          <div className="flex justify-center space-x-2">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="w-2 h-2 bg-blue-600 rounded-full"
-                animate={{ 
-                  scale: [1, 1.5, 1], 
-                  opacity: [0.5, 1, 0.5] 
-                }}
-                transition={{ 
-                  duration: 1.5, 
-                  repeat: Infinity, 
-                  delay: i * 0.3 
-                }}
+          <motion.div variants={itemVariants}>
+            <div className="relative">
+              <motion.div 
+                className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
-            ))}
-          </div>
+              <motion.div 
+                className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-16 border-4 border-purple-400 border-b-transparent rounded-full"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+          </motion.div>
+          
+          <motion.div variants={itemVariants}>
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              Préparation de votre questionnaire...
+            </h2>
+            <p className="text-gray-600 mb-4">Chargement des questions personnalisées</p>
+            
+            <div className="flex justify-center space-x-2">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  className="w-2 h-2 bg-blue-600 rounded-full"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ 
+                    duration: 1.5, 
+                    repeat: Infinity, 
+                    delay: i * 0.3 
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     )
@@ -325,18 +377,18 @@ export default function QuestionnairePage() {
         <AnimatePresence>
           {showConfetti && (
             <>
-              {[...Array(15)].map((_, i) => (
+              {[...Array(20)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute text-2xl pointer-events-none"
+                  className="absolute text-2xl"
                   initial={{ 
-                    x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : 400, 
+                    x: Math.random() * window.innerWidth, 
                     y: -50,
                     rotate: 0,
                     scale: 0
                   }}
                   animate={{ 
-                    y: typeof window !== 'undefined' ? window.innerHeight + 50 : 800,
+                    y: window.innerHeight + 50,
                     rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
                     scale: [0, 1, 0]
                   }}
@@ -459,7 +511,7 @@ export default function QuestionnairePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
       {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden">
         <motion.div 
           className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full opacity-20"
           animate={{ 
@@ -490,28 +542,37 @@ export default function QuestionnairePage() {
         {/* Header avec navigation */}
         <motion.div 
           className="text-center mb-8"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <Link 
-            href="/" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm mb-4 transition-colors duration-200"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour à l'accueil
-          </Link>
+          <motion.div variants={itemVariants}>
+            <Link 
+              href="/" 
+              className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm mb-4 transition-colors duration-200"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour à l'accueil
+            </Link>
+          </motion.div>
 
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Questionnaire NikahScore
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Question {currentQuestion + 1} sur {questions.length}
-          </p>
+          <motion.div variants={itemVariants}>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              Questionnaire NikahScore
+            </h1>
+            <p className="text-gray-600 text-lg">
+              Question {currentQuestion + 1} sur {questions.length}
+            </p>
+          </motion.div>
 
           {/* Badge d'axe avec animation */}
-          <motion.div className="mt-4">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 text-sm font-medium">
+          <motion.div 
+            variants={itemVariants}
+            className="mt-4"
+          >
+            <Badge 
+              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 text-sm font-medium"
+            >
               <Target className="w-4 h-4 mr-2" />
               {currentQ.axis}
               {currentQ.is_dealbreaker && (
@@ -530,9 +591,9 @@ export default function QuestionnairePage() {
         {/* Barre de progression avancée */}
         <motion.div 
           className="mb-8"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
         >
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center space-x-2">
@@ -553,9 +614,10 @@ export default function QuestionnairePage() {
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
               <motion.div
                 className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full relative"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                variants={progressVariants}
+                initial="initial"
+                animate="animate"
+                custom={progress}
               >
                 <motion.div 
                   className="absolute right-0 top-0 w-6 h-full bg-white opacity-30 rounded-full"
@@ -585,10 +647,6 @@ export default function QuestionnairePage() {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.3 }
-            }}
             className="mb-8"
           >
             <Card className="p-8 shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
@@ -637,18 +695,16 @@ export default function QuestionnairePage() {
                   // Questions Oui/Non
                   <div className="grid md:grid-cols-2 gap-4">
                     <motion.div
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      animate={selectedAnswer === true ? { scale: 1.05 } : {}}
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                      animate={selectedAnswer === true ? "selected" : "rest"}
                     >
                       <Button
                         onClick={() => handleResponse(true)}
                         disabled={isSubmitting}
-                        className={`w-full h-16 text-lg font-semibold border-2 transition-all duration-300 ${
-                          selectedAnswer === true 
-                            ? 'bg-green-600 hover:bg-green-700 text-white border-green-600 shadow-lg' 
-                            : 'bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 border-green-200 hover:border-green-300'
-                        }`}
+                        className="w-full h-16 text-lg font-semibold bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 border-2 border-green-200 hover:border-green-300 transition-all duration-300"
                         variant="outline"
                       >
                         <div className="flex items-center justify-center space-x-3">
@@ -663,18 +719,16 @@ export default function QuestionnairePage() {
                     </motion.div>
 
                     <motion.div
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      animate={selectedAnswer === false ? { scale: 1.05 } : {}}
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                      animate={selectedAnswer === false ? "selected" : "rest"}
                     >
                       <Button
                         onClick={() => handleResponse(false)}
                         disabled={isSubmitting}
-                        className={`w-full h-16 text-lg font-semibold border-2 transition-all duration-300 ${
-                          selectedAnswer === false 
-                            ? 'bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-lg' 
-                            : 'bg-gradient-to-r from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 text-red-700 border-red-200 hover:border-red-300'
-                        }`}
+                        className="w-full h-16 text-lg font-semibold bg-gradient-to-r from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 text-red-700 border-2 border-red-200 hover:border-red-300 transition-all duration-300"
                         variant="outline"
                       >
                         <div className="flex items-center justify-center space-x-3">
@@ -698,16 +752,18 @@ export default function QuestionnairePage() {
                       {[1, 2, 3, 4, 5].map((value) => (
                         <motion.div
                           key={value}
-                          whileHover={{ scale: 1.01, y: -1 }}
-                          whileTap={{ scale: 0.99 }}
-                          animate={selectedAnswer === value ? { scale: 1.02 } : {}}
+                          variants={buttonVariants}
+                          initial="rest"
+                          whileHover="hover"
+                          whileTap="tap"
+                          animate={selectedAnswer === value ? "selected" : "rest"}
                         >
                           <Button
                             onClick={() => handleResponse(value)}
                             disabled={isSubmitting}
                             className={`w-full h-14 text-left justify-start text-lg border-2 transition-all duration-300 ${
                               selectedAnswer === value 
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-lg' 
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' 
                                 : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300'
                             }`}
                             variant="outline"
@@ -769,6 +825,7 @@ export default function QuestionnairePage() {
                   <span>Question {currentQuestion + 1} / {questions.length}</span>
                 </div>
 
+                {/* Prochaine question auto (optionnel) */}
                 <div className="w-24"></div>
               </motion.div>
             </Card>
@@ -794,14 +851,8 @@ export default function QuestionnairePage() {
                       ? 'bg-green-500' 
                       : 'bg-gray-300'
                 }`}
-                animate={actualIndex === currentQuestion ? { 
-                  scale: [1, 1.3, 1] 
-                } : {}}
-                transition={{ 
-                  duration: 0.5, 
-                  repeat: actualIndex === currentQuestion ? Infinity : 0, 
-                  repeatDelay: 2 
-                }}
+                animate={actualIndex === currentQuestion ? { scale: [1, 1.3, 1] } : {}}
+                transition={{ duration: 0.5, repeat: actualIndex === currentQuestion ? Infinity : 0, repeatDelay: 2 }}
               />
             )
           })}

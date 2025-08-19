@@ -52,7 +52,6 @@ import {
   Lightbulb,
   ArrowLeft
 } from 'lucide-react'
-import EmailVerificationModal from '@/components/EmailVerificationModal'
 
 interface Question {
   id: number
@@ -319,8 +318,6 @@ export default function EnhancedResultsPage() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
   const [showDetailedView, setShowDetailedView] = useState(false)
-  const [showEmailModal, setShowEmailModal] = useState(false)
-  const [emailModalAction, setEmailModalAction] = useState<'download' | 'share'>('download')
 
   useEffect(() => {
     loadDataAndCalculate()
@@ -488,57 +485,6 @@ export default function EnhancedResultsPage() {
       .filter(axis => axis.percentage < 60)
       .map(axis => `${axis.axis} : Nécessite une réflexion (${axis.percentage}%)`)
       .slice(0, 3)
-  }
-
-  const handleDownloadPDF = () => {
-    setEmailModalAction('download')
-    setShowEmailModal(true)
-  }
-
-  const handleShareResults = () => {
-    setEmailModalAction('share')
-    setShowEmailModal(true)
-  }
-
-  const handleEmailSubmit = async (email: string, code?: string) => {
-    try {
-      if (emailModalAction === 'download') {
-        const response = await fetch('/api/generate-pdf', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            email, 
-            code, 
-            results: result 
-          })
-        })
-
-        if (!response.ok) {
-          throw new Error('Erreur lors de la génération du PDF')
-        }
-
-        // Le PDF sera envoyé par email
-        console.log('PDF envoyé par email avec succès')
-      } else {
-        // Logique de partage
-        const shareData = {
-          title: `Mon Score NikahScore: ${result?.globalScore}%`,
-          text: `J'ai obtenu un score de ${result?.globalScore}% sur NikahScore ! Découvrez votre compatibilité matrimoniale islamique.`,
-          url: window.location.href
-        }
-
-        if (navigator.share) {
-          await navigator.share(shareData)
-        } else {
-          // Fallback: copier le lien
-          await navigator.clipboard.writeText(window.location.href)
-          console.log('Lien copié dans le presse-papier')
-        }
-      }
-    } catch (error) {
-      console.error('Erreur:', error)
-      throw error
-    }
   }
 
   if (loading) {
@@ -1037,19 +983,11 @@ export default function EnhancedResultsPage() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button 
-                    size="lg" 
-                    onClick={handleDownloadPDF}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
+                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                     <Download className="w-5 h-5 mr-2" />
                     Télécharger le rapport PDF
                   </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    onClick={handleShareResults}
-                  >
+                  <Button size="lg" variant="outline">
                     <Share2 className="w-5 h-5 mr-2" />
                     Partager mes résultats
                   </Button>
@@ -1064,20 +1002,6 @@ export default function EnhancedResultsPage() {
           )}
         </AnimatePresence>
       </div>
-
-      {/* Modal de vérification email */}
-      <EmailVerificationModal
-        isOpen={showEmailModal}
-        onClose={() => setShowEmailModal(false)}
-        onSubmit={handleEmailSubmit}
-        title={emailModalAction === 'download' ? 'Télécharger le Rapport PDF' : 'Partager vos Résultats'}
-        description={
-          emailModalAction === 'download' 
-            ? 'Pour recevoir votre rapport PDF détaillé par email, veuillez confirmer votre adresse.' 
-            : 'Pour partager vos résultats de manière sécurisée, veuillez confirmer votre identité.'
-        }
-        action={emailModalAction}
-      />
     </div>
   )
 }
