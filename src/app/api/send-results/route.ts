@@ -68,20 +68,33 @@ export async function POST(request: NextRequest) {
     console.log('📧 Envoi vers:', data.email)
     console.log('📧 Expéditeur: onboarding@resend.dev (domaine vérifié)')
     
-    const emailResult = await resend.emails.send({
-      from: 'NikahScore <onboarding@resend.dev>',
-      to: [data.email],
-      subject: `Vos résultats NikahScore - Score: ${data.globalScore}%`,
-      html: htmlContent
-    })
+    let emailResult: any = null
+    
+    try {
+      emailResult = await resend.emails.send({
+        from: 'NikahScore <onboarding@resend.dev>',
+        to: [data.email],
+        subject: `Vos résultats NikahScore - Score: ${data.globalScore}%`,
+        html: htmlContent
+      })
 
-    console.log('✅ Email envoyé avec succès:', emailResult)
-    console.log('✅ Structure de la réponse:', JSON.stringify(emailResult, null, 2))
+      console.log('✅ Email envoyé avec succès:', emailResult)
+      console.log('✅ Structure de la réponse:', JSON.stringify(emailResult, null, 2))
+      
+      if (emailResult.error) {
+        console.error('❌ Erreur Resend:', emailResult.error)
+        throw new Error(`Resend API Error: ${JSON.stringify(emailResult.error)}`)
+      }
+
+    } catch (resendError) {
+      console.error('❌ Erreur lors de l\'envoi Resend:', resendError)
+      throw resendError
+    }
     
     return NextResponse.json({
       success: true,
       message: 'Email envoyé avec succès',
-      emailId: emailResult.data?.id
+      emailId: emailResult?.data?.id || emailResult?.id || 'unknown'
     })
 
   } catch (error) {
