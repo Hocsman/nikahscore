@@ -3,8 +3,14 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Initialisation conditionnelle de Resend
 let resend: Resend | null = null
+console.log('🔑 RESEND_API_KEY présente:', !!process.env.RESEND_API_KEY)
+console.log('🔑 RESEND_API_KEY valeur:', process.env.RESEND_API_KEY?.substring(0, 8) + '...')
+
 if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
   resend = new Resend(process.env.RESEND_API_KEY)
+  console.log('✅ Resend initialisé avec succès')
+} else {
+  console.log('❌ Resend NON initialisé - API key manquante ou invalide')
 }
 
 interface EmailRequest {
@@ -38,6 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Vérifier si Resend est configuré
     if (!resend) {
+      console.log('🚧 Mode démo - Resend non configuré')
       console.log('🚧 Mode démo - Email simulé:', {
         to: data.email,
         name: data.name,
@@ -53,8 +60,13 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    console.log('📧 Tentative d\'envoi d\'email réel avec Resend...')
+    
     // Template HTML de l'email
     const htmlContent = generateEmailTemplate(data)
+    
+    console.log('📧 Envoi vers:', data.email)
+    console.log('📧 Expéditeur: noreply@nikahscore.com')
     
     const emailResult = await resend.emails.send({
       from: 'NikahScore <noreply@nikahscore.com>',
@@ -63,7 +75,7 @@ export async function POST(request: NextRequest) {
       html: htmlContent
     })
 
-    console.log('✅ Email envoyé:', emailResult)
+    console.log('✅ Email envoyé avec succès:', emailResult)
     
     return NextResponse.json({
       success: true,
@@ -73,8 +85,14 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Erreur envoi email:', error)
+    console.error('❌ Type d\'erreur:', typeof error)
+    console.error('❌ Message d\'erreur:', error instanceof Error ? error.message : 'Erreur inconnue')
+    
     return NextResponse.json(
-      { error: 'Erreur lors de l\'envoi de l\'email' },
+      { 
+        error: 'Erreur lors de l\'envoi de l\'email',
+        details: error instanceof Error ? error.message : 'Erreur inconnue'
+      },
       { status: 500 }
     )
   }
