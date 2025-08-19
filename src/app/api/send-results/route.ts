@@ -70,15 +70,20 @@ export async function POST(request: NextRequest) {
     
     let emailResult: any = null
     
+    // Utiliser le domaine vérifié en production
+    const fromEmail = process.env.NODE_ENV === 'production' 
+      ? 'NikahScore <noreply@nikahscore.com>'
+      : 'NikahScore <onboarding@resend.dev>'
+    
     try {
       emailResult = await resend.emails.send({
-        from: 'NikahScore <onboarding@resend.dev>',
+        from: fromEmail,
         to: [data.email],
         subject: `Vos résultats NikahScore - Score: ${data.globalScore}%`,
         html: htmlContent
       })
 
-      console.log('✅ Email envoyé avec succès:', emailResult)
+      console.log('✅ Email envoyé avec succès depuis:', fromEmail)
       console.log('✅ Structure de la réponse:', JSON.stringify(emailResult, null, 2))
       
       if (emailResult.error) {
