@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import EmailModal from '@/components/EmailModal'
 import { 
   RadialBarChart, 
   RadialBar, 
@@ -63,6 +64,7 @@ export default function ResultsPage() {
   const [result, setResult] = useState<CompatibilityResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [emailModalOpen, setEmailModalOpen] = useState(false)
 
   useEffect(() => {
     loadDataAndCalculate()
@@ -521,8 +523,11 @@ export default function ResultsPage() {
               Refaire le questionnaire
             </Button>
           </Link>
-          <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
-            Partager mes résultats
+          <Button 
+            onClick={() => setEmailModalOpen(true)}
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+          >
+            📧 Recevoir par email
           </Button>
           <Link href="/">
             <Button variant="outline" className="w-full sm:w-auto">
@@ -530,6 +535,21 @@ export default function ResultsPage() {
             </Button>
           </Link>
         </div>
+
+        {/* Modal Email */}
+        <EmailModal
+          isOpen={emailModalOpen}
+          onClose={() => setEmailModalOpen(false)}
+          resultData={{
+            globalScore: result.globalScore,
+            axisScores: result.axisScores,
+            dealbreakersTotal: result.dealbreakersTotal,
+            dealbreakersPassed: result.dealbreakersPassed,
+            recommendations: result.recommendations,
+            strengths: result.strengths,
+            concerns: result.concerns
+          }}
+        />
       </div>
     </div>
   )
