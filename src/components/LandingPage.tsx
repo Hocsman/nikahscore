@@ -71,6 +71,9 @@ export default function LandingPage() {
             <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               À propos
             </Link>
+            <Link href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              Tarifs
+            </Link>
             <Link href="/faq" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               FAQ
             </Link>
@@ -125,9 +128,12 @@ export default function LandingPage() {
               Commencer le Test
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <button className="border-2 border-emerald-500 text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-50 transition-colors duration-300">
-              En Savoir Plus
-            </button>
+            <Link 
+              href="/pricing"
+              className="border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-300"
+            >
+              Voir les Tarifs
+            </Link>
           </motion.div>
 
           <motion.div
@@ -300,6 +306,9 @@ export default function LandingPage() {
                 </Link>
                 <Link href="/questionnaire" className="text-gray-300 hover:text-emerald-400 transition-colors block">
                   Questionnaire
+                </Link>
+                <Link href="/pricing" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  Tarifs
                 </Link>
                 <Link href="/about" className="text-gray-300 hover:text-emerald-400 transition-colors block">
                   À propos

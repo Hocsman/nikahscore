@@ -27,7 +27,15 @@ export default function FAQPage() {
         },
         {
           question: "Est-ce que le service est gratuit ?",
-          answer: "Oui, NikahScore est entièrement gratuit. Nous croyons que l'accès aux outils matrimoniaux halal ne devrait pas être limité par des considérations financières."
+          answer: "NikahScore propose un modèle freemium pour rester accessible à tous. Le test de base avec résultats est entièrement gratuit. Pour ceux qui souhaitent aller plus loin, nous proposons des fonctionnalités premium comme l'analyse détaillée, la comparaison de profils, et l'accompagnement personnalisé."
+        },
+        {
+          question: "Quelles sont les fonctionnalités premium ?",
+          answer: "Les fonctionnalités premium incluent : analyse approfondie avec recommandations personnalisées, comparaison détaillée entre deux profils, historique des tests, export PDF professionnel, consultation avec un conseiller matrimonial musulman qualifié, et accès prioritaire aux nouvelles fonctionnalités."
+        },
+        {
+          question: "Combien coûtent les fonctionnalités premium ?",
+          answer: "Nos forfaits premium démarrent à 9,99€/mois ou 79€/an. Nous proposons également des forfaits familiaux et des réductions pour les étudiants. L'objectif est de garder nos services accessibles tout en permettant le développement continu de la plateforme."
         },
         {
           question: "Combien de temps faut-il pour compléter le test ?",
