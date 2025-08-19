@@ -29,6 +29,7 @@ export default function EmailModal({ isOpen, onClose, resultData }: EmailModalPr
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
   const [error, setError] = useState('')
 
   const handleSendEmail = async (e: React.FormEvent) => {
@@ -53,12 +54,16 @@ export default function EmailModal({ isOpen, onClose, resultData }: EmailModalPr
 
       if (response.ok) {
         setSuccess(true)
+        setSuccessMessage(result.demo ? 
+          'Démo réussie ! (Configurez Resend pour l\'envoi réel)' : 
+          'Email envoyé avec succès !'
+        )
         setTimeout(() => {
           onClose()
           setSuccess(false)
           setEmail('')
           setName('')
-        }, 2000)
+        }, 3000)
       } else {
         setError(result.error || 'Erreur lors de l\'envoi')
       }
@@ -81,7 +86,7 @@ export default function EmailModal({ isOpen, onClose, resultData }: EmailModalPr
             </div>
             <h2 className="text-xl font-semibold text-green-800 mb-2">Email Envoyé !</h2>
             <p className="text-green-600">
-              Vos résultats ont été envoyés à votre adresse email.
+              {successMessage || 'Vos résultats ont été envoyés à votre adresse email.'}
             </p>
           </div>
         ) : (

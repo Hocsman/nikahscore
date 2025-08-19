@@ -1,7 +1,11 @@
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialisation conditionnelle de Resend
+let resend: Resend | null = null
+if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
+  resend = new Resend(process.env.RESEND_API_KEY)
+}
 
 interface EmailRequest {
   email: string
@@ -30,6 +34,23 @@ export async function POST(request: NextRequest) {
         { error: 'Email et résultats requis' },
         { status: 400 }
       )
+    }
+
+    // Vérifier si Resend est configuré
+    if (!resend) {
+      console.log('🚧 Mode démo - Email simulé:', {
+        to: data.email,
+        name: data.name,
+        score: data.globalScore
+      })
+      
+      // Mode démo - simulation d'envoi réussi
+      return NextResponse.json({
+        success: true,
+        message: 'Email envoyé avec succès (mode démo)',
+        emailId: 'demo-' + Date.now(),
+        demo: true
+      })
     }
 
     // Template HTML de l'email
