@@ -60,6 +60,33 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300">
       <ThemeToggle />
+      
+      {/* Navigation Header */}
+      <nav className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
+            NikahScore
+          </Link>
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              À propos
+            </Link>
+            <Link href="/faq" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              FAQ
+            </Link>
+            <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              Contact
+            </Link>
+            <Link 
+              href="/questionnaire"
+              className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
+            >
+              Commencer
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4">
         <motion.div 
@@ -238,6 +265,75 @@ export default function LandingPage() {
           </Link>
         </motion.div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 dark:bg-gray-950 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Logo & Description */}
+            <div className="md:col-span-2">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent mb-4">
+                NikahScore
+              </h3>
+              <p className="text-gray-300 mb-4 max-w-md">
+                Découvrez votre compatibilité matrimoniale selon les valeurs islamiques avec notre questionnaire détaillé et respectueux.
+              </p>
+              <div className="flex space-x-4">
+                <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                  <Heart className="w-4 h-4" />
+                </div>
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                  <Star className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Navigation</h4>
+              <div className="space-y-2">
+                <Link href="/" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  Accueil
+                </Link>
+                <Link href="/questionnaire" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  Questionnaire
+                </Link>
+                <Link href="/about" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  À propos
+                </Link>
+                <Link href="/faq" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  FAQ
+                </Link>
+              </div>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Support</h4>
+              <div className="space-y-2">
+                <Link href="/contact" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  Contact
+                </Link>
+                <Link href="/faq" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  Aide
+                </Link>
+                <a href="mailto:support@nikahscore.com" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                  support@nikahscore.com
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+            <p className="text-gray-400">
+              © 2024 NikahScore. Tous droits réservés. | Fait avec ❤️ pour la Oummah
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
