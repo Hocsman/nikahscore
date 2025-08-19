@@ -106,13 +106,7 @@ export default function EnhancedQuestionnairePage() {
       x: 0,
       opacity: 1,
       scale: 1,
-      rotateY: 0,
-      transition: {
-        duration: 0.6,
-        type: "spring",
-        stiffness: 120,
-        damping: 20
-      }
+      rotateY: 0
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 300 : -300,
@@ -140,11 +134,7 @@ export default function EnhancedQuestionnairePage() {
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
+      opacity: 1
     }
   }
 
@@ -170,11 +160,7 @@ export default function EnhancedQuestionnairePage() {
   const progressVariants = {
     initial: { width: 0 },
     animate: (progress: number) => ({
-      width: `${progress}%`,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
+      width: `${progress}%`
     })
   }
 
