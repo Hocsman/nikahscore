@@ -179,7 +179,7 @@ export default function QuestionnairePage() {
             Version de test terminée !
           </p>
           <div className="space-y-3">
-            <Link href="/resultats">
+            <Link href="/results">
               <Button className="w-full bg-blue-600 hover:bg-blue-700">
                 Voir les résultats →
               </Button>
