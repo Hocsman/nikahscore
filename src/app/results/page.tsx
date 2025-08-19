@@ -5,6 +5,26 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { 
+  RadialBarChart, 
+  RadialBar, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  ResponsiveContainer, 
+  PieChart, 
+  Pie, 
+  Cell,
+  Legend,
+  Tooltip,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis
+} from 'recharts'
 
 interface Question {
   id: number
@@ -239,9 +259,19 @@ export default function ResultsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700">Analyse de vos réponses...</h2>
-          <p className="text-gray-500 mt-2">Calcul de votre score de compatibilité</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+            <div className="absolute inset-0 rounded-full h-16 w-16 border-4 border-blue-200 mx-auto"></div>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Analyse de vos réponses...</h2>
+          <p className="text-gray-500">Calcul de votre score de compatibilité</p>
+          <div className="mt-4 flex justify-center">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -279,7 +309,7 @@ export default function ResultsPage() {
 
         {/* Score Global */}
         <Card className="p-8 text-center mb-8">
-          <div className="mb-4">
+          <div className="mb-6">
             <div className={`text-6xl font-bold mb-2 ${getGlobalScoreColor(result.globalScore)}`}>
               {result.globalScore}%
             </div>
@@ -287,6 +317,20 @@ export default function ResultsPage() {
             <p className="text-gray-600 mt-2">
               Basé sur {result.responsesCount} réponses sur {questions.length} questions
             </p>
+          </div>
+
+          {/* Graphique circulaire du score global */}
+          <div className="mb-6">
+            <ResponsiveContainer width="100%" height={200}>
+              <RadialBarChart cx="50%" cy="50%" innerRadius="60%" outerRadius="90%" data={[
+                { name: 'Score', value: result.globalScore, fill: getGlobalScoreColor(result.globalScore).replace('text-', '#') }
+              ]}>
+                <RadialBar dataKey="value" cornerRadius={10} fill={result.globalScore >= 80 ? '#16a34a' : result.globalScore >= 65 ? '#2563eb' : result.globalScore >= 50 ? '#ca8a04' : '#dc2626'} />
+                <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-gray-700">
+                  {result.globalScore}%
+                </text>
+              </RadialBarChart>
+            </ResponsiveContainer>
           </div>
           
           <div className="flex justify-center items-center space-x-6 mt-6">
@@ -302,24 +346,130 @@ export default function ResultsPage() {
           </div>
         </Card>
 
-        {/* Scores par Axe */}
+        {/* Graphique en barres des axes */}
         <Card className="p-6 mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">Analyse par Domaine</h3>
-          <div className="grid gap-4">
-            {result.axisScores.map((axis) => (
-              <div key={axis.axis} className={`p-4 rounded-lg border-2 ${getScoreColor(axis.percentage)}`}>
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold">{axis.axis}</h4>
-                  <span className="font-bold text-lg">{axis.percentage}%</span>
-                </div>
-                <Progress value={axis.percentage} className="mb-2" />
-                <div className="text-sm opacity-75">
-                  {axis.questionCount} questions • {axis.dealbreakersPassed}/{axis.dealbreakers} critères essentiels validés
-                </div>
-              </div>
-            ))}
+          <h3 className="text-xl font-semibold text-gray-800 mb-6">Vue d'ensemble par Domaine</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Graphique en barres */}
+            <div>
+              <h4 className="font-medium text-gray-700 mb-4">Scores par Axe</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={result.axisScores} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="axis" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    fontSize={10}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => [`${value}%`, 'Score']}
+                    labelFormatter={(label) => `Axe: ${label}`}
+                  />
+                  <Bar 
+                    dataKey="percentage" 
+                    radius={[4, 4, 0, 0]}
+                  >
+                    {result.axisScores.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.percentage >= 80 ? '#16a34a' : entry.percentage >= 65 ? '#2563eb' : entry.percentage >= 50 ? '#ca8a04' : '#dc2626'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Graphique radar */}
+            <div>
+              <h4 className="font-medium text-gray-700 mb-4">Profil de Compatibilité</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <RadarChart data={result.axisScores.map(axis => ({
+                  axis: axis.axis.length > 10 ? axis.axis.substring(0, 10) + '...' : axis.axis,
+                  score: axis.percentage
+                }))}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="axis" tick={{ fontSize: 10 }} />
+                  <PolarRadiusAxis domain={[0, 100]} tick={false} />
+                  <Radar 
+                    name="Score" 
+                    dataKey="score" 
+                    stroke="#2563eb" 
+                    fill="#2563eb" 
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                  />
+                  <Tooltip formatter={(value) => [`${value}%`, 'Score']} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </Card>
+
+        {/* Scores par Axe */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Analyse détaillée */}
+          <Card className="p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">Analyse Détaillée par Domaine</h3>
+            <div className="space-y-4">
+              {result.axisScores.map((axis) => (
+                <div key={axis.axis} className={`p-4 rounded-lg border-2 ${getScoreColor(axis.percentage)}`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold">{axis.axis}</h4>
+                    <span className="font-bold text-lg">{axis.percentage}%</span>
+                  </div>
+                  <Progress value={axis.percentage} className="mb-2" />
+                  <div className="text-sm opacity-75">
+                    {axis.questionCount} questions • {axis.dealbreakersPassed}/{axis.dealbreakers} critères essentiels
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Graphique Deal-breakers */}
+          <Card className="p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">Critères Essentiels</h3>
+            <div className="flex items-center justify-center mb-4">
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'Validés', value: result.dealbreakersPassed, fill: '#16a34a' },
+                      { name: 'Non validés', value: result.dealbreakersTotal - result.dealbreakersPassed, fill: '#dc2626' }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [value, name]} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-2">
+                <span className="text-green-600">{result.dealbreakersPassed}</span>
+                <span className="text-gray-400 mx-2">/</span>
+                <span className="text-gray-700">{result.dealbreakersTotal}</span>
+              </div>
+              <p className="text-gray-600">Critères essentiels respectés</p>
+              <div className="mt-4">
+                <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
+                  result.dealbreakersPassed / result.dealbreakersTotal >= 0.8 ? 'bg-green-100 text-green-800' :
+                  result.dealbreakersPassed / result.dealbreakersTotal >= 0.6 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {Math.round((result.dealbreakersPassed / result.dealbreakersTotal) * 100)}% validés
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         {/* Points Forts */}
         {result.strengths.length > 0 && (
