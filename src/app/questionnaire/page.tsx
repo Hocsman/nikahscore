@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useFeaturePermission } from '@/hooks/usePermission'
+import PremiumBlock from '@/components/PremiumBlock'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -19,7 +21,9 @@ import {
   Award,
   Zap,
   ChevronRight,
-  Home
+  Home,
+  Lock,
+  Crown
 } from 'lucide-react'
 
 // Questions statiques améliorées
@@ -119,6 +123,10 @@ export default function QuestionnairePage() {
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | number | null>(null)
   const [showConfetti, setShowConfetti] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showPremiumBlock, setShowPremiumBlock] = useState(false)
+
+  // Vérification des permissions
+  const { allowed: hasBasicAccess, blocked: needsUpgrade, requiredPlan } = useFeaturePermission('basic_questionnaire')
 
   // Animation variants
   const questionVariants = {
@@ -456,6 +464,21 @@ export default function QuestionnairePage() {
     )
   }
 
+  // Vérifier les permissions d'accès
+  if (needsUpgrade) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative flex items-center justify-center">
+        <PremiumBlock
+          feature="basic_questionnaire"
+          title="Questionnaire NikahScore"
+          description="Accédez au questionnaire complet de compatibilité matrimoniale"
+          requiredPlan={requiredPlan || 'premium'}
+          onUpgrade={() => setShowPremiumBlock(false)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
       {/* Background decorative elements */}
@@ -689,56 +712,56 @@ export default function QuestionnairePage() {
                     </motion.div>
                   </div>
                 ) : (
-                  // Questions à échelle 1-5
+                  // Questions à échelle de Likert
                   <div className="space-y-3">
                     <p className="text-center text-gray-600 mb-6 text-lg">
-                      Évaluez l'importance sur une échelle de 1 à 5
+                      Indiquez votre niveau d'accord avec cette affirmation
                     </p>
                     <div className="space-y-3">
-                      {[1, 2, 3, 4, 5].map((value) => (
+                      {[
+                        { value: 1, label: "Pas du tout d'accord", color: "from-red-500 to-red-600", emoji: "😔" },
+                        { value: 2, label: "Plutôt en désaccord", color: "from-orange-500 to-orange-600", emoji: "🤔" },
+                        { value: 3, label: "Neutre", color: "from-gray-500 to-gray-600", emoji: "😐" },
+                        { value: 4, label: "Plutôt d'accord", color: "from-blue-500 to-blue-600", emoji: "🙂" },
+                        { value: 5, label: "Tout à fait d'accord", color: "from-green-500 to-green-600", emoji: "😊" }
+                      ].map((option, index) => (
                         <motion.div
-                          key={value}
-                          whileHover={{ scale: 1.01, y: -1 }}
+                          key={option.value}
+                          whileHover={{ scale: 1.01, y: -2 }}
                           whileTap={{ scale: 0.99 }}
-                          animate={selectedAnswer === value ? { scale: 1.02 } : {}}
+                          animate={selectedAnswer === option.value ? { scale: 1.03 } : { scale: 1 }}
+                          initial={{ opacity: 0, x: -20 }}
+                          transition={{ delay: index * 0.1 }}
                         >
                           <Button
-                            onClick={() => handleResponse(value)}
+                            onClick={() => handleResponse(option.value)}
                             disabled={isSubmitting}
-                            className={`w-full h-14 text-left justify-start text-lg border-2 transition-all duration-300 ${
-                              selectedAnswer === value 
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-lg' 
+                            className={`w-full h-16 text-left justify-start text-lg border-2 transition-all duration-300 ${
+                              selectedAnswer === option.value 
+                                ? `bg-gradient-to-r ${option.color} text-white border-transparent shadow-xl transform scale-105` 
                                 : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300'
                             }`}
                             variant="outline"
                           >
-                            <div className="flex items-center space-x-4">
-                              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold ${
-                                selectedAnswer === value 
-                                  ? 'bg-white text-blue-600 border-white' 
-                                  : 'border-current'
-                              }`}>
-                                {value}
+                            <div className="flex items-center space-x-4 w-full">
+                              <div className="text-2xl">{option.emoji}</div>
+                              <div className="flex-1">
+                                <div className={`font-semibold ${selectedAnswer === option.value ? 'text-white' : 'text-gray-800'}`}>
+                                  {option.label}
+                                </div>
+                                <div className={`text-sm ${selectedAnswer === option.value ? 'text-white/80' : 'text-gray-500'}`}>
+                                  Niveau {option.value}/5
+                                </div>
                               </div>
-                              <div className="flex items-center space-x-2">
-                                {[...Array(value)].map((_, i) => (
-                                  <Star 
-                                    key={i} 
-                                    className={`w-5 h-5 ${
-                                      selectedAnswer === value 
-                                        ? 'text-yellow-300 fill-yellow-300' 
-                                        : 'text-blue-400 fill-blue-400'
-                                    }`} 
-                                  />
-                                ))}
-                              </div>
-                              <span className="flex-1">
-                                {value === 1 ? 'Pas du tout important' : 
-                                 value === 2 ? 'Peu important' :
-                                 value === 3 ? 'Moyennement important' :
-                                 value === 4 ? 'Important' : 
-                                 'Très important'}
-                              </span>
+                              {selectedAnswer === option.value && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg"
+                                >
+                                  <CheckCircle className="w-5 h-5 text-green-500" />
+                                </motion.div>
+                              )}
                             </div>
                           </Button>
                         </motion.div>

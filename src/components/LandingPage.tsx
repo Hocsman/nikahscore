@@ -84,7 +84,7 @@ export default function LandingPage() {
               Connexion
             </Link>
             <Link 
-              href="/questionnaire"
+              href="/auth"
               className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
             >
               Commencer
@@ -125,10 +125,10 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
           >
             <Link 
-              href="/questionnaire" 
+              href="/auth" 
               className="group bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
             >
-              Commencer le Test
+              Créer un Compte & Commencer
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 

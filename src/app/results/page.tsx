@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useFeaturePermission } from '@/hooks/usePermission'
+import PremiumBlock from '@/components/PremiumBlock'
 import { 
   RadialBarChart, 
   RadialBar, 
@@ -48,6 +50,9 @@ import {
   Users,
   BarChart3,
   PieChart as PieChartIcon,
+  Lock,
+  Crown,
+  Mail,
   Activity,
   Lightbulb,
   ArrowLeft
@@ -321,6 +326,15 @@ export default function EnhancedResultsPage() {
   const [showDetailedView, setShowDetailedView] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [emailModalAction, setEmailModalAction] = useState<'download' | 'share'>('download')
+  const [showPremiumBlock, setShowPremiumBlock] = useState(false)
+  const [blockedFeature, setBlockedFeature] = useState<{feature: string, title: string, description: string}>()
+
+  // Hooks de permissions
+  const { allowed: canViewResults, requiredPlan: resultsRequiredPlan } = useFeaturePermission('basic_results')
+  const { allowed: canViewDetailed, requiredPlan: detailedRequiredPlan } = useFeaturePermission('detailed_analysis')
+  const { allowed: canDownloadPDF, requiredPlan: pdfRequiredPlan } = useFeaturePermission('pdf_report')
+  const { allowed: canEmailResults, requiredPlan: emailRequiredPlan } = useFeaturePermission('email_results')
+  const { allowed: canViewCharts, requiredPlan: chartsRequiredPlan } = useFeaturePermission('advanced_charts')
 
   useEffect(() => {
     loadDataAndCalculate()
@@ -490,14 +504,48 @@ export default function EnhancedResultsPage() {
       .slice(0, 3)
   }
 
+  // Fonctions de gestion des permissions
+  const handlePremiumFeature = (feature: string, title: string, description: string) => {
+    setBlockedFeature({ feature, title, description })
+    setShowPremiumBlock(true)
+  }
+
   const handleDownloadPDF = () => {
+    if (!canDownloadPDF) {
+      handlePremiumFeature(
+        'pdf_report',
+        'Téléchargement PDF', 
+        'Téléchargez un rapport PDF complet de vos résultats'
+      )
+      return
+    }
     setEmailModalAction('download')
     setShowEmailModal(true)
   }
 
   const handleShareResults = () => {
+    if (!canEmailResults) {
+      handlePremiumFeature(
+        'email_results',
+        'Partage par Email',
+        'Partagez vos résultats par email avec vos proches'
+      )
+      return
+    }
     setEmailModalAction('share')
     setShowEmailModal(true)
+  }
+
+  const handleViewDetailed = () => {
+    if (!canViewDetailed) {
+      handlePremiumFeature(
+        'detailed_analysis',
+        'Analyse Détaillée',
+        'Accédez à une analyse complète avec recommandations personnalisées'
+      )
+      return
+    }
+    setShowDetailedView(true)
   }
 
   const handleEmailSubmit = async (email: string, code?: string) => {
@@ -539,6 +587,21 @@ export default function EnhancedResultsPage() {
       console.error('Erreur:', error)
       throw error
     }
+  }
+
+  // Vérifier les permissions d'accès aux résultats
+  if (!canViewResults) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative flex items-center justify-center">
+        <PremiumBlock
+          feature="basic_results"
+          title="Résultats NikahScore"
+          description="Consultez vos résultats de compatibilité matrimoniale"
+          requiredPlan={resultsRequiredPlan || 'premium'}
+          onUpgrade={() => setShowPremiumBlock(false)}
+        />
+      </div>
+    )
   }
 
   if (loading) {
@@ -1040,19 +1103,36 @@ export default function EnhancedResultsPage() {
                   <Button 
                     size="lg" 
                     onClick={handleDownloadPDF}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    className={`${canDownloadPDF 
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
+                      : 'bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 relative'
+                    }`}
                   >
-                    <Download className="w-5 h-5 mr-2" />
-                    Télécharger le rapport PDF
+                    {canDownloadPDF ? (
+                      <Download className="w-5 h-5 mr-2" />
+                    ) : (
+                      <Lock className="w-5 h-5 mr-2" />
+                    )}
+                    {canDownloadPDF ? 'Télécharger le rapport PDF' : 'PDF Premium - Débloquer'}
+                    {!canDownloadPDF && <Crown className="w-4 h-4 ml-2 text-yellow-400" />}
                   </Button>
                   <Button 
                     size="lg" 
                     variant="outline"
                     onClick={handleShareResults}
+                    className={!canEmailResults ? 'relative border-gray-300 text-gray-500' : ''}
                   >
-                    <Share2 className="w-5 h-5 mr-2" />
-                    Partager mes résultats
+                    {canEmailResults ? (
+                      <Share2 className="w-5 h-5 mr-2" />
+                    ) : (
+                      <Lock className="w-5 h-5 mr-2" />
+                    )}
+                    {canEmailResults ? 'Partager par email' : 'Partage Premium - Débloquer'}
+                    {!canEmailResults && <Crown className="w-4 h-4 ml-2 text-yellow-400" />}
                   </Button>
+                </div>
+                
+                <div className="mt-6">
                   <Link href="/questionnaire">
                     <Button size="lg" variant="ghost">
                       Refaire le test
@@ -1078,6 +1158,22 @@ export default function EnhancedResultsPage() {
         }
         action={emailModalAction}
       />
+
+      {/* Premium Block pour fonctionnalités bloquées */}
+      {showPremiumBlock && blockedFeature && (
+        <PremiumBlock
+          feature={blockedFeature.feature}
+          title={blockedFeature.title}
+          description={blockedFeature.description}
+          requiredPlan={
+            (blockedFeature.feature === 'pdf_report' ? pdfRequiredPlan :
+            blockedFeature.feature === 'email_results' ? emailRequiredPlan :
+            blockedFeature.feature === 'detailed_analysis' ? detailedRequiredPlan :
+            'premium') || 'premium'
+          }
+          onUpgrade={() => setShowPremiumBlock(false)}
+        />
+      )}
     </div>
   )
 }
