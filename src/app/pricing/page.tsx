@@ -2,12 +2,75 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowLeft, Check, Star, Heart, Users, Crown, Zap } from 'lucide-react'
+import { ArrowLeft, Check, Star, Heart, Users, Crown, Zap, Loader2 } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAnalytics } from '@/lib/analytics'
+import { useUser } from '@/hooks/useUser'
+import { Button } from '@/components/ui/button'
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(false)
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const { trackEvent } = useAnalytics()
+  const { user, loading: userLoading } = useUser()
+
+  // Fonction pour gérer l'achat d'un plan
+  const handlePlanPurchase = async (planId: string, planName: string) => {
+    if (!user) {
+      // Rediriger vers l'inscription
+      trackEvent('upgrade_button_clicked', {
+        plan: planId,
+        error: 'user_not_authenticated',
+        redirect: 'auth'
+      })
+      window.location.href = '/auth'
+      return
+    }
+
+    try {
+      setLoadingPlan(planId)
+      
+      // Track l'événement
+      trackEvent('plan_upgrade_started', {
+        plan: planId,
+        userId: user.id,
+        source: 'pricing_page'
+      })
+
+      // Créer la session Stripe
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: planId,
+          userId: user.id,
+          email: user.email,
+          successUrl: `${window.location.origin}/success?plan=${planId}`,
+          cancelUrl: `${window.location.origin}/pricing`
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.checkoutUrl) {
+        // Rediriger vers Stripe Checkout
+        window.location.href = data.checkoutUrl
+      } else {
+        throw new Error(data.error || 'Erreur création session')
+      }
+
+    } catch (error) {
+      console.error('Erreur achat plan:', error)
+      trackEvent('plan_upgrade_error', {
+        plan: planId,
+        error: error instanceof Error ? error.message : 'unknown_error'
+      })
+      alert('Erreur lors de la création de la session de paiement. Veuillez réessayer.')
+    } finally {
+      setLoadingPlan(null)
+    }
+  }
 
   const plans = [
     {
@@ -55,7 +118,8 @@ export default function PricingPage() {
       ],
       limitations: [],
       cta: "Essayer Premium",
-      href: "/signup?plan=premium",
+      planId: "premium",
+      stripeEnabled: true,
       popular: true
     },
     {
@@ -78,7 +142,8 @@ export default function PricingPage() {
       ],
       limitations: [],
       cta: "Essayer Family",
-      href: "/signup?plan=family",
+      planId: "family",
+      stripeEnabled: true,
       popular: false
     },
     {
@@ -101,7 +166,8 @@ export default function PricingPage() {
       ],
       limitations: [],
       cta: "Réserver une consultation",
-      href: "/contact?subject=conseil",
+      planId: "conseil",
+      stripeEnabled: true,
       popular: false
     }
   ]
@@ -255,12 +321,29 @@ export default function PricingPage() {
                 </div>
 
                 {/* CTA */}
-                <Link 
-                  href={plan.href}
-                  className={`block w-full bg-gradient-to-r ${plan.color} text-white text-center py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity`}
-                >
-                  {plan.cta}
-                </Link>
+                {plan.stripeEnabled ? (
+                  <Button
+                    onClick={() => handlePlanPurchase(plan.planId!, plan.name)}
+                    disabled={loadingPlan === plan.planId}
+                    className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold hover:opacity-90 transition-opacity h-12`}
+                  >
+                    {loadingPlan === plan.planId ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Traitement...
+                      </>
+                    ) : (
+                      plan.cta
+                    )}
+                  </Button>
+                ) : (
+                  <Link 
+                    href={plan.href || '/questionnaire'}
+                    className={`block w-full bg-gradient-to-r ${plan.color} text-white text-center py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity`}
+                  >
+                    {plan.cta}
+                  </Link>
+                )}
               </div>
             </motion.div>
           ))}
