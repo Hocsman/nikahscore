@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
-// Initialiser Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20'
-})
+// Initialiser Stripe seulement si la clé API existe
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-07-30.basil'
+    })
+  : null
 
 // Configuration des prix pour chaque plan
 const PLAN_PRICES = {
@@ -31,6 +33,14 @@ const PLAN_PRICES = {
 
 export async function POST(request: NextRequest) {
   try {
+    // Vérifier que Stripe est configuré
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe non configuré - clé API manquante' },
+        { status: 500 }
+      )
+    }
+
     const { plan, userId, email, successUrl, cancelUrl } = await request.json()
 
     // Validation des données

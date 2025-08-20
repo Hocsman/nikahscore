@@ -12,8 +12,12 @@ export type AnalyticsEvent =
   | 'detailed_analysis_clicked'
   | 'plan_upgrade_started'
   | 'plan_upgrade_completed'
+  | 'plan_upgrade_error'
   | 'user_registered'
   | 'user_login'
+  | 'payment_succeeded'
+  | 'payment_failed'
+  | 'subscription_cancelled'
 
 export interface AnalyticsEventData {
   event: AnalyticsEvent
