@@ -199,6 +199,23 @@ export default function QuestionnairePage() {
     }
   }, [questions, responses])
 
+  // Réinitialiser selectedAnswer quand on change de question
+  useEffect(() => {
+    setSelectedAnswer(null)
+  }, [currentQuestion])
+
+  // Debug: Log de la question courante
+  useEffect(() => {
+    if (questions.length > 0 && questions[currentQuestion]) {
+      const currentQ = questions[currentQuestion]
+      console.log('🎯 Question courante:', { 
+        id: currentQ.id, 
+        category: currentQ.category, 
+        text: currentQ.text.substring(0, 50) + '...' 
+      })
+    }
+  }, [currentQuestion, questions])
+
   const handleResponse = (response: boolean | number) => {
     if (questions.length === 0) return
     
@@ -463,6 +480,13 @@ export default function QuestionnairePage() {
       </div>
     )
   }
+
+  // Debug log
+  console.log('🔍 Question actuelle:', { 
+    id: currentQ.id, 
+    category: currentQ.category, 
+    text: currentQ.text.substring(0, 50) + '...' 
+  })
 
   // Vérifier les permissions d'accès
   if (needsUpgrade) {
@@ -729,9 +753,9 @@ export default function QuestionnairePage() {
                           key={option.value}
                           whileHover={{ scale: 1.01, y: -2 }}
                           whileTap={{ scale: 0.99 }}
-                          animate={selectedAnswer === option.value ? { scale: 1.03 } : { scale: 1 }}
-                          initial={{ opacity: 0, x: -20 }}
-                          transition={{ delay: index * 0.1 }}
+                          animate={{ scale: 1, opacity: 1, x: 0 }}
+                          initial={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0, duration: 0.3 }}
                         >
                           <Button
                             onClick={() => handleResponse(option.value)}
