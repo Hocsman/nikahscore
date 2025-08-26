@@ -244,10 +244,10 @@ export default function SimpleAnalyticsDashboard() {
             🔄 Actualiser
           </Button>
           <Button 
-            onClick={() => window.open('/admin/analytics-full', '_blank')}
+            onClick={() => window.location.href = '/admin/analytics'}
             variant="outline"
           >
-            📊 Dashboard Complet
+            📊 Dashboard Avancé
           </Button>
         </motion.div>
       </div>

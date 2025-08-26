@@ -114,7 +114,7 @@ export default function AnalyticsDashboard() {
     )
   }
 
-  const premiumFeatureData = Object.entries(data.premiumFeatures).map(([feature, count], index) => ({
+  const premiumFeatureData = Object.entries(data.premiumFeatures || {}).map(([feature, count], index) => ({
     name: feature,
     value: count,
     color: COLORS[index % COLORS.length]
@@ -185,7 +185,7 @@ export default function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
-                      {data.overview.uniqueSessions.toLocaleString()}
+                      {(data.overview?.uniqueSessions || 0).toLocaleString()}
                     </div>
                   </CardContent>
                 </Card>
@@ -205,7 +205,7 @@ export default function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
-                      {data.overview.uniqueUsers.toLocaleString()}
+                      {(data.overview?.uniqueUsers || 0).toLocaleString()}
                     </div>
                   </CardContent>
                 </Card>
@@ -225,7 +225,7 @@ export default function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
-                      {data.conversion.completion_rate}%
+                      {data.conversion?.completion_rate || 0}%
                     </div>
                   </CardContent>
                 </Card>
@@ -245,7 +245,7 @@ export default function AnalyticsDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
-                      {data.conversion.premium_interest_rate}%
+                      {data.conversion?.premium_interest_rate || 0}%
                     </div>
                   </CardContent>
                 </Card>
@@ -260,7 +260,7 @@ export default function AnalyticsDashboard() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.dailyStats}>
+                    <LineChart data={data.dailyStats || []}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
                       <YAxis />
@@ -279,7 +279,7 @@ export default function AnalyticsDashboard() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={Object.entries(data.overview.eventsByType).map(([key, value]) => ({
+                    <BarChart data={Object.entries(data.overview.eventsByType || {}).map(([key, value]) => ({
                       name: key.replace('_', ' '),
                       count: value
                     }))}>
@@ -308,8 +308,8 @@ export default function AnalyticsDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {Object.entries(data.funnel).map(([step, count], index) => {
-                    const totalStarted = data.funnel.questionnaire_started || 1
+                  {Object.entries(data.funnel || {}).map(([step, count], index) => {
+                    const totalStarted = data.funnel?.questionnaire_started || 1
                     const percentage = (count / totalStarted * 100).toFixed(1)
                     
                     return (
