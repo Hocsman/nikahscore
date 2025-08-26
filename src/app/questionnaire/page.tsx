@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useFeaturePermission } from '@/hooks/usePermission'
 import PremiumBlock from '@/components/PremiumBlock'
+import { useAnalytics } from '@/hooks/useAnalytics'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -127,6 +128,9 @@ export default function QuestionnairePage() {
 
   // Vérification des permissions
   const { allowed: hasBasicAccess, blocked: needsUpgrade, requiredPlan } = useFeaturePermission('basic_questionnaire')
+  
+  // Analytics tracking
+  const { trackEvent } = useAnalytics()
 
   // Animation variants
   const questionVariants = {
@@ -151,6 +155,11 @@ export default function QuestionnairePage() {
     console.log('🚀 Chargement questionnaire depuis API...')
     setLoading(true)
     
+    // Track page view
+    trackEvent('questionnaire_page_view', {
+      source: 'direct'
+    })
+    
     const fetchQuestions = async () => {
       try {
         const response = await fetch('/api/questions')
@@ -163,6 +172,12 @@ export default function QuestionnairePage() {
           setQuestions(STATIC_QUESTIONS)
           console.log('⚠️ Fallback vers questions statiques')
         }
+        
+        // Track questionnaire start
+        trackEvent('questionnaire_started', {
+          question_count: data.questions?.length || STATIC_QUESTIONS.length
+        })
+        
       } catch (err) {
         console.error('❌ Erreur API, fallback:', err)
         setQuestions(STATIC_QUESTIONS)
@@ -222,6 +237,19 @@ export default function QuestionnairePage() {
     setSelectedAnswer(response)
     setIsSubmitting(true)
     
+    const currentQ = questions[currentQuestion]
+    
+    // Track question response
+    trackEvent('questionnaire_question_answered', {
+      question_id: currentQ.id,
+      question_axis: currentQ.axis,
+      question_category: currentQ.category,
+      response: response,
+      is_dealbreaker: currentQ.is_dealbreaker,
+      question_number: currentQuestion + 1,
+      total_questions: questions.length
+    })
+    
     // Animation délai pour voir la sélection
     setTimeout(() => {
       const questionId = questions[currentQuestion].id
@@ -236,6 +264,12 @@ export default function QuestionnairePage() {
         setSelectedAnswer(null)
         setIsSubmitting(false)
       } else {
+        // Questionnaire terminé
+        trackEvent('questionnaire_completed', {
+          total_questions: questions.length,
+          completion_time: Date.now() - (performance.timeOrigin || 0)
+        })
+        
         setShowConfetti(true)
         setTimeout(() => {
           setIsCompleted(true)
