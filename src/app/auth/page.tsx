@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
+import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import { 
   Mail, 
   Lock, 
@@ -26,6 +29,9 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const router = useRouter()
+  const { user } = useAuth()
+  const supabase = createClient()
   
   const [formData, setFormData] = useState({
     name: '',
@@ -33,6 +39,13 @@ export default function AuthPage() {
     password: '',
     confirmPassword: ''
   })
+
+  // Rediriger si déjà connecté
+  useEffect(() => {
+    if (user) {
+      router.push('/questionnaire')
+    }
+  }, [user, router])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -56,31 +69,38 @@ export default function AuthPage() {
         if (formData.password.length < 6) {
           throw new Error('Le mot de passe doit contenir au moins 6 caractères')
         }
+
+        // Inscription avec Supabase
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              name: formData.name
+            }
+          }
+        })
+
+        if (error) throw error
+
+        setSuccess('Compte créé avec succès ! Vérifiez votre email.')
+        
+      } else {
+        // Connexion avec Supabase
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password
+        })
+
+        if (error) throw error
+
+        setSuccess('Connexion réussie !')
+        
+        // Redirection automatique via useAuth
+        setTimeout(() => {
+          router.push('/questionnaire')
+        }, 1500)
       }
-
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
-      const body = isLogin 
-        ? { email: formData.email, password: formData.password }
-        : { name: formData.name, email: formData.email, password: formData.password }
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'authentification')
-      }
-
-      setSuccess(isLogin ? 'Connexion réussie !' : 'Compte créé avec succès !')
-      
-      // Rediriger vers le questionnaire après un délai
-      setTimeout(() => {
-        window.location.href = '/questionnaire'
-      }, 1500)
 
     } catch (err: any) {
       setError(err.message)

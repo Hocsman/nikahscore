@@ -1,6 +1,34 @@
 -- Script de déploiement des analytics NikahScore
 -- À copier/coller dans l'éditeur SQL de Supabase
 
+-- 0. Table pour les profils utilisateur
+CREATE TABLE IF NOT EXISTS profiles (
+    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- RLS pour les profils
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Politique pour que les utilisateurs puissent lire leur propre profil
+CREATE POLICY "Users can read own profile" ON profiles
+    FOR SELECT USING (auth.uid() = id);
+
+-- Politique pour que les utilisateurs puissent mettre à jour leur propre profil
+CREATE POLICY "Users can update own profile" ON profiles
+    FOR UPDATE USING (auth.uid() = id);
+
+-- Politique pour insertion automatique du profil
+CREATE POLICY "Users can insert own profile" ON profiles
+    FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- Index pour les profils
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+
 -- 1. Table pour les événements analytics
 CREATE TABLE IF NOT EXISTS analytics_events (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

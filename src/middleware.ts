@@ -4,11 +4,6 @@ import type { NextRequest } from 'next/server'
 import { cookies } from 'next/headers'
 
 export async function middleware(req: NextRequest) {
-  // Pour le développement, permettre l'accès temporairement
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next()
-  }
-
   const response = NextResponse.next()
   
   // Créer le client Supabase pour le middleware
@@ -30,9 +25,14 @@ export async function middleware(req: NextRequest) {
     }
   )
   
+  const { data: { session } } = await supabase.auth.getSession()
+  
   // Vérifier l'authentification pour les routes admin
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    const { data: { session } } = await supabase.auth.getSession()
+    // Pour le développement, permettre l'accès temporairement
+    if (process.env.NODE_ENV === 'development') {
+      return NextResponse.next()
+    }
     
     if (!session) {
       return NextResponse.redirect(new URL('/auth', req.url))
@@ -45,6 +45,16 @@ export async function middleware(req: NextRequest) {
     if (!isAdmin) {
       return NextResponse.redirect(new URL('/', req.url))
     }
+  }
+
+  // Routes qui nécessitent une authentification utilisateur
+  const protectedRoutes = ['/results', '/questionnaire']
+  const isProtectedRoute = protectedRoutes.some(route => 
+    req.nextUrl.pathname.startsWith(route)
+  )
+
+  if (isProtectedRoute && !session) {
+    return NextResponse.redirect(new URL('/auth', req.url))
   }
 
   return response

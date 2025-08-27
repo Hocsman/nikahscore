@@ -1,27 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Récupérer les utilisateurs du storage (en production, utiliser une vraie base de données)
-const getUsers = () => {
-  // Simuler une base d'utilisateurs pour la démonstration
-  const users = new Map<string, { 
-    id: string, 
-    name: string, 
-    email: string, 
-    password: string, 
-    createdAt: Date 
-  }>()
-  
-  // Ajouter un utilisateur de test
-  users.set('test@nikahscore.com', {
-    id: '1',
-    name: 'Utilisateur Test',
-    email: 'test@nikahscore.com',
-    password: 'password123', // En production: hash
-    createdAt: new Date()
-  })
-  
-  return users
-}
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,36 +12,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const users = getUsers()
-    const user = users.get(email)
+    const supabase = createClient()
 
-    if (!user) {
+    // Connexion avec Supabase Auth
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
       return NextResponse.json(
-        { error: 'Utilisateur non trouvé' },
+        { error: error.message },
         { status: 401 }
       )
     }
 
-    // En production: await bcrypt.compare(password, user.password)
-    if (password !== user.password) {
+    if (!data.user) {
       return NextResponse.json(
-        { error: 'Mot de passe incorrect' },
+        { error: 'Erreur de connexion' },
         { status: 401 }
       )
     }
 
-    // Créer une session simple (en production, utiliser JWT ou sessions sécurisées)
-    const sessionToken = Date.now().toString()
+    // Récupérer les métadonnées utilisateur depuis la base
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', data.user.id)
+      .single()
 
     return NextResponse.json({
       success: true,
       message: 'Connexion réussie',
       user: {
-        id: user.id,
-        name: user.name,
-        email: user.email
-      },
-      token: sessionToken
+        id: data.user.id,
+        name: profile?.name || data.user.email?.split('@')[0] || 'Utilisateur',
+        email: data.user.email
+      }
     })
 
   } catch (error) {
