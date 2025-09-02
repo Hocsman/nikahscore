@@ -67,21 +67,31 @@ export async function POST(request: NextRequest) {
 
     // Créer le profil utilisateur avec un client admin (bypass RLS)
     if (data.user) {
-      const { error: profileError } = await supabaseAdmin
-        .from('profiles')
-        .insert([
-          {
-            id: data.user.id,
-            name: name,
-            email: email,
-            created_at: new Date().toISOString()
-          }
-        ])
+      // Attendre un peu pour que Supabase Auth finalise l'utilisateur
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Vérifier d'abord si l'utilisateur existe dans auth.users
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.user.id)
+      
+      if (authUser.user) {
+        const { error: profileError } = await supabaseAdmin
+          .from('profiles')
+          .insert([
+            {
+              id: data.user.id,
+              name: name,
+              email: email,
+              created_at: new Date().toISOString()
+            }
+          ])
 
-      if (profileError) {
-        console.error('Erreur création profil:', profileError)
+        if (profileError) {
+          console.error('Erreur création profil:', profileError)
+        } else {
+          console.log('✅ Profil créé pour:', name)
+        }
       } else {
-        console.log('✅ Profil créé pour:', name)
+        console.warn('⚠️ Utilisateur non trouvé dans auth.users, profil non créé')
       }
 
       // Envoyer l'email de bienvenue via Resend
