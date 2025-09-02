@@ -70,20 +70,29 @@ export default function AuthPage() {
           throw new Error('Le mot de passe doit contenir au moins 6 caractères')
         }
 
-        // Inscription avec Supabase
-        const { error } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            data: {
-              name: formData.name
-            }
-          }
+        console.log('🚀 Inscription via API...')
+        
+        // Inscription via notre API (avec envoi d'email)
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+          })
         })
 
-        if (error) throw error
+        const result = await response.json()
 
-        setSuccess('Compte créé avec succès ! Vérifiez votre email.')
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur lors de l\'inscription')
+        }
+
+        console.log('✅ Inscription réussie:', result)
+        setSuccess(result.message || 'Compte créé avec succès ! Vérifiez votre email.')
         
       } else {
         // Connexion avec Supabase
