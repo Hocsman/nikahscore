@@ -48,7 +48,11 @@ export async function POST(request: NextRequest) {
         data: {
           name: name
         },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`,
+        // Pour les tests - pas de confirmation email requise
+        ...(process.env.NODE_ENV === 'development' && {
+          skipConfirmationEmail: true
+        })
       }
     })
 
