@@ -143,14 +143,14 @@ export default function FAQPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <ThemeToggle />
       
       {/* Header avec navigation */}
       <div className="container mx-auto px-4 py-8">
         <Link 
           href="/"
-          className="inline-flex items-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 mb-8 transition-colors"
+          className="inline-flex items-center text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Retour à l'accueil
@@ -165,7 +165,7 @@ export default function FAQPage() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
             Questions Fréquentes
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -186,7 +186,7 @@ export default function FAQPage() {
               viewport={{ once: true }}
               className="mb-12"
             >
-              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 border-b-2 border-emerald-200 dark:border-emerald-800 pb-2">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 border-b-2 border-pink-200 dark:border-pink-800 pb-2">
                 {category.category}
               </h2>
               
@@ -212,9 +212,9 @@ export default function FAQPage() {
                           transition={{ duration: 0.2 }}
                         >
                           {isOpen ? (
-                            <Minus className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                            <Minus className="w-5 h-5 text-pink-600 dark:text-pink-400 flex-shrink-0" />
                           ) : (
-                            <Plus className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                            <Plus className="w-5 h-5 text-pink-600 dark:text-pink-400 flex-shrink-0" />
                           )}
                         </motion.div>
                       </button>
@@ -250,7 +250,7 @@ export default function FAQPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-emerald-500 to-blue-600 rounded-3xl p-12 text-white"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-12 text-white"
         >
           <h2 className="text-4xl font-bold mb-6">
             Vous ne trouvez pas votre réponse ?
@@ -260,13 +260,13 @@ export default function FAQPage() {
           </p>
           <Link 
             href="/contact"
-            className="inline-flex items-center bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mr-4"
+            className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mr-4"
           >
             Nous Contacter
           </Link>
           <Link 
             href="/questionnaire"
-            className="inline-flex items-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-emerald-600 transition-colors duration-300"
+            className="inline-flex items-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-pink-600 transition-colors duration-300"
           >
             Commencer le Test
           </Link>

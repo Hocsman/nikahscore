@@ -113,8 +113,8 @@ const ScoreDisplay = ({ score, label, delay = 0 }: { score: number, label: strin
   }, [isInView, score, delay])
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'from-green-500 to-emerald-600'
-    if (score >= 65) return 'from-blue-500 to-indigo-600'
+    if (score >= 80) return 'from-pink-500 to-purple-600'
+    if (score >= 65) return 'from-pink-500 to-purple-600'
     if (score >= 50) return 'from-yellow-500 to-orange-500'
     return 'from-red-500 to-pink-600'
   }
@@ -253,13 +253,13 @@ const StatusCard = ({
 
   const colorClasses = {
     blue: {
-      bg: 'from-blue-50 to-indigo-50',
+      bg: 'from-pink-50 to-purple-50',
       border: 'border-blue-200',
       icon: 'text-blue-600 bg-blue-100',
       value: 'text-blue-700'
     },
     green: {
-      bg: 'from-green-50 to-emerald-50',
+      bg: 'from-pink-50 to-purple-50',
       border: 'border-green-200',
       icon: 'text-green-600 bg-green-100',
       value: 'text-green-700'
@@ -592,7 +592,7 @@ export default function EnhancedResultsPage() {
   // Vérifier les permissions d'accès aux résultats
   if (!canViewResults) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 relative flex items-center justify-center">
         <PremiumBlock
           feature="basic_results"
           title="Résultats NikahScore"
@@ -606,7 +606,7 @@ export default function EnhancedResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 flex items-center justify-center">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -632,7 +632,7 @@ export default function EnhancedResultsPage() {
           </div>
           
           <motion.h2 
-            className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4"
+            className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
@@ -651,7 +651,7 @@ export default function EnhancedResultsPage() {
             {[0, 1, 2, 3].map((i) => (
               <motion.div
                 key={i}
-                className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                className="w-3 h-3 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
                 animate={{ 
                   scale: [1, 1.8, 1], 
                   opacity: [0.4, 1, 0.4] 
@@ -706,7 +706,7 @@ export default function EnhancedResultsPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50">
       {/* Header avec navigation */}
       <motion.div 
         className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40"
@@ -724,7 +724,7 @@ export default function EnhancedResultsPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
                   Vos Résultats NikahScore
                 </h1>
                 <p className="text-sm text-gray-600">
@@ -779,7 +779,7 @@ export default function EnhancedResultsPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, type: "spring" }}
               >
-                <Card className="p-8 text-center bg-gradient-to-br from-white to-blue-50 border-0 shadow-2xl">
+                <Card className="p-8 text-center bg-gradient-to-br from-white to-purple-50 border-0 shadow-2xl">
                   <motion.div
                     className="mb-6"
                     whileHover={{ scale: 1.05 }}
@@ -925,7 +925,7 @@ export default function EnhancedResultsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 0.6 }}
                   >
-                    <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                    <Card className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200">
                       <CardHeader className="pb-4">
                         <CardTitle className="flex items-center space-x-2 text-green-700">
                           <Trophy className="w-5 h-5" />
@@ -1055,7 +1055,7 @@ export default function EnhancedResultsPage() {
               transition={{ duration: 0.5 }}
               className="space-y-6"
             >
-              <Card className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+              <Card className="p-8 bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center space-x-2 text-blue-700 text-2xl">
                     <Lightbulb className="w-6 h-6" />
@@ -1104,7 +1104,7 @@ export default function EnhancedResultsPage() {
                     size="lg" 
                     onClick={handleDownloadPDF}
                     className={`${canDownloadPDF 
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
+                      ? 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700' 
                       : 'bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 relative'
                     }`}
                   >

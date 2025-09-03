@@ -89,7 +89,7 @@ export default function CTA() {
               avant notre mariage. Une approche mature et respectueuse."
             </blockquote>
             <cite className="text-brand-200 text-sm">
-              — Amina & Omar, mariés en 2024
+              — Amina & Omar, mariés en 2025
             </cite>
           </div>
 

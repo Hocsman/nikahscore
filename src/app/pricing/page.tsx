@@ -79,7 +79,7 @@ export default function PricingPage() {
       price: "0€",
       period: "toujours",
       icon: <Heart className="w-8 h-8" />,
-      color: "from-emerald-500 to-emerald-600",
+      color: "from-pink-500 to-pink-600",
       features: [
         "Test de compatibilité complet (60+ questions)",
         "Score global de compatibilité",
@@ -104,7 +104,7 @@ export default function PricingPage() {
       period: isAnnual ? "par mois (79€/an)" : "par mois",
       savings: isAnnual ? "Économisez 33%" : "",
       icon: <Star className="w-8 h-8" />,
-      color: "from-blue-500 to-blue-600",
+      color: "from-purple-500 to-purple-600",
       features: [
         "Tout du plan Gratuit",
         "Tests illimités",
@@ -192,14 +192,14 @@ export default function PricingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <ThemeToggle />
       
       {/* Header avec navigation */}
       <div className="container mx-auto px-4 py-8">
         <Link 
           href="/"
-          className="inline-flex items-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 mb-8 transition-colors"
+          className="inline-flex items-center text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Retour à l'accueil
@@ -214,7 +214,7 @@ export default function PricingPage() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
             Nos Tarifs
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
@@ -227,7 +227,7 @@ export default function PricingPage() {
               onClick={() => setIsAnnual(false)}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${
                 !isAnnual 
-                  ? 'bg-emerald-500 text-white shadow-md' 
+                  ? 'bg-pink-500 text-white shadow-md' 
                   : 'text-gray-600 dark:text-gray-300'
               }`}
             >
@@ -237,7 +237,7 @@ export default function PricingPage() {
               onClick={() => setIsAnnual(true)}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${
                 isAnnual 
-                  ? 'bg-emerald-500 text-white shadow-md' 
+                  ? 'bg-pink-500 text-white shadow-md' 
                   : 'text-gray-600 dark:text-gray-300'
               }`}
             >
@@ -265,7 +265,7 @@ export default function PricingPage() {
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center py-2 text-sm font-semibold">
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center py-2 text-sm font-semibold">
                   ⭐ Plus Populaire
                 </div>
               )}
@@ -297,7 +297,7 @@ export default function PricingPage() {
                     {plan.period}
                   </p>
                   {plan.savings && (
-                    <p className="text-emerald-600 dark:text-emerald-400 text-sm font-semibold mt-1">
+                    <p className="text-pink-600 dark:text-pink-400 text-sm font-semibold mt-1">
                       {plan.savings}
                     </p>
                   )}
@@ -311,7 +311,7 @@ export default function PricingPage() {
                   <ul className="space-y-2">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                        <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-pink-500 mt-0.5 mr-3 flex-shrink-0" />
                         <span className="text-gray-600 dark:text-gray-300 text-sm">
                           {feature}
                         </span>
@@ -395,7 +395,7 @@ export default function PricingPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-emerald-500 to-blue-600 rounded-3xl p-12 text-white"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-12 text-white"
         >
           <Zap className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-6">
@@ -407,13 +407,13 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/questionnaire"
-              className="bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-lg"
+              className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-lg"
             >
               Commencer Gratuitement
             </Link>
             <Link 
               href="/contact"
-              className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-emerald-600 transition-colors"
+              className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-pink-600 transition-colors"
             >
               Nous Contacter
             </Link>

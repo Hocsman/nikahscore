@@ -175,7 +175,7 @@ export default function EmailVerificationModal({
                       <Button
                         onClick={handleEmailSubmit}
                         disabled={loading || !email}
-                        className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        className="w-full h-12 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
                       >
                         {loading ? (
                           <div className="flex items-center space-x-2">
@@ -252,7 +252,7 @@ export default function EmailVerificationModal({
                         <Button
                           onClick={handleCodeSubmit}
                           disabled={loading || code.length !== 6}
-                          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                          className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
                         >
                           {loading ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

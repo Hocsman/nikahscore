@@ -30,7 +30,7 @@ const PLAN_INFO = {
   premium: {
     name: 'Premium',
     price: '9,99€',
-    color: 'from-blue-500 to-indigo-600',
+    color: 'from-pink-500 to-purple-600',
     icon: '⚡',
     features: ['Analyse détaillée', 'Rapport PDF', 'Graphiques avancés']
   },

@@ -24,6 +24,15 @@ import {
 } from 'lucide-react'
 
 export default function AuthPage() {
+  // Récupérer le mode depuis l'URL côté client
+  const [mode, setMode] = useState<string | null>(null)
+  
+  useEffect(() => {
+    // Récupérer le mode depuis l'URL une fois le composant monté côté client
+    const urlParams = new URLSearchParams(window.location.search)
+    setMode(urlParams.get('mode'))
+  }, [])
+  
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -39,6 +48,15 @@ export default function AuthPage() {
     password: '',
     confirmPassword: ''
   })
+
+  // Définir le mode par défaut basé sur l'URL
+  useEffect(() => {
+    if (mode === 'register') {
+      setIsLogin(false)
+    } else if (mode === 'login') {
+      setIsLogin(true)
+    }
+  }, [mode])
 
   // Rediriger si déjà connecté
   useEffect(() => {
@@ -119,7 +137,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 flex items-center justify-center p-4">
       
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -137,14 +155,14 @@ export default function AuthPage() {
         <Card className="bg-white/80 backdrop-blur-sm shadow-2xl border-0">
           <CardHeader className="text-center pb-6">
             <motion.div
-              className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4"
+              className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4"
               animate={{ rotate: [0, 5, -5, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
               <Heart className="w-8 h-8 text-white" />
             </motion.div>
             
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
               {isLogin ? 'Bon Retour !' : 'Créer un Compte'}
             </CardTitle>
             <p className="text-gray-600 mt-2">
@@ -282,7 +300,7 @@ export default function AuthPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium"
+                className="w-full h-12 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-medium"
               >
                 {loading ? (
                   <div className="flex items-center space-x-2">
@@ -347,11 +365,11 @@ export default function AuthPage() {
         >
           <p>🔒 Vos données sont protégées et confidentielles</p>
           <p className="mt-1">
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-700 underline">
+            <Link href="/privacy" className="text-pink-600 hover:text-pink-700 underline">
               Politique de confidentialité
             </Link>
             {' • '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
+            <Link href="/terms" className="text-pink-600 hover:text-pink-700 underline">
               Conditions d'utilisation
             </Link>
           </p>

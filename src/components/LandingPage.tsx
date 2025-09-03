@@ -58,50 +58,18 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300">
       <ThemeToggle />
       
-      {/* Navigation Header */}
-      <nav className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
-            NikahScore
-          </Link>
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              À propos
-            </Link>
-            <Link href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              Tarifs
-            </Link>
-            <Link href="/faq" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              FAQ
-            </Link>
-            <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              Contact
-            </Link>
-            <Link href="/auth" className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              Connexion
-            </Link>
-            <Link 
-              href="/auth"
-              className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
-            >
-              Commencer
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4">
+      <section className="relative min-h-screen flex items-center justify-center px-4 pt-20">
         <motion.div 
           className="absolute inset-0 opacity-10"
           style={{ y: y1 }}
         >
-          <div className="absolute top-20 left-20 w-32 h-32 bg-emerald-300 rounded-full blur-xl" />
-          <div className="absolute top-40 right-32 w-48 h-48 bg-blue-300 rounded-full blur-xl" />
-          <div className="absolute bottom-40 left-1/3 w-24 h-24 bg-purple-300 rounded-full blur-xl" />
+          <div className="absolute top-20 left-20 w-32 h-32 bg-pink-300 rounded-full blur-xl" />
+          <div className="absolute top-40 right-32 w-48 h-48 bg-purple-300 rounded-full blur-xl" />
+          <div className="absolute bottom-40 left-1/3 w-24 h-24 bg-pink-200 rounded-full blur-xl" />
         </motion.div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
@@ -110,7 +78,7 @@ export default function LandingPage() {
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               NikahScore
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -125,17 +93,17 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
           >
             <Link 
-              href="/auth" 
-              className="group bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+              href="/questionnaire/shared" 
+              className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
             >
-              Créer un Compte & Commencer
+              Créer un Questionnaire Partagé
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/pricing"
-              className="border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-300"
+              className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
             >
-              Voir les Tarifs
+              Tarifs
             </Link>
           </motion.div>
 
@@ -146,19 +114,19 @@ export default function LandingPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto"
           >
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">60+</div>
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">60+</div>
               <div className="text-gray-600 dark:text-gray-400">Questions</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">9</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">9</div>
               <div className="text-gray-600 dark:text-gray-400">Domaines</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">100%</div>
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100%</div>
               <div className="text-gray-600 dark:text-gray-400">Gratuit</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">2min</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">2min</div>
               <div className="text-gray-600 dark:text-gray-400">Résultats</div>
             </div>
           </motion.div>
@@ -193,8 +161,8 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center group"
               >
-                <div className="bg-gradient-to-r from-emerald-100 to-blue-100 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-emerald-600">
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-pink-600">
                     {feature.icon}
                   </div>
                 </div>
@@ -207,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-emerald-50 to-blue-50">
+      <section className="py-20 px-4 bg-gradient-to-r from-pink-50 to-purple-50">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -240,7 +208,7 @@ export default function LandingPage() {
                       <Star key={i} className="w-5 h-5 fill-current" />
                     ))}
                   </div>
-                  <span className="ml-2 font-semibold text-emerald-600">{testimonial.score}</span>
+                  <span className="ml-2 font-semibold text-pink-600">{testimonial.score}</span>
                 </div>
                 <p className="text-gray-600 mb-4 italic">"{testimonial.text}"</p>
                 <p className="font-semibold text-gray-800">{testimonial.name}</p>
@@ -257,7 +225,7 @@ export default function LandingPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-emerald-500 to-blue-600 rounded-3xl p-12 text-white"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-12 text-white"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Prêt à Découvrir Votre Score ?
@@ -266,10 +234,10 @@ export default function LandingPage() {
             Rejoignez des milliers de musulmans qui ont déjà trouvé leur compatibilité
           </p>
           <Link 
-            href="/questionnaire"
-            className="inline-flex items-center bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            href="/questionnaire/shared"
+            className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
-            Commencer Maintenant
+            Créer un Questionnaire Partagé
             <ArrowRight className="ml-2 w-5 h-5" />
           </Link>
         </motion.div>
@@ -281,20 +249,20 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8">
             {/* Logo & Description */}
             <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent mb-4">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-4">
                 NikahScore
               </h3>
               <p className="text-gray-300 mb-4 max-w-md">
                 Découvrez votre compatibilité matrimoniale selon les valeurs islamiques avec notre questionnaire détaillé et respectueux.
               </p>
               <div className="flex space-x-4">
-                <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
                   <Heart className="w-4 h-4" />
                 </div>
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                   <Users className="w-4 h-4" />
                 </div>
-                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-pink-400 rounded-full flex items-center justify-center">
                   <Star className="w-4 h-4" />
                 </div>
               </div>
@@ -304,19 +272,19 @@ export default function LandingPage() {
             <div>
               <h4 className="text-lg font-semibold mb-4">Navigation</h4>
               <div className="space-y-2">
-                <Link href="/" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Accueil
                 </Link>
-                <Link href="/questionnaire" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/questionnaire" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Questionnaire
                 </Link>
-                <Link href="/pricing" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/pricing" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Tarifs
                 </Link>
-                <Link href="/about" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/about" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   À propos
                 </Link>
-                <Link href="/faq" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/faq" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   FAQ
                 </Link>
               </div>
@@ -326,23 +294,33 @@ export default function LandingPage() {
             <div>
               <h4 className="text-lg font-semibold mb-4">Support</h4>
               <div className="space-y-2">
-                <Link href="/contact" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/contact" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Contact
                 </Link>
-                <Link href="/faq" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <Link href="/faq" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Aide
                 </Link>
-                <a href="mailto:support@nikahscore.com" className="text-gray-300 hover:text-emerald-400 transition-colors block">
+                <a href="mailto:support@nikahscore.com" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   support@nikahscore.com
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">
-              © 2024 NikahScore. Tous droits réservés. | Fait avec ❤️ pour la Oummah
-            </p>
+          <div className="border-t border-gray-800 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <p className="text-gray-400 text-center md:text-left">
+                © 2025 NikahScore. Tous droits réservés. | Fait avec ❤️ pour la Oummah
+              </p>
+              <div className="flex space-x-6 text-sm">
+                <Link href="/privacy" className="text-gray-400 hover:text-pink-400 transition-colors">
+                  Politique de confidentialité
+                </Link>
+                <Link href="/terms" className="text-gray-400 hover:text-pink-400 transition-colors">
+                  Conditions d'utilisation
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

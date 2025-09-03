@@ -296,7 +296,7 @@ export default function QuestionnairePage() {
   // États de chargement avec animations
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 flex items-center justify-center">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -424,7 +424,7 @@ export default function QuestionnairePage() {
           }}
         >
           <motion.div 
-            className="w-20 h-20 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6"
+            className="w-20 h-20 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6"
             animate={{ 
               rotate: [0, 360],
               scale: [1, 1.1, 1]
@@ -468,7 +468,7 @@ export default function QuestionnairePage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg">
+                <Button className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg">
                   <Sparkles className="w-5 h-5 mr-2" />
                   Voir mes résultats détaillés
                   <ChevronRight className="w-5 h-5 ml-2" />
@@ -507,7 +507,7 @@ export default function QuestionnairePage() {
   const currentQ = questions[currentQuestion]
   if (!currentQ) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">Aucune question disponible</p>
         </div>
@@ -525,7 +525,7 @@ export default function QuestionnairePage() {
   // Vérifier les permissions d'accès
   if (needsUpgrade) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 relative flex items-center justify-center">
         <PremiumBlock
           feature="basic_questionnaire"
           title="Questionnaire NikahScore"
@@ -538,7 +538,7 @@ export default function QuestionnairePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 relative">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div 
@@ -583,7 +583,7 @@ export default function QuestionnairePage() {
             Retour à l'accueil
           </Link>
 
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
             Questionnaire NikahScore
           </h1>
           <p className="text-gray-600 text-lg">
@@ -592,7 +592,7 @@ export default function QuestionnairePage() {
 
           {/* Badge d'axe avec animation */}
           <motion.div className="mt-4">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 text-sm font-medium">
+            <Badge className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 text-sm font-medium">
               <Target className="w-4 h-4 mr-2" />
               {currentQ.axis}
               {currentQ.is_dealbreaker && (
@@ -633,7 +633,7 @@ export default function QuestionnairePage() {
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full relative"
+                className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full relative"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -728,7 +728,7 @@ export default function QuestionnairePage() {
                         className={`w-full h-16 text-lg font-semibold border-2 transition-all duration-300 ${
                           selectedAnswer === true 
                             ? 'bg-green-600 hover:bg-green-700 text-white border-green-600 shadow-lg' 
-                            : 'bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 border-green-200 hover:border-green-300'
+                            : 'bg-gradient-to-r from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 text-pink-700 border-pink-200 hover:border-pink-300'
                         }`}
                         variant="outline"
                       >
@@ -780,7 +780,7 @@ export default function QuestionnairePage() {
                         { value: 1, label: "Pas du tout d'accord", color: "from-red-500 to-red-600", emoji: "😔" },
                         { value: 2, label: "Plutôt en désaccord", color: "from-orange-500 to-orange-600", emoji: "🤔" },
                         { value: 3, label: "Neutre", color: "from-gray-500 to-gray-600", emoji: "😐" },
-                        { value: 4, label: "Plutôt d'accord", color: "from-blue-500 to-blue-600", emoji: "🙂" },
+                        { value: 4, label: "Plutôt d'accord", color: "from-pink-500 to-pink-600", emoji: "🙂" },
                         { value: 5, label: "Tout à fait d'accord", color: "from-green-500 to-green-600", emoji: "😊" }
                       ].map((option, index) => (
                         <motion.div

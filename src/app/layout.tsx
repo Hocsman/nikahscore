@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { ThemeProvider } from '@/contexts/ThemeContext'
+import { Navbar } from '@/components/NavbarSimple'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -70,6 +71,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <ThemeProvider>
           <div className="relative flex min-h-screen flex-col">
+            <Navbar />
             <main className="flex-1">
               {children}
             </main>
