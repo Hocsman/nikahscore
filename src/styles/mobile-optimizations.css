@@ -1,0 +1,248 @@
+/* Optimisations CSS pour mobile - NikahScore */
+
+/* Variables CSS pour les breakpoints */
+:root {
+  --mobile-small: 320px;
+  --mobile: 480px;
+  --tablet: 768px;
+  --desktop: 1024px;
+  --large: 1200px;
+}
+
+/* Optimisations générales pour mobile */
+@media (max-width: 768px) {
+  /* Typography responsive */
+  .text-4xl { font-size: 2rem; }
+  .text-3xl { font-size: 1.875rem; }
+  .text-2xl { font-size: 1.5rem; }
+  .text-xl { font-size: 1.25rem; }
+  
+  /* Spacing optimisé */
+  .p-6 { padding: 1rem; }
+  .p-4 { padding: 0.75rem; }
+  .gap-6 { gap: 1rem; }
+  .gap-4 { gap: 0.75rem; }
+  
+  /* Grilles responsive */
+  .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  
+  /* Cards mobile-friendly */
+  .card-mobile {
+    border-radius: 0.75rem;
+    margin: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+  
+  /* Boutons tactiles optimisés */
+  .btn-mobile {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  /* Navigation mobile */
+  .navbar-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid rgb(229 231 235);
+    padding: 0.5rem;
+    z-index: 50;
+  }
+  
+  /* Tabs mobile */
+  .tabs-mobile .tabs-list {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .tabs-mobile .tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tabs-mobile .tabs-trigger {
+    white-space: nowrap;
+    min-width: fit-content;
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Formulaires tactiles */
+  .input-mobile {
+    min-height: 44px;
+    font-size: 16px; /* Évite le zoom sur iOS */
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+  }
+  
+  /* Modals plein écran sur mobile */
+  .modal-mobile {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    border-radius: 0;
+    max-width: none;
+    max-height: none;
+    height: 100vh;
+  }
+  
+  /* Images responsive */
+  .img-mobile {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+  
+  /* Charts mobile */
+  .chart-mobile {
+    height: 250px !important;
+    margin: 0 -1rem;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .text-3xl { font-size: 1.5rem; }
+  .text-2xl { font-size: 1.25rem; }
+  .p-4 { padding: 0.5rem; }
+  .gap-4 { gap: 0.5rem; }
+  
+  /* Grilles très petites */
+  .grid-cols-2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  
+  /* Navbar simplifiée */
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  
+  /* Cards compactes */
+  .card-compact {
+    padding: 0.75rem;
+    margin: 0.25rem;
+  }
+}
+
+/* Optimisations pour les écrans tactiles */
+@media (hover: none) and (pointer: coarse) {
+  /* Meilleure accessibilité tactile */
+  .hover\:scale-105:hover {
+    transform: scale(1.02); /* Réduction de l'effet hover */
+  }
+  
+  /* Boutons avec zone tactile plus grande */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Suppression des effets hover non pertinents */
+  .hover\:shadow-lg:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+}
+
+/* Dark mode mobile */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  .card-mobile {
+    background: rgb(31 41 55);
+    border-color: rgb(75 85 99);
+    color: rgb(243 244 246);
+  }
+  
+  .navbar-mobile {
+    background: rgb(17 24 39);
+    border-color: rgb(75 85 99);
+  }
+  
+  .input-mobile {
+    background: rgb(31 41 55);
+    border-color: rgb(75 85 99);
+    color: rgb(243 244 246);
+  }
+}
+
+/* Animations optimisées pour mobile */
+@media (prefers-reduced-motion: no-preference) and (max-width: 768px) {
+  .animate-mobile-slide-up {
+    animation: mobileSlideUp 0.3s ease-out;
+  }
+  
+  .animate-mobile-fade-in {
+    animation: mobileFadeIn 0.2s ease-out;
+  }
+}
+
+@keyframes mobileSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* PWA - Support mode plein écran */
+@media (display-mode: standalone) {
+  .pwa-header {
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+  
+  .pwa-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+}
+
+/* Orientation paysage mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .landscape-adjust {
+    height: 80vh;
+  }
+  
+  .landscape-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Performance - Optimisations GPU */
+.gpu-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Scrolling optimisé */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Fix pour les viewports mobiles variables */
+.full-height-mobile {
+  height: 100vh;
+  height: 100dvh; /* Support navigateurs modernes */
+}
+
+/* Classes utilitaires mobile */
+.mobile-only { display: none; }
+.desktop-only { display: block; }
+
+@media (max-width: 768px) {
+  .mobile-only { display: block; }
+  .desktop-only { display: none; }
+  .mobile-flex { display: flex; }
+  .mobile-grid { display: grid; }
+  .mobile-hidden { display: none; }
+}
