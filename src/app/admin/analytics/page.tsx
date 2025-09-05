@@ -51,14 +51,16 @@ export default function AdminAnalyticsPage() {
 
   // Vérification des permissions admin
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!loading && (!user || !user.email)) {
       redirect('/')
     }
+    // TODO: Ajouter vérification role admin via database query
+    // Pour l'instant, on vérifie juste l'authentification
   }, [user, loading])
 
   // Chargement des données analytics
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (user?.email) {
       loadAnalyticsData()
     }
   }, [user])
