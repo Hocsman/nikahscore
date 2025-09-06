@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
   const envCheck = {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'MANQUANT',
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'MANQUANT',
+    VERCEL_URL: process.env.VERCEL_URL || 'MANQUANT',
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'PRÉSENT' : 'MANQUANT',
     RESEND_API_KEY: process.env.RESEND_API_KEY ? 'PRÉSENT' : 'MANQUANT',
     NODE_ENV: process.env.NODE_ENV || 'MANQUANT'
@@ -15,6 +16,6 @@ export async function GET(request: NextRequest) {
     environment: envCheck,
     timestamp: new Date().toISOString(),
     // Test de l'URL de redirection
-    emailRedirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`
+    emailRedirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.VERCEL_URL}` || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`
   })
 }

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         data: {
           name: name
         },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.VERCEL_URL}` || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire`,
         // Pour les tests - pas de confirmation email requise
         ...(process.env.NODE_ENV === 'development' && {
           skipConfirmationEmail: true
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire" 
+                <a href="${process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.VERCEL_URL}` || process.env.NEXT_PUBLIC_BASE_URL}/questionnaire" 
                    style="background: #8B5CF6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block;">
                   ✨ Commencer mon questionnaire
                 </a>
