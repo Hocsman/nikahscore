@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         data: {
           name: name
         },
-        emailRedirectTo: `https://nikahscore-platform.vercel.app/questionnaire`,
+        emailRedirectTo: `https://${process.env.VERCEL_URL}/questionnaire`,
         // Pour les tests - pas de confirmation email requise
         ...(process.env.NODE_ENV === 'development' && {
           skipConfirmationEmail: true
