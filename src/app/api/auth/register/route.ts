@@ -47,12 +47,9 @@ export async function POST(request: NextRequest) {
       options: {
         data: {
           name: name
-        },
-        emailRedirectTo: `https://${process.env.VERCEL_URL}/questionnaire`,
-        // Pour les tests - pas de confirmation email requise
-        ...(process.env.NODE_ENV === 'development' && {
-          skipConfirmationEmail: true
-        })
+        }
+        // Note: L'email de confirmation Supabase peut être désactivé dans le dashboard
+        // Pour éviter la double réception d'emails
       }
     })
 
