@@ -169,7 +169,7 @@ export default function PricingPage() {
 
       {/* Plans de tarification */}
       <section className="container mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto justify-items-center">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
