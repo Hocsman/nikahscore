@@ -17,12 +17,6 @@ const PLAN_PRICES = {
     name: 'Premium',
     features: ['Analyse détaillée', 'Rapport PDF', 'Graphiques avancés']
   },
-  family: {
-    priceId: process.env.STRIPE_FAMILY_PRICE_ID!,
-    amount: 1799, // 17,99€ en centimes
-    name: 'Famille',
-    features: ['Jusqu\'à 5 profils', 'Comparaison familiale', 'Support prioritaire']
-  },
   conseil: {
     priceId: process.env.STRIPE_CONSEIL_PRICE_ID!,
     amount: 4999, // 49,99€ en centimes

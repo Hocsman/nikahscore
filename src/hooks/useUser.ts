@@ -12,6 +12,12 @@ interface UserSubscription {
 
 interface ExtendedUser extends User {
   subscription?: UserSubscription
+  // Champs Stripe pour compatibilité
+  subscription_plan?: string
+  subscription_status?: string
+  subscription_start?: string
+  subscription_end?: string
+  stripe_customer_id?: string
 }
 
 interface UseUserReturn {
