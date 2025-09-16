@@ -18,6 +18,13 @@ export type AnalyticsEvent =
   | 'payment_succeeded'
   | 'payment_failed'
   | 'subscription_cancelled'
+  // Nouveaux événements Stripe
+  | 'upgrade_attempt'
+  | 'checkout_started'
+  | 'checkout_session_created'
+  | 'checkout_error'
+  | 'plan_purchased'
+  | 'subscription_activated'
 
 export interface AnalyticsEventData {
   event: AnalyticsEvent
@@ -25,7 +32,7 @@ export interface AnalyticsEventData {
   sessionId: string
   timestamp: number
   properties?: Record<string, any>
-  userPlan?: 'free' | 'premium' | 'family' | 'conseil'
+  userPlan?: 'free' | 'premium' | 'conseil'
 }
 
 // Configuration des métriques clés
@@ -38,8 +45,11 @@ export const CONVERSION_FUNNEL_STEPS = [
   'results_viewed',
   'premium_feature_clicked',
   'upgrade_button_clicked',
+  'checkout_started',
+  'checkout_session_created',
   'payment_started',
-  'payment_completed'
+  'payment_completed',
+  'subscription_activated'
 ] as const
 
 export type FunnelStep = typeof CONVERSION_FUNNEL_STEPS[number]
