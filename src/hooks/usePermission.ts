@@ -26,7 +26,7 @@ export function usePermission(): UsePermissionReturn {
   }, [userPlan, loading])
 
   const requiresUpgrade = useCallback((feature: Feature): boolean => {
-    return !hasPermission(feature) && userPlan === 'free'
+    return !hasPermission(feature) && userPlan === 'gratuit'
   }, [hasPermission, userPlan])
 
   const getRequiredPlan = useCallback((feature: Feature): PlanType | null => {

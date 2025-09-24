@@ -48,7 +48,7 @@ const PLAN_INFO = {
     icon: '🏆',
     features: ['Consultation expert', 'Support personnalisé', 'Questions sur mesure']
   },
-  free: {
+  gratuit: {
     name: 'Gratuit',
     price: '0€',
     color: 'from-gray-400 to-gray-500',
@@ -62,7 +62,7 @@ export default function PremiumBlock({
   title, 
   description, 
   requiredPlan, 
-  currentPlan = 'free',
+  currentPlan = 'gratuit',
   onUpgrade 
 }: PremiumBlockProps) {
   const planInfo = PLAN_INFO[requiredPlan]
