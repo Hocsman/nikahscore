@@ -44,23 +44,32 @@ export function useUser(): UseUserReturn {
         }
 
         if (authUser && mounted) {
-          // Récupérer les informations d'abonnement
-          const { data: subscription, error: subError } = await supabase
-            .from('user_subscriptions')
-            .select('plan, status, expires_at')
-            .eq('user_id', authUser.id)
+          // Récupérer les informations du profil avec abonnement (gestion des colonnes manquantes)
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authUser.id)
             .single()
+
+          console.log('🔍 Profile data:', profile)
+          console.log('❌ Profile error:', profileError)
 
           const extendedUser: ExtendedUser = {
             ...authUser,
-            subscription: subscription ? {
-              plan: subscription.plan || 'free',
-              status: subscription.status || 'inactive',
-              expiresAt: subscription.expires_at ? new Date(subscription.expires_at) : undefined
+            subscription: profile ? {
+              plan: (profile as any).subscription_plan || 'gratuit',
+              status: (profile as any).subscription_status || 'inactive',
+              expiresAt: (profile as any).subscription_end ? new Date((profile as any).subscription_end) : undefined
             } : {
-              plan: 'free',
+              plan: 'gratuit',
               status: 'inactive'
-            }
+            },
+            // Ajouter les champs Stripe pour compatibilité
+            subscription_plan: (profile as any)?.subscription_plan || 'gratuit',
+            subscription_status: (profile as any)?.subscription_status || 'inactive',
+            subscription_start: (profile as any)?.subscription_start,
+            subscription_end: (profile as any)?.subscription_end,
+            stripe_customer_id: (profile as any)?.stripe_customer_id
           }
 
           setUser(extendedUser)

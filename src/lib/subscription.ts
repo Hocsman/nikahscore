@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Types des plans d'abonnement
-export type PlanType = 'free' | 'premium' | 'family' | 'conseil'
+// Types des plans d'abonnement (Family supprimé)
+export type PlanType = 'gratuit' | 'premium' | 'conseil'
 
 // Type pour les fonctionnalités disponibles
 export type Feature = 
@@ -28,7 +28,7 @@ export interface UserSubscription {
 
 // Configuration des fonctionnalités par plan
 export const PLAN_FEATURES: Record<PlanType, Feature[]> = {
-  free: [
+  gratuit: [
     'basic_questionnaire',
     'basic_results',
     'basic_compatibility_score'
@@ -43,18 +43,6 @@ export const PLAN_FEATURES: Record<PlanType, Feature[]> = {
     'advanced_charts',
     'recommendations'
   ],
-  family: [
-    'basic_questionnaire',
-    'basic_results',
-    'basic_compatibility_score',
-    'detailed_analysis',
-    'pdf_report',
-    'email_results',
-    'advanced_charts',
-    'recommendations',
-    'family_comparison',
-    'multiple_profiles'
-  ],
   conseil: [
     'basic_questionnaire',
     'basic_results',
@@ -64,8 +52,6 @@ export const PLAN_FEATURES: Record<PlanType, Feature[]> = {
     'email_results',
     'advanced_charts',
     'recommendations',
-    'family_comparison',
-    'multiple_profiles',
     'expert_consultation',
     'priority_support',
     'custom_questions'
@@ -77,16 +63,16 @@ const userSubscriptions = new Map<string, UserSubscription>()
 
 // Utilisateur test avec plan gratuit
 userSubscriptions.set('test@nikahscore.com', {
-  plan: 'free',
+  plan: 'gratuit',
   isActive: true,
-  features: PLAN_FEATURES.free
+  features: PLAN_FEATURES.gratuit
 })
 
 export function getUserSubscription(email: string): UserSubscription {
   return userSubscriptions.get(email) || {
-    plan: 'free',
+    plan: 'gratuit',
     isActive: true,
-    features: PLAN_FEATURES.free
+    features: PLAN_FEATURES.gratuit
   }
 }
 
@@ -103,7 +89,7 @@ export function getPlanLimitations(plan: PlanType): {
   hasAdvancedAnalytics: boolean
 } {
   switch (plan) {
-    case 'free':
+    case 'gratuit':
       return {
         maxProfiles: 1,
         questionnairesPerMonth: 1,
@@ -119,18 +105,10 @@ export function getPlanLimitations(plan: PlanType): {
         canEmailResults: true,
         hasAdvancedAnalytics: true
       }
-    case 'family':
-      return {
-        maxProfiles: 5,
-        questionnairesPerMonth: 20,
-        canDownloadPDF: true,
-        canEmailResults: true,
-        hasAdvancedAnalytics: true
-      }
     case 'conseil':
       return {
-        maxProfiles: 999,
-        questionnairesPerMonth: 999,
+        maxProfiles: 5,
+        questionnairesPerMonth: -1, // Illimité
         canDownloadPDF: true,
         canEmailResults: true,
         hasAdvancedAnalytics: true
@@ -159,8 +137,6 @@ export function checkPermission(
     // Déterminer le plan minimum requis
     if (PLAN_FEATURES.premium.includes(feature)) {
       requiredPlan = 'premium'
-    } else if (PLAN_FEATURES.family.includes(feature)) {
-      requiredPlan = 'family'
     } else if (PLAN_FEATURES.conseil.includes(feature)) {
       requiredPlan = 'conseil'
     }

@@ -1,6 +1,21 @@
--- Migration pour intégration Stripe
--- Tables nécessaires pour gérer les abonnements et paiements
+-- Migration CORRECTIVE pour intégration Stripe
+-- Cette migration corrige la table de référence de 'users' vers 'profiles'
+-- Et ajoute uniquement ce qui manque
 
+-- 1. D'abord, supprimer les anciennes politiques s'il y en a
+DROP POLICY IF EXISTS "Users can view their own stripe customer data" ON stripe_customers;
+DROP POLICY IF EXISTS "Users can insert their own stripe customer data" ON stripe_customers;
+DROP POLICY IF EXISTS "Users can view their own stripe sessions" ON stripe_sessions;
+DROP POLICY IF EXISTS "Users can insert their own stripe sessions" ON stripe_sessions;
+DROP POLICY IF EXISTS "Users can view their own transactions" ON transactions;
+DROP POLICY IF EXISTS "Service role can manage all transactions" ON transactions;
+
+-- 2. Supprimer les anciennes tables pour les recréer avec les bonnes références
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS stripe_sessions CASCADE;
+DROP TABLE IF EXISTS stripe_customers CASCADE;
+
+-- 3. Recréer les tables avec les bonnes références vers 'profiles'
 -- Table pour les clients Stripe
 CREATE TABLE IF NOT EXISTS stripe_customers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -37,18 +52,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Table pour les notifications utilisateur
-CREATE TABLE IF NOT EXISTS notifications (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  message TEXT NOT NULL,
-  type TEXT NOT NULL DEFAULT 'info', -- 'info', 'success', 'warning', 'error'
-  read BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Ajout des colonnes manquantes à la table profiles si elles n'existent pas
+-- 4. Ajout des colonnes manquantes à la table profiles si elles n'existent pas
 DO $$ 
 BEGIN
   -- Colonnes pour l'abonnement
@@ -73,17 +77,15 @@ BEGIN
   END IF;
 END $$;
 
--- Index pour optimiser les requêtes
+-- 5. Index pour optimiser les requêtes
 CREATE INDEX IF NOT EXISTS idx_stripe_customers_user_id ON stripe_customers(user_id);
 CREATE INDEX IF NOT EXISTS idx_stripe_customers_stripe_id ON stripe_customers(stripe_customer_id);
 CREATE INDEX IF NOT EXISTS idx_stripe_sessions_user_id ON stripe_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_stripe_sessions_session_id ON stripe_sessions(session_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_subscription ON profiles(subscription_plan, subscription_status);
-CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read, created_at);
 
--- Politiques RLS (Row Level Security)
+-- 6. Politiques RLS (Row Level Security)
 -- Stripe customers
 ALTER TABLE stripe_customers ENABLE ROW LEVEL SECURITY;
 
@@ -111,19 +113,7 @@ CREATE POLICY "Users can view their own transactions" ON transactions
 CREATE POLICY "Service role can manage all transactions" ON transactions
   FOR ALL USING (auth.role() = 'service_role');
 
--- Notifications
-ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view their own notifications" ON notifications
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own notifications" ON notifications
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Service role can manage all notifications" ON notifications
-  FOR ALL USING (auth.role() = 'service_role');
-
--- Fonction pour mettre à jour updated_at automatiquement
+-- 7. Fonction pour mettre à jour updated_at automatiquement
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -132,7 +122,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Triggers pour updated_at
+-- 8. Triggers pour updated_at
 CREATE TRIGGER update_stripe_customers_updated_at
   BEFORE UPDATE ON stripe_customers
   FOR EACH ROW
@@ -143,7 +133,7 @@ CREATE TRIGGER update_stripe_sessions_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
--- Commentaires pour documentation
+-- 9. Commentaires pour documentation
 COMMENT ON TABLE stripe_customers IS 'Mapping entre utilisateurs NikahScore et customers Stripe';
 COMMENT ON TABLE stripe_sessions IS 'Sessions de checkout Stripe pour tracking';
 COMMENT ON TABLE transactions IS 'Historique des transactions et paiements';
