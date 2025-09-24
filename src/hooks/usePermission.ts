@@ -31,7 +31,7 @@ export function usePermission(): UsePermissionReturn {
 
   const getRequiredPlan = useCallback((feature: Feature): PlanType | null => {
     // Ordre de priorité des plans
-    const planPriority: PlanType[] = ['premium', 'family', 'conseil']
+    const planPriority: PlanType[] = ['premium', 'conseil']
     
     for (const plan of planPriority) {
       if (checkPermissionSimple(plan, feature)) {
