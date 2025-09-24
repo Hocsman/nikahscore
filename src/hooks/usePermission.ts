@@ -16,7 +16,7 @@ export function usePermission(): UsePermissionReturn {
   const { user, loading } = useUser()
   
   const userPlan: PlanType = useMemo(() => {
-    if (!user?.subscription) return 'free'
+    if (!user?.subscription) return 'gratuit'
     return user.subscription.plan as PlanType
   }, [user?.subscription])
 

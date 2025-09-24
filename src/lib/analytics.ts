@@ -32,7 +32,7 @@ export interface AnalyticsEventData {
   sessionId: string
   timestamp: number
   properties?: Record<string, any>
-  userPlan?: 'free' | 'premium' | 'conseil'
+  userPlan?: 'gratuit' | 'premium' | 'conseil'
 }
 
 // Configuration des métriques clés

@@ -45,7 +45,7 @@ export const useAnalytics = () => {
         timestamp: Date.now(),
         userId: user?.id || null,
         properties,
-        userPlan: user?.user_metadata?.plan || 'free'
+        userPlan: user?.user_metadata?.plan || 'gratuit'
       }
 
       // Envoyer l'événement à l'API
