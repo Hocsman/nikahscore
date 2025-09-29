@@ -91,6 +91,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Récupérer toutes les questions
+    const { data: questions, error: questionsError } = await supabaseAdmin
+      .from('questions')
+      .select('id, label, type')
+      .order('id')
+
+    if (questionsError) {
+      console.error('Error fetching questions:', questionsError)
+      return NextResponse.json(
+        { error: 'Erreur lors du chargement des questions' },
+        { status: 500 }
+      )
+    }
+
     // Calculer le statut
     let status = 'waiting'
     if (shared.creator_completed_at && shared.partner_completed_at) {
@@ -101,6 +115,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      questions: questions || [],
       shared: {
         ...shared,
         status
