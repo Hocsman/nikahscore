@@ -79,7 +79,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
   }, [resolvedParams, loadSharedQuestionnaire])
 
   const handleResponse = (response: boolean | number) => {
-    if (questions.length === 0) return
+    if (!questions || questions.length === 0 || currentQuestion >= questions.length) return
     
     const questionId = questions[currentQuestion].id
     const newResponses = { ...responses, [questionId]: response }
@@ -270,7 +270,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     )
   }
 
-  if (questions.length === 0 && !loading) {
+  if ((!questions || questions.length === 0) && !loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -280,8 +280,19 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     )
   }
 
-  if (userRole && email && questions.length > 0) {
+  if (userRole && email && questions && questions.length > 0 && currentQuestion < questions.length) {
     const currentQ = questions[currentQuestion]
+    
+    if (!currentQ) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600">Erreur de chargement de la question...</p>
+          </div>
+        </div>
+      )
+    }
+    
     const progress = ((currentQuestion + 1) / questions.length) * 100
 
     return (
@@ -292,7 +303,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
               Code: {resolvedParams?.code} • {userRole === 'creator' ? 'Créateur' : 'Partenaire'}
             </Badge>
             <h1 className="text-2xl font-bold text-gray-800">
-              Question {currentQuestion + 1} sur {questions.length}
+              Question {currentQuestion + 1} sur {questions?.length || 0}
             </h1>
             <Progress value={progress} className="w-full" />
           </div>
