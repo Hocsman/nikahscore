@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import '../styles/mobile-optimizations.css'
 import { Toaster } from '@/components/ui/toaster'
+import { Toaster as Sonner } from 'sonner'
 import { ClientProviders } from '@/components/ClientProviders'
 import { Navbar } from '@/components/NavbarSimple'
 
@@ -78,6 +79,7 @@ export default function RootLayout({
             </main>
           </div>
           <Toaster />
+          <Sonner />
         </ClientProviders>
       </body>
     </html>
