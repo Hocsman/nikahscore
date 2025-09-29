@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -42,7 +42,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     resolveParams()
   }, [params])
 
-  const loadSharedQuestionnaire = React.useCallback(async () => {
+  const loadSharedQuestionnaire = useCallback(async () => {
     if (!resolvedParams?.code) return
     
     try {
