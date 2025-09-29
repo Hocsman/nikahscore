@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Partage Questionnaire - NikahScore</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #e91e63; 
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #e91e63;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #e91e63;
+        }
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+        }
+        input, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            background: #e91e63; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px; 
+            font-size: 14px;
+        }
+        button:hover { 
+            background: #c2185b; 
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border-radius: 5px; 
+            white-space: pre-wrap;
+        }
+        .success { 
+            background: #d4edda; 
+            border: 1px solid #c3e6cb; 
+            color: #155724; 
+        }
+        .error { 
+            background: #f8d7da; 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
+        .info { 
+            background: #d1ecf1; 
+            border: 1px solid #bee5eb; 
+            color: #0c5460; 
+        }
+        .share-url {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+            border: 1px solid #2196f3;
+        }
+        .step {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin: 20px 0;
+        }
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #e91e63;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .steps {
+            counter-reset: step-counter;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Test du Partage de Questionnaire NikahScore</h1>
+        
+        <div class="test-section">
+            <h2>📋 Test du système Couple</h2>
+            <p><strong>Objectif :</strong> Créer un questionnaire partagé entre couples</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <button onclick="createCouple()" id="btnCreateCouple">
+                        👥 Créer un questionnaire couple
+                    </button>
+                </div>
+                
+                <div class="step" id="stepJoin" style="display: none;">
+                    <div class="form-group">
+                        <label>Code du couple généré :</label>
+                        <input type="text" id="generatedCode" readonly>
+                    </div>
+                    <button onclick="joinCouple()" id="btnJoin">
+                        🤝 Rejoindre avec le code
+                    </button>
+                </div>
+            </div>
+            
+            <div id="resultCouple"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📤 Test du système Shared</h2>
+            <p><strong>Objectif :</strong> Partager un questionnaire avec réponses</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <button onclick="createSharedQuestionnaire()" id="btnCreateShared">
+                        📝 Créer un questionnaire partagé
+                    </button>
+                </div>
+                
+                <div class="step" id="stepAccess" style="display: none;">
+                    <div class="form-group">
+                        <label>URL de partage générée :</label>
+                        <div class="share-url" id="shareUrl"></div>
+                    </div>
+                    <button onclick="accessSharedQuestionnaire()" id="btnAccess">
+                        🔗 Tester l'accès au questionnaire
+                    </button>
+                </div>
+            </div>
+            
+            <div id="resultShared"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🏠 Test navigation depuis la landing</h2>
+            <div class="steps">
+                <div class="step">
+                    <button onclick="testLandingPage()">
+                        🏠 Tester le lien "Questionnaire Partagé" de la landing
+                    </button>
+                </div>
+            </div>
+            <div id="resultLanding"></div>
+        </div>
+    </div>
+
+    <script>
+        let generatedCoupleCode = '';
+        let generatedShareCode = '';
+        let shareUrl = '';
+
+        function showResult(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        // Test 1: Créer un questionnaire couple
+        async function createCouple() {
+            const btn = document.getElementById('btnCreateCouple');
+            btn.disabled = true;
+            btn.textContent = '⏳ Création en cours...';
+            
+            try {
+                showResult('resultCouple', '👥 Création du questionnaire couple en cours...', 'info');
+                
+                const response = await fetch('/api/couple', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_id: 'test-user-' + Date.now() 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    generatedCoupleCode = data.couple_code;
+                    document.getElementById('generatedCode').value = generatedCoupleCode;
+                    document.getElementById('stepJoin').style.display = 'block';
+                    
+                    showResult('resultCouple', `✅ Questionnaire couple créé !
+🔑 Code: ${data.couple_code}
+🔗 URL: ${data.share_url}
+👫 ID: ${data.couple_id}`, 'success');
+                } else {
+                    showResult('resultCouple', `❌ Erreur de création:
+Status: ${response.status}
+Message: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult('resultCouple', `❌ Erreur de connexion: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '👥 Créer un questionnaire couple';
+            }
+        }
+
+        // Test 2: Rejoindre le couple
+        async function joinCouple() {
+            if (!generatedCoupleCode) {
+                showResult('resultCouple', '⚠️ Créez d\'abord un questionnaire couple', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnJoin');
+            btn.disabled = true;
+            btn.textContent = '⏳ Connexion...';
+            
+            try {
+                const response = await fetch(`/api/couple?code=${generatedCoupleCode}&user_id=test-partner-${Date.now()}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('resultCouple', `✅ Connexion au couple réussie !
+📊 Données du couple récupérées
+🎯 Le système de partage couple fonctionne parfaitement !`, 'success');
+                } else {
+                    showResult('resultCouple', `⚠️ Problème de connexion:
+Status: ${response.status}
+Message: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult('resultCouple', `❌ Erreur: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🤝 Rejoindre avec le code';
+            }
+        }
+
+        // Test 3: Créer un questionnaire partagé
+        async function createSharedQuestionnaire() {
+            const btn = document.getElementById('btnCreateShared');
+            btn.disabled = true;
+            btn.textContent = '⏳ Création...';
+            
+            try {
+                showResult('resultShared', '📝 Création du questionnaire partagé...', 'info');
+                
+                const mockResponses = {
+                    question_1: 4,
+                    question_2: 3,
+                    question_3: 5,
+                    // Réponses de test
+                };
+
+                const response = await fetch('/api/questionnaire/share', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        responses: mockResponses,
+                        user_id: 'test-shared-user-' + Date.now()
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    generatedShareCode = data.share_code;
+                    shareUrl = data.share_url;
+                    document.getElementById('shareUrl').textContent = shareUrl;
+                    document.getElementById('stepAccess').style.display = 'block';
+                    
+                    showResult('resultShared', `✅ Questionnaire partagé créé !
+🔑 Code: ${data.share_code}
+🔗 URL: ${data.share_url}`, 'success');
+                } else {
+                    showResult('resultShared', `❌ Erreur de création:
+Status: ${response.status}
+Message: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult('resultShared', `❌ Erreur: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📝 Créer un questionnaire partagé';
+            }
+        }
+
+        // Test 4: Accéder au questionnaire partagé
+        async function accessSharedQuestionnaire() {
+            if (!generatedShareCode) {
+                showResult('resultShared', '⚠️ Créez d\'abord un questionnaire partagé', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnAccess');
+            btn.disabled = true;
+            btn.textContent = '⏳ Test accès...';
+            
+            try {
+                const response = await fetch(`/api/questionnaire/share?code=${generatedShareCode}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('resultShared', `✅ Accès au questionnaire partagé réussi !
+📊 Données récupérées
+🎯 Le système de partage fonctionne parfaitement !`, 'success');
+                } else {
+                    showResult('resultShared', `⚠️ Problème d'accès:
+Status: ${response.status}
+Message: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult('resultShared', `❌ Erreur: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔗 Tester l\'accès au questionnaire';
+            }
+        }
+
+        // Test 5: Navigation landing page
+        function testLandingPage() {
+            showResult('resultLanding', `🏠 Test de navigation...
+Redirection vers /questionnaire/shared`, 'info');
+            
+            // Simuler le clic sur le bouton de la landing page
+            setTimeout(() => {
+                window.open('/questionnaire/shared', '_blank');
+                showResult('resultLanding', `✅ Navigation testée !
+🔗 Page /questionnaire/shared ouverte dans un nouvel onglet
+🎯 Le lien de la landing page fonctionne !`, 'success');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

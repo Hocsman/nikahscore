@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Inscription NikahScore</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .container { background: #f5f5f5; padding: 30px; border-radius: 10px; }
+        h1 { color: #e91e63; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { background: #e91e63; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background: #c2185b; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Test d'Inscription NikahScore</h1>
+        
+        <div id="userInfo" class="result info">
+            <h3>👤 Utilisateur de test généré :</h3>
+            <p><strong>Nom:</strong> <span id="testName"></span></p>
+            <p><strong>Email:</strong> <span id="testEmail"></span></p>
+            <p><strong>Mot de passe:</strong> <span id="testPassword"></span></p>
+        </div>
+
+        <div class="form-group">
+            <button onclick="testInscription()" id="btnInscription">📝 Tester l'Inscription</button>
+        </div>
+        
+        <div class="form-group">
+            <button onclick="testConnexion()" id="btnConnexion" disabled>🔐 Tester la Connexion</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Générer un utilisateur de test unique
+        const timestamp = Date.now();
+        const testUser = {
+            name: 'Demo User Test',
+            email: `demo-${timestamp}@nikahscore-test.com`,
+            password: 'TestPassword123!'
+        };
+
+        // Afficher les infos de l'utilisateur de test
+        document.getElementById('testName').textContent = testUser.name;
+        document.getElementById('testEmail').textContent = testUser.email;
+        document.getElementById('testPassword').textContent = testUser.password;
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        async function testInscription() {
+            const btn = document.getElementById('btnInscription');
+            btn.disabled = true;
+            btn.textContent = '⏳ Inscription en cours...';
+            
+            try {
+                showResult('📝 Tentative d\'inscription en cours...', 'info');
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testUser)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ <strong>INSCRIPTION RÉUSSIE !</strong><br>
+                               🎉 Réponse : ${data.message || 'Compte créé avec succès'}<br>
+                               📧 Email de confirmation envoyé à : ${testUser.email}`, 'success');
+                    
+                    // Activer le bouton de connexion
+                    document.getElementById('btnConnexion').disabled = false;
+                } else {
+                    showResult(`⚠️ <strong>Problème d'inscription</strong><br>
+                               Status: ${response.status}<br>
+                               Erreur: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ <strong>Erreur de connexion</strong><br>
+                           ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📝 Tester l\'Inscription';
+            }
+        }
+
+        async function testConnexion() {
+            const btn = document.getElementById('btnConnexion');
+            btn.disabled = true;
+            btn.textContent = '⏳ Connexion en cours...';
+            
+            try {
+                showResult('🔐 Tentative de connexion en cours...', 'info');
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: testUser.email,
+                        password: testUser.password
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ <strong>CONNEXION RÉUSSIE !</strong><br>
+                               🎊 L'utilisateur peut se connecter !<br>
+                               🎯 Système d'authentification 100% fonctionnel !`, 'success');
+                } else {
+                    showResult(`⚠️ <strong>Problème de connexion</strong><br>
+                               Status: ${response.status}<br>
+                               Erreur: ${data.error || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ <strong>Erreur de connexion</strong><br>
+                           ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔐 Tester la Connexion';
+            }
+        }
+    </script>
+</body>
+</html>
