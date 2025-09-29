@@ -45,10 +45,14 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Questionnaire partagé créé:', codeResult)
 
+    // Utiliser l'URL de la requête pour générer l'URL de partage
+    const url = new URL(request.url)
+    const baseUrl = `${url.protocol}//${url.host}`
+
     return NextResponse.json({
       success: true,
       share_code: codeResult,
-      share_url: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire/shared/${codeResult}`
+      share_url: `${baseUrl}/questionnaire/shared/${codeResult}`
     })
 
   } catch (error) {
