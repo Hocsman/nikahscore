@@ -1,0 +1,602 @@
+[
+  {
+    "id": "aca04eac-4938-4a7c-9885-c89966c492e8",
+    "text": "Je souhaite me marier dans les 12 prochains mois.",
+    "category": "bool",
+    "axis": "Intentions",
+    "is_dealbreaker": true,
+    "order_index": 1,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "f2744aba-d58c-4f27-b96e-5024e5b745d3",
+    "text": "Je souhaite le mariage civil avant toute vie commune.",
+    "category": "bool",
+    "axis": "Intentions",
+    "is_dealbreaker": true,
+    "order_index": 2,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d6129466-11e2-4ee3-ac85-861809a1f325",
+    "text": "Le mariage religieux est prioritaire pour moi.",
+    "category": "scale",
+    "axis": "Intentions",
+    "is_dealbreaker": true,
+    "order_index": 3,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "8474ac00-d6ce-45c9-b045-434f9a397b46",
+    "text": "Je recherche une relation sérieuse en vue du mariage.",
+    "category": "bool",
+    "axis": "Intentions",
+    "is_dealbreaker": false,
+    "order_index": 4,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "235d99a0-4b21-48a8-b6ca-a167c354c139",
+    "text": "Je suis prêt(e) à m'engager pour la vie.",
+    "category": "scale",
+    "axis": "Intentions",
+    "is_dealbreaker": false,
+    "order_index": 5,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "fb3ffec9-3ae7-4f94-aecb-a5321f76874c",
+    "text": "Une période de fiançailles courte me convient.",
+    "category": "scale",
+    "axis": "Intentions",
+    "is_dealbreaker": false,
+    "order_index": 6,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "65aff808-268f-4689-a1c5-bce0f3584b7c",
+    "text": "Les familles doivent se rencontrer rapidement.",
+    "category": "scale",
+    "axis": "Intentions",
+    "is_dealbreaker": false,
+    "order_index": 7,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "60ad0f50-91e5-4838-8be6-04dbadc892e4",
+    "text": "Le mariage doit suivre les traditions islamiques.",
+    "category": "scale",
+    "axis": "Intentions",
+    "is_dealbreaker": false,
+    "order_index": 8,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "9fb230b5-ab10-4dd3-9dae-20e7840ecfe5",
+    "text": "La pratique religieuse régulière est importante pour moi.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": true,
+    "order_index": 9,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "08101828-6cff-4323-9104-44f6989605eb",
+    "text": "Je souhaite préserver des limites d'interaction avant le mariage.",
+    "category": "bool",
+    "axis": "Valeurs",
+    "is_dealbreaker": true,
+    "order_index": 10,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "3fd35722-6f04-4cde-a0c9-2a2e72f4d438",
+    "text": "La lecture du Coran fait partie de ma routine.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": true,
+    "order_index": 11,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "273adac8-e191-4c35-bad6-ad56b2e66865",
+    "text": "Je prie les cinq prières quotidiennes.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": false,
+    "order_index": 12,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "ad0f962b-e259-4cc0-a0f9-3e72962c62be",
+    "text": "Je jeûne pendant le mois de Ramadan.",
+    "category": "bool",
+    "axis": "Valeurs",
+    "is_dealbreaker": false,
+    "order_index": 13,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "e82f7f60-4f5d-4637-9d7b-5f927e85fd35",
+    "text": "Je souhaite faire le pèlerinage ensemble.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": false,
+    "order_index": 14,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "99fe74d0-c5ec-421f-81d9-b9989ddd1a2c",
+    "text": "L'apprentissage religieux en couple est important.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": false,
+    "order_index": 15,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "2e389ffc-bcde-4956-9df7-6c1230ce8142",
+    "text": "Je participe aux activités de la mosquée.",
+    "category": "scale",
+    "axis": "Valeurs",
+    "is_dealbreaker": false,
+    "order_index": 16,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "467c9767-bb01-4b2f-9772-69c89ad47496",
+    "text": "Je préfère une répartition traditionnelle des rôles.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 17,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "75243d86-14a6-482d-b1bf-2d111620a745",
+    "text": "L'homme doit être le principal pourvoyeur financier.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 18,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d81c1d88-06cc-4eb8-a380-41518fb06325",
+    "text": "La femme peut travailler après le mariage.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 19,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "f375b1aa-4d13-4b69-a355-e1a0d17332b9",
+    "text": "Les tâches ménagères doivent être partagées.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 20,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "29d20762-9976-4ede-b4ab-fbcc81bddeca",
+    "text": "Mon conjoint doit participer à l'éducation des enfants.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 21,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "93246e87-122d-498b-9e61-49f5348f29d0",
+    "text": "Les décisions importantes se prennent ensemble.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 22,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "079074ec-6cc9-45d4-8276-7c14dd2703e4",
+    "text": "Je peux accepter un conjoint plus ou moins éduqué que moi.",
+    "category": "scale",
+    "axis": "Rôles",
+    "is_dealbreaker": false,
+    "order_index": 23,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "5f73d859-f388-4340-91d5-303c3e4e642d",
+    "text": "Je souhaite des enfants.",
+    "category": "bool",
+    "axis": "Enfants",
+    "is_dealbreaker": true,
+    "order_index": 24,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "30d4ec26-0e67-40b6-9d6d-f393b0b695d9",
+    "text": "Je veux plus de trois enfants.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": true,
+    "order_index": 25,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "738a7c11-1ec0-49a5-9a67-48cdaeb38a0d",
+    "text": "L'éducation islamique des enfants est prioritaire.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": false,
+    "order_index": 26,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "bef03a40-5f74-496e-bc11-91acb091cd1e",
+    "text": "Je préfère l'école islamique pour mes enfants.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": false,
+    "order_index": 27,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "82b2e4e3-d4a4-4061-af70-e441c087738f",
+    "text": "L'apprentissage de l'arabe est important pour les enfants.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": false,
+    "order_index": 28,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "53026d1c-fab7-482d-a470-5bd54521ba27",
+    "text": "Je veux avoir des enfants rapidement après le mariage.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": false,
+    "order_index": 29,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "7586ea7e-ee1a-48e8-aed1-281d4d1559b7",
+    "text": "L'éducation mixte est acceptable pour mes enfants.",
+    "category": "scale",
+    "axis": "Enfants",
+    "is_dealbreaker": false,
+    "order_index": 30,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "7c46adb9-2dbf-4e0b-b72e-29f187c4263a",
+    "text": "La transparence financière est essentielle dans le couple.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 31,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "dcbe5713-2a25-45e8-bbf2-810049a2afea",
+    "text": "Nous devons avoir un budget commun.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 32,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d3589eb5-347d-4b61-a0d8-2baa9acb80a9",
+    "text": "L'épargne pour le pèlerinage est prioritaire.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 33,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "44316562-d3c8-4928-ada9-3ea5c40f68da",
+    "text": "Je peux accepter un crédit immobilier conforme.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 34,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d9da71be-c20e-4529-9fb0-d174d128b2fe",
+    "text": "Le niveau de vie doit rester modeste.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 35,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "6e35f322-4b8c-41b9-9eb8-f42071122ce4",
+    "text": "L'alimentation halal est non négociable même si plus chère.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 36,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "adab710b-5ffd-402d-bb75-610dbadbf2ae",
+    "text": "Les achats importants se décident ensemble.",
+    "category": "scale",
+    "axis": "Finance",
+    "is_dealbreaker": false,
+    "order_index": 37,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d1fdf62a-0ba0-46e0-a56e-28aade9fa522",
+    "text": "Je refuse l'alcool dans le foyer.",
+    "category": "bool",
+    "axis": "Style",
+    "is_dealbreaker": true,
+    "order_index": 38,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "2621564e-c671-464c-8ec7-d9f57df1b7be",
+    "text": "La nourriture doit être exclusivement halal.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": true,
+    "order_index": 39,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "c41d5063-e06b-4153-adb1-5767f60be66c",
+    "text": "Je limite mes sorties en soirée.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": false,
+    "order_index": 40,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "a383dfc3-e7ed-4b16-b0ca-ed3b26bb935d",
+    "text": "Les voyages en couple sont importants pour moi.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": false,
+    "order_index": 41,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "dcaa3e1e-fe6d-4d3a-aad9-e4fdc11ea7d2",
+    "text": "Je pratique régulièrement une activité sportive.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": false,
+    "order_index": 42,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "70244a9c-a769-4312-aa23-3e9c24ed7a52",
+    "text": "Je limite mon utilisation des réseaux sociaux.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": false,
+    "order_index": 43,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "1a1ef47e-4043-4c76-974d-67ba798a3f79",
+    "text": "Les loisirs culturels m'intéressent.",
+    "category": "scale",
+    "axis": "Style",
+    "is_dealbreaker": false,
+    "order_index": 44,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "c628b150-8ed5-43e8-a13a-64b78e9021e6",
+    "text": "Je préfère résoudre les conflits par la discussion.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 45,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "b6da22f0-f312-47f3-8c01-9df01e2baf65",
+    "text": "Je suis à l'aise pour exprimer mes sentiments.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 46,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "fb2c28c9-c857-43b6-afc8-2877078480c6",
+    "text": "Les non-dits peuvent détruire un couple.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 47,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "86e178be-c7e9-4133-a398-93036a4d001b",
+    "text": "Je peux accepter les critiques constructives.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 48,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "4fd284d3-68ae-48dd-93fd-6fc3aaf8c93f",
+    "text": "Je présente facilement mes excuses quand j'ai tort.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 49,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "0f074050-7730-4cac-8eca-819e9439d692",
+    "text": "L'humour est important dans la relation.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 50,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d473150f-3221-4bfe-adb4-b88b6dae6e4d",
+    "text": "Je consulte un imam en cas de conflit important.",
+    "category": "scale",
+    "axis": "Communication",
+    "is_dealbreaker": false,
+    "order_index": 51,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "6edfa6b8-a0df-46ec-a41e-49c527ff4ee9",
+    "text": "Je me considère comme une personne patiente.",
+    "category": "scale",
+    "axis": "Personnalité",
+    "is_dealbreaker": false,
+    "order_index": 52,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "7930f92d-20ec-4cbe-a25f-3b2a35598c8e",
+    "text": "J'ai une stabilité émotionnelle.",
+    "category": "scale",
+    "axis": "Personnalité",
+    "is_dealbreaker": false,
+    "order_index": 53,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "2cc0b3fc-489c-4aa6-bdc8-01612464b16b",
+    "text": "Je suis plutôt introverti(e).",
+    "category": "scale",
+    "axis": "Personnalité",
+    "is_dealbreaker": false,
+    "order_index": 54,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "b1e0e380-3523-4c7d-8e2f-4a73643d5623",
+    "text": "J'exprime facilement mes émotions.",
+    "category": "scale",
+    "axis": "Personnalité",
+    "is_dealbreaker": false,
+    "order_index": 55,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "5876b082-6d09-4c1c-9414-30528fd66a5c",
+    "text": "Je vis (ou peux vivre) en Île-de-France.",
+    "category": "bool",
+    "axis": "Logistique",
+    "is_dealbreaker": true,
+    "order_index": 56,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "d4a82871-7830-4b0a-8ed3-bfa4927c1f9d",
+    "text": "Je peux déménager dans une autre région.",
+    "category": "bool",
+    "axis": "Logistique",
+    "is_dealbreaker": true,
+    "order_index": 57,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "0fa5de29-9233-4e52-ada7-ff8f73524f90",
+    "text": "Je préfère rester proche de ma famille.",
+    "category": "scale",
+    "axis": "Logistique",
+    "is_dealbreaker": false,
+    "order_index": 58,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "867282f8-e9fc-41af-bedd-8db705906f5a",
+    "text": "Je suis ouvert(e) à l'expatriation.",
+    "category": "scale",
+    "axis": "Logistique",
+    "is_dealbreaker": false,
+    "order_index": 59,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  },
+  {
+    "id": "94446284-447f-4be8-a606-8a30e112452e",
+    "text": "La mobilité géographique ne me dérange pas.",
+    "category": "scale",
+    "axis": "Logistique",
+    "is_dealbreaker": false,
+    "order_index": 60,
+    "weight": 1,
+    "created_at": "2025-08-18T10:11:42.31829+00:00"
+  }
+]
