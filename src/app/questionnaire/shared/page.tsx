@@ -22,7 +22,7 @@ export default function SharedQuestionnairePage() {
 
     setLoading(true)
     try {
-      const response = await fetch('/api/questionnaire/shared', {
+      const response = await fetch('/api/questionnaire/shared/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ creator_email: email })
