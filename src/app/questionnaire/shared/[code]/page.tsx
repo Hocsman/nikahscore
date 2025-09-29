@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -43,13 +42,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     resolveParams()
   }, [params])
 
-  useEffect(() => {
-    if (resolvedParams?.code) {
-      loadSharedQuestionnaire()
-    }
-  }, [resolvedParams])
-
-  const loadSharedQuestionnaire = async () => {
+  const loadSharedQuestionnaire = React.useCallback(async () => {
     if (!resolvedParams?.code) return
     
     try {
@@ -77,7 +70,13 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     } finally {
       setLoading(false)
     }
-  }
+  }, [resolvedParams?.code, router])
+
+  useEffect(() => {
+    if (resolvedParams?.code) {
+      loadSharedQuestionnaire()
+    }
+  }, [resolvedParams, loadSharedQuestionnaire])
 
   const handleResponse = (response: boolean | number) => {
     if (questions.length === 0) return
@@ -298,17 +297,10 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
             <Progress value={progress} className="w-full" />
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentQuestion}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg leading-relaxed">
+          <div className="transition-all duration-300 ease-in-out">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg leading-relaxed">
                     {currentQ.label}
                   </CardTitle>
                 </CardHeader>
@@ -368,8 +360,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          </AnimatePresence>
+            </div>
         </div>
       </div>
     )
