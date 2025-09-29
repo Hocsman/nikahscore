@@ -141,6 +141,8 @@ export default function QuestionnairePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 flex items-center justify-center p-4">
         <PremiumBlock 
+          title="Questionnaire Premium"
+          description="Accédez au questionnaire de compatibilité complet"
           feature="questionnaire de base"
           requiredPlan={requiredPlan || 'premium'}
           onUpgrade={() => setShowPremiumBlock(false)}

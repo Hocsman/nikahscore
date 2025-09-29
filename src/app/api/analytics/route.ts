@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const startDate = searchParams.get('start_date') || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
     
-    const supabase = createClient()
+    const supabase = await createClient()
 
     try {
       // Essayer d'abord avec la fonction sécurisée
