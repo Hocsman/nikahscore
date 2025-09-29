@@ -82,7 +82,7 @@ export default function LandingPage() {
               NikahScore
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Découvrez votre compatibilité matrimoniale selon les valeurs islamiques
+              Découvrez votre compatibilité matrimoniale grâce à notre évaluation approfondie de 100 questions axées sur la personnalité et les valeurs islamiques
             </p>
           </motion.div>
 
@@ -114,19 +114,19 @@ export default function LandingPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto"
           >
             <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">60+</div>
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100</div>
               <div className="text-gray-600 dark:text-gray-400">Questions</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">9</div>
-              <div className="text-gray-600 dark:text-gray-400">Domaines</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">6</div>
+              <div className="text-gray-600 dark:text-gray-400">Dimensions</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100%</div>
               <div className="text-gray-600 dark:text-gray-400">Gratuit</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">2min</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">5min</div>
               <div className="text-gray-600 dark:text-gray-400">Résultats</div>
             </div>
           </motion.div>
@@ -147,7 +147,7 @@ export default function LandingPage() {
               Une Approche Complète
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Notre algorithme évalue 9 domaines essentiels pour une union harmonieuse
+              Notre algorithme évalue 6 dimensions clés de la personnalité pour une union harmonieuse basée sur 100 questions approfondies
             </p>
           </motion.div>
 

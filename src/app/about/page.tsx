@@ -98,7 +98,7 @@ export default function AboutPage() {
                   NikahScore est né de la volonté de créer un outil moderne qui respecte les traditions islamiques du mariage. Face aux défis des rencontres matrimoniales dans notre époque, nous avons développé une solution qui allie technologie et spiritualité.
                 </p>
                 <p>
-                  Notre plateforme évalue la compatibilité sur 9 domaines essentiels : intentions matrimoniales, valeurs religieuses, rôles familiaux, projets d'enfants, gestion financière, style de vie, communication, personnalité et logistique.
+                  Notre plateforme évalue la compatibilité sur 6 dimensions clés de la personnalité : spiritualité et pratique religieuse, traits de personnalité et tempérament, communication et relations, famille et projets de vie, style de vie et valeurs, ainsi que vos ambitions et projets futurs.
                 </p>
                 <p>
                   Chaque question a été soigneusement élaborée en collaboration avec des conseillers religieux et des experts en relations humaines pour garantir une évaluation juste et pertinente.
@@ -112,12 +112,12 @@ export default function AboutPage() {
                   <div className="text-gray-600 dark:text-gray-400">Lancement</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">60+</div>
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">100</div>
                   <div className="text-gray-600 dark:text-gray-400">Questions</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">9</div>
-                  <div className="text-gray-600 dark:text-gray-400">Domaines</div>
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">6</div>
+                  <div className="text-gray-600 dark:text-gray-400">Dimensions</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">100%</div>

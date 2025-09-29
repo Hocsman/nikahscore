@@ -67,7 +67,7 @@ const getInviteEmailTemplate = (data: InviteEmailData) => `
             <h3>🎯 À propos du test :</h3>
             <ul>
                 <li><strong>Durée :</strong> 10-15 minutes</li>
-                <li><strong>Questions :</strong> 60 questions sur 9 axes essentiels</li>
+                <li><strong>Questions :</strong> 100 questions approfondies sur 6 dimensions de personnalité</li>
                 <li><strong>Résultats :</strong> Analyse détaillée de votre compatibilité</li>
                 <li><strong>Confidentialité :</strong> Données 100% sécurisées</li>
             </ul>
@@ -87,7 +87,7 @@ const getInviteEmailTemplate = (data: InviteEmailData) => `
             <h3>❓ Comment ça marche ?</h3>
             <ol>
                 <li>Cliquez sur le lien ci-dessus</li>
-                <li>Répondez aux 60 questions en toute sincérité</li>
+                <li>Répondez aux 100 questions en toute sincérité</li>
                 <li>Une fois que vous avez tous les deux terminé, recevez vos résultats</li>
                 <li>Découvrez vos points forts et les axes d'amélioration</li>
             </ol>

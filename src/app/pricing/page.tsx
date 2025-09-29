@@ -22,7 +22,7 @@ export default function PricingPage() {
       icon: <Heart className="w-8 h-8" />,
       color: "from-pink-500 to-pink-600",
       features: [
-        "Test de compatibilité complet (60+ questions)",
+        "Test de compatibilité complet (100 questions personnalité)",
         "Score global de compatibilité",
         "Résultats par domaine",
         "Partage des résultats par email",

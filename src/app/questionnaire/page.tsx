@@ -27,81 +27,10 @@ import {
   Crown
 } from 'lucide-react'
 
+import { PERSONALITY_QUESTIONS } from '@/data/personality-questions'
+
 // Questions statiques améliorées
-const STATIC_QUESTIONS = [
-  {
-    id: 1,
-    axis: 'Intentions',
-    text: 'Je souhaite me marier dans les 12 prochains mois.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 1
-  },
-  {
-    id: 2,
-    axis: 'Valeurs',
-    text: 'La pratique religieuse régulière est importante pour moi.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 2
-  },
-  {
-    id: 3,
-    axis: 'Enfants',
-    text: 'Je souhaite des enfants.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 3
-  },
-  {
-    id: 4,
-    axis: 'Rôles',
-    text: 'Je préfère une répartition traditionnelle des rôles.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 4
-  },
-  {
-    id: 5,
-    axis: 'Finance',
-    text: 'Je peux accepter de gérer un budget serré.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 5
-  },
-  {
-    id: 6,
-    axis: 'Communication',
-    text: 'Je préfère résoudre les conflits par la discussion.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 6
-  },
-  {
-    id: 7,
-    axis: 'Style de vie',
-    text: 'Je refuse l\'alcool dans le foyer.',
-    category: 'bool' as const,
-    weight: 1,
-    is_dealbreaker: true,
-    order_index: 7
-  },
-  {
-    id: 8,
-    axis: 'Personnalité',
-    text: 'Je me considère comme une personne patiente.',
-    category: 'scale' as const,
-    weight: 1,
-    is_dealbreaker: false,
-    order_index: 8
-  }
-]
+const STATIC_QUESTIONS = PERSONALITY_QUESTIONS
 
 interface Question {
   id: number

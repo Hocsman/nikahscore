@@ -23,7 +23,7 @@ export default function FAQPage() {
       questions: [
         {
           question: "Qu'est-ce que NikahScore ?",
-          answer: "NikahScore est une plateforme en ligne qui évalue la compatibilité matrimoniale selon les valeurs islamiques. Notre questionnaire de 60+ questions analyse 9 domaines essentiels pour vous donner un score de compatibilité détaillé."
+          answer: "NikahScore est une plateforme en ligne qui évalue la compatibilité matrimoniale selon les valeurs islamiques. Notre questionnaire approfondi de 100 questions analyse 6 dimensions clés de la personnalité pour vous donner un score de compatibilité détaillé."
         },
         {
           question: "Est-ce que le service est gratuit ?",
@@ -39,7 +39,7 @@ export default function FAQPage() {
         },
         {
           question: "Combien de temps faut-il pour compléter le test ?",
-          answer: "Le questionnaire prend généralement entre 15 et 20 minutes à compléter. Nous recommandons de prendre votre temps pour répondre honnêtement à chaque question."
+          answer: "Le questionnaire de 100 questions prend généralement entre 15 et 25 minutes à compléter. Nous recommandons de prendre votre temps pour répondre honnêtement à chaque question afin d'obtenir une évaluation précise de votre personnalité."
         },
         {
           question: "Dans quelles langues est disponible NikahScore ?",
@@ -69,11 +69,11 @@ export default function FAQPage() {
       questions: [
         {
           question: "Quels domaines sont évalués dans le test ?",
-          answer: "Nous évaluons 9 domaines essentiels : intentions matrimoniales, valeurs religieuses, rôles familiaux, projets d'enfants, gestion financière, style de vie, communication, personnalité et aspects logistiques."
+          answer: "Nous évaluons 6 dimensions clés de la personnalité : spiritualité et pratique religieuse, traits de personnalité et tempérament, communication et relations, famille et projets de vie, style de vie et valeurs, ainsi que vos ambitions et projets futurs. Chaque dimension explore des aspects spécifiques qui influencent la compatibilité matrimoniale."
         },
         {
           question: "Comment le score de compatibilité est-il calculé ?",
-          answer: "Notre algorithme analyse vos réponses selon des critères pondérés basés sur l'importance de chaque domaine dans une relation matrimoniale islamique. Les deal-breakers sont également pris en compte dans le calcul final."
+          answer: "Notre algorithme analyse vos 100 réponses selon des critères pondérés basés sur l'importance de chaque trait de personnalité dans une relation matrimoniale islamique. L'analyse prend en compte les valeurs spirituelles, la compatibilité caractérielle, les projets de vie communs et les deal-breakers potentiels."
         },
         {
           question: "Que sont les 'deal-breakers' ?",
