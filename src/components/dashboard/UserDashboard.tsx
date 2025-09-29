@@ -156,8 +156,16 @@ export default function UserDashboard() {
               Salam {user?.email?.split('@')[0] || 'Utilisateur'} 👋
             </h1>
             <p className="text-gray-600 mt-1">
-              Voici votre tableau de bord personnalisé
+              Votre parcours vers un mariage épanoui continue
             </p>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex -space-x-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+              </div>
+              <span className="text-sm text-gray-500">En ligne maintenant</span>
+            </div>
           </div>
           
           <div className="flex items-center gap-3">

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Authentification NikahScore</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .test-section { margin-bottom: 30px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; margin: 5px; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Authentification NikahScore</h1>
+        
+        <div class="test-section">
+            <h2>Test Inscription</h2>
+            <input id="registerName" type="text" placeholder="Nom" value="Test User">
+            <input id="registerEmail" type="email" placeholder="Email" value="test@example.com">
+            <input id="registerPassword" type="password" placeholder="Mot de passe" value="test123">
+            <button onclick="testRegister()">Tester Inscription</button>
+            <div id="registerResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Connexion</h2>
+            <input id="loginEmail" type="email" placeholder="Email" value="test@example.com">
+            <input id="loginPassword" type="password" placeholder="Mot de passe" value="test123">
+            <button onclick="testLogin()">Tester Connexion</button>
+            <div id="loginResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test APIs</h2>
+            <button onclick="testRegisterAPI()">Test API Inscription</button>
+            <button onclick="testSupabaseConnection()">Test Connexion Supabase</button>
+            <div id="apiResult"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testRegisterAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<p>Test API Inscription...</p>';
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Test User API',
+                        email: 'testapi@example.com',
+                        password: 'test123456'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p class="success">✅ API Inscription OK: ${JSON.stringify(result, null, 2)}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ API Inscription Error (${response.status}): ${result.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ API Inscription Exception: ${error.message}</p>`;
+            }
+        }
+
+        async function testSupabaseConnection() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<p>Test Connexion Supabase...</p>';
+            
+            try {
+                // Test de la configuration Supabase
+                const supabaseUrl = 'https://vhwdgjzjxrcglbmnjzot.supabase.co';
+                const response = await fetch(`${supabaseUrl}/rest/v1/`, {
+                    headers: {
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod2RnanpqeHJjZ2xibW5qem90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwNzg1ODQsImV4cCI6MjA3MDY1NDU4NH0.V5oFPodicKKsERL-6OHzYRruLCMvrcunOxts0HhGFOc'
+                    }
+                });
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '<p class="success">✅ Connexion Supabase OK</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Connexion Supabase Error: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Connexion Supabase Exception: ${error.message}</p>`;
+            }
+        }
+
+        function testRegister() {
+            const resultDiv = document.getElementById('registerResult');
+            resultDiv.innerHTML = '<p>Cette fonctionnalité nécessite le composant React complet</p>';
+        }
+
+        function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<p>Cette fonctionnalité nécessite le composant React complet</p>';
+        }
+    </script>
+</body>
+</html>

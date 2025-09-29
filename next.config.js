@@ -8,7 +8,6 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   },
   // Configuration pour l'optimisation
-  swcMinify: true,
   poweredByHeader: false,
   
   // Headers de sécurité

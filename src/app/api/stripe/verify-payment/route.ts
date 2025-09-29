@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Mettre à jour le plan de l'utilisateur
     const { error: updateError } = await supabase

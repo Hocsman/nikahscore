@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Connexion Supabase
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Insérer l'événement dans la base de données
     const { error } = await supabase

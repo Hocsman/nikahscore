@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     const planConfig = PLAN_PRICES[plan as keyof typeof PLAN_PRICES]
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: user, error: userError } = await supabase
       .from('profiles')
