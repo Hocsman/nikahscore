@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       .insert([
         {
           share_code: shareCode,
-          creator_email: creator_email || null,
+          creator_email: creator_email,
           created_at: new Date().toISOString()
         }
       ])

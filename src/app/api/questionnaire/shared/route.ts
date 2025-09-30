@@ -57,12 +57,17 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Calculer le statut
+    // Calculer le statut basé sur la structure shared_questionnaires
     let status = 'waiting'
     if (shared.creator_completed_at && shared.partner_completed_at) {
       status = 'completed'
     } else if (shared.creator_completed_at || shared.partner_completed_at) {
       status = 'partial'
+    }
+    
+    const adaptedShared = {
+      ...shared,
+      status
     }
 
     console.log('✅ Retour API réussi:', { 
@@ -74,10 +79,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       questions: questions || [],
-      shared: {
-        ...shared,
-        status
-      }
+      shared: adaptedShared
     })
 
   } catch (error) {

@@ -40,20 +40,21 @@ export async function POST(request: NextRequest) {
       // Vérifier que ce n'est pas déjà complété
       if (shared.creator_completed_at) {
         return NextResponse.json(
-          { error: 'Le créateur a déjà terminé ce questionnaire' },
-          { status: 409 }
+          { error: 'Vous avez déjà répondu à ce questionnaire' },
+          { status: 400 }
         )
       }
       
       updateData.creator_email = email
       updateData.creator_responses = responses
       updateData.creator_completed_at = new Date().toISOString()
-    } else if (role === 'partner') {
+      
+    } else if (role === 'participant') {
       // Vérifier que ce n'est pas déjà complété
       if (shared.partner_completed_at) {
         return NextResponse.json(
-          { error: 'Le partenaire a déjà terminé ce questionnaire' },
-          { status: 409 }
+          { error: 'Vous avez déjà répondu à ce questionnaire' },
+          { status: 400 }
         )
       }
       
