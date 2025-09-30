@@ -43,13 +43,13 @@ GRANT EXECUTE ON FUNCTION generate_share_code() TO anon, authenticated;
 -- Politique RLS simple (lecture publique avec code)
 ALTER TABLE shared_questionnaires ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can read with share code" ON shared_questionnaires
+CREATE POLICY IF NOT EXISTS "Anyone can read with share code" ON shared_questionnaires
     FOR SELECT USING (true);
 
-CREATE POLICY "Anyone can create shared questionnaire" ON shared_questionnaires
+CREATE POLICY IF NOT EXISTS "Anyone can create shared questionnaire" ON shared_questionnaires
     FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Anyone can update shared questionnaire" ON shared_questionnaires
+CREATE POLICY IF NOT EXISTS "Anyone can update shared questionnaire" ON shared_questionnaires
     FOR UPDATE USING (true);
 
 -- Message de confirmation

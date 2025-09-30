@@ -11,17 +11,18 @@ export async function POST(request: NextRequest) {
   try {
     const { creator_email } = await request.json()
 
-    // Générer un code de partage unique côté client
-    const generateShareCode = () => {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-      let result = ''
-      for (let i = 0; i < 8; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length))
-      }
-      return result
+    // Générer un code de partage unique via Supabase
+    const { data: codeResult } = await supabaseAdmin
+      .rpc('generate_share_code')
+    
+    if (!codeResult) {
+      return NextResponse.json(
+        { error: 'Impossible de générer un code de partage' },
+        { status: 500 }
+      )
     }
 
-    const shareCode = generateShareCode()
+    const shareCode = codeResult
     
     console.log('🔍 Tentative de création avec code:', shareCode)
 

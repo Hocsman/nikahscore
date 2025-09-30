@@ -37,6 +37,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
   useEffect(() => {
     const resolveParams = async () => {
       const resolved = await params
+      console.log('🔍 Params résolus:', resolved)
       setResolvedParams(resolved)
     }
     resolveParams()
@@ -45,9 +46,14 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
   const loadSharedQuestionnaire = useCallback(async () => {
     if (!resolvedParams?.code) return
     
+    console.log('🔍 Chargement questionnaire pour code:', resolvedParams.code)
+    
     try {
       const response = await fetch(`/api/questionnaire/shared?code=${resolvedParams.code}`)
+      console.log('🔍 Réponse API status:', response.status)
+      
       const data = await response.json()
+      console.log('🔍 Données reçues:', data)
       
       if (data.success) {
         setQuestions(data.questions)
@@ -61,6 +67,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
           }
         }
       } else {
+        console.error('❌ Erreur API:', data.error)
         toast.error('Questionnaire non trouvé')
         router.push('/questionnaire/shared')
       }
