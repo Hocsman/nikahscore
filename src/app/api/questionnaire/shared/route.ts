@@ -40,13 +40,22 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Récupérer toutes les questions
+    // Récupérer toutes les questions (mapping compatible)
     console.log('🔍 Chargement des questions...')
-    const { data: questions, error: questionsError } = await supabaseAdmin
+    const { data: questionsRaw, error: questionsError } = await supabaseAdmin
       .from('questions')
-      .select('id, label, type')
-      .order('id')
+      .select('id, text, category')
+      .order('order_index')
 
+    // Mapping pour compatibilité avec le front (label/type)
+    let questions: any[] = []
+    if (questionsRaw && Array.isArray(questionsRaw)) {
+      questions = questionsRaw.map(q => ({
+        id: q.id,
+        label: q.text || '',
+        type: q.category || '',
+      }))
+    }
     console.log('📋 Résultat questions:', { questionsCount: questions?.length, error: questionsError })
 
     if (questionsError) {

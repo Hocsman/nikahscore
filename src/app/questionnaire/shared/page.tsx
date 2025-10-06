@@ -33,7 +33,11 @@ export default function SharedQuestionnairePage() {
       if (data.success) {
         setShareCode(data.share_code)
         setShareUrl(data.share_url)
-        toast.success('Lien de partage créé avec succès!')
+        if (data.email_sent) {
+          toast.success('Lien créé et email envoyé ! Vérifiez votre boîte mail.')
+        } else {
+          toast.success('Lien de partage créé avec succès!')
+        }
       } else {
         toast.error(data.error || 'Erreur lors de la création')
       }
