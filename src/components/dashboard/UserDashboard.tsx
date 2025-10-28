@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import Link from 'next/link'
+import CompatibilityAnalysis from './CompatibilityAnalysis'
+import MatchInsights from './MatchInsights'
 import { 
   User, 
   Heart, 
@@ -237,6 +239,44 @@ export default function UserDashboard() {
                     </div>
                     <Target className="w-8 h-8 text-green-200" />
                   </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Analyse de compatibilité complète avec onglets */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-purple-500" />
+                    Tableau de Bord NikahScore
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="compatibility" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="compatibility" className="flex items-center gap-2">
+                        <Heart className="w-4 h-4" />
+                        Compatibilité
+                      </TabsTrigger>
+                      <TabsTrigger value="insights" className="flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        Insights & Matchs
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="compatibility" className="mt-6">
+                      <CompatibilityAnalysis />
+                    </TabsContent>
+                    
+                    <TabsContent value="insights" className="mt-6">
+                      <MatchInsights />
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             </motion.div>
