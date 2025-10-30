@@ -28,8 +28,8 @@ export async function POST(request: Request) {
     
     // 1. Envoi de l'email à l'équipe NikahScore
     const { data: adminEmailData, error: adminEmailError } = await resend.emails.send({
-      from: 'NikahScore Contact <onboarding@resend.dev>', // Email d'envoi Resend (temporaire)
-      to: 'projetcodestream@gmail.com', // 🔧 Email de test Resend (fonctionne partout)
+      from: 'NikahScore Contact <contact@nikahscore.com>', // ✅ Domaine vérifié
+      to: 'support@nikahscore.com', // ✅ Email professionnel OVH
       reply_to: email, // Permet de répondre directement à l'utilisateur
       subject: `[Contact NikahScore] ${subject}`,
       html: `
@@ -187,7 +187,7 @@ export async function POST(request: Request) {
     
     // 2. Envoi de l'email de confirmation à l'utilisateur
     const { data: userEmailData, error: userEmailError } = await resend.emails.send({
-      from: 'NikahScore Support <onboarding@resend.dev>', // Changez ceci une fois votre domaine vérifié
+      from: 'NikahScore Support <support@nikahscore.com>', // ✅ Domaine vérifié
       to: email,
       subject: 'Confirmation de réception - NikahScore',
       html: `
