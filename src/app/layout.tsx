@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from 'sonner'
 import { ClientProviders } from '@/components/ClientProviders'
 import { Navbar } from '@/components/NavbarSimple'
+import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -81,6 +82,7 @@ export default function RootLayout({
           <Toaster />
           <Sonner />
         </ClientProviders>
+        <Analytics />
       </body>
     </html>
   )
