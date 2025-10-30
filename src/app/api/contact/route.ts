@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     // 1. Envoi de l'email à l'équipe NikahScore
     const { data: adminEmailData, error: adminEmailError } = await resend.emails.send({
       from: 'NikahScore Contact <onboarding@resend.dev>', // Email d'envoi Resend (temporaire)
-      to: 'support@nikahscore.com', // ✅ Email OVH de production
+      to: 'projetcodestream@gmail.com', // 🔧 Email de test Resend (fonctionne partout)
       reply_to: email, // Permet de répondre directement à l'utilisateur
       subject: `[Contact NikahScore] ${subject}`,
       html: `
