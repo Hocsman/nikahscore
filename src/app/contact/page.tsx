@@ -20,12 +20,38 @@ export default function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulation d'envoi (à remplacer par votre API réelle)
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de l\'envoi')
+      }
+      
+      // Succès - Afficher le message de confirmation
       setIsSubmitted(true)
       setFormData({ name: '', email: '', subject: '', message: '' })
-    }, 1000)
+      
+      console.log('✅ Message envoyé avec succès:', data)
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'envoi:', error)
+      
+      // Afficher un message d'erreur à l'utilisateur
+      alert(
+        '❌ Une erreur est survenue lors de l\'envoi de votre message.\n\n' +
+        'Veuillez réessayer ou nous contacter directement à support@nikahscore.com'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
