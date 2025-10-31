@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Copy, Share2, Heart, Users } from 'lucide-react'
+import { Copy, Share2, Heart, Users, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface CoupleData {
@@ -25,6 +26,7 @@ interface CoupleData {
 }
 
 export default function CoupleQuestionnaire() {
+  const router = useRouter()
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [coupleData, setCoupleData] = useState<CoupleData | null>(null)
@@ -183,6 +185,51 @@ export default function CoupleQuestionnaire() {
             et renforcer votre relation
           </p>
         </div>
+
+        {/* Section explicative du processus */}
+        <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-center space-x-2 text-lg">
+              <Sparkles className="w-5 h-5 text-pink-500" />
+              <span>Comment ça fonctionne ?</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl font-bold text-pink-600">1</span>
+                </div>
+                <h3 className="font-semibold text-sm mb-1">Créez un code</h3>
+                <p className="text-xs text-gray-600">Générez un code unique de couple</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl font-bold text-purple-600">2</span>
+                </div>
+                <h3 className="font-semibold text-sm mb-1">Partagez le code</h3>
+                <p className="text-xs text-gray-600">Envoyez-le à votre partenaire</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl font-bold text-blue-600">3</span>
+                </div>
+                <h3 className="font-semibold text-sm mb-1">Répondez ensemble</h3>
+                <p className="text-xs text-gray-600">Chacun répond de son côté</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl font-bold text-green-600">4</span>
+                </div>
+                <h3 className="font-semibold text-sm mb-1">Score commun</h3>
+                <p className="text-xs text-gray-600">Découvrez votre compatibilité</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {!coupleData && (
           <div className="grid md:grid-cols-2 gap-6">
@@ -345,7 +392,7 @@ export default function CoupleQuestionnaire() {
                 {coupleData.partner_id && !coupleData.completed_at && (
                   <Button 
                     className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
-                    onClick={() => window.location.href = `/questionnaire?couple_code=${coupleData.couple_code}`}
+                    onClick={() => router.push(`/questionnaire?couple_code=${coupleData.couple_code}`)}
                   >
                     Commencer le Questionnaire
                   </Button>
@@ -355,7 +402,7 @@ export default function CoupleQuestionnaire() {
                   <Button 
                     className="w-full"
                     variant="outline"
-                    onClick={() => window.location.href = `/results/couple/${coupleData.couple_code}`}
+                    onClick={() => router.push(`/results/couple/${coupleData.couple_code}`)}
                   >
                     Voir les Résultats de Compatibilité
                   </Button>
