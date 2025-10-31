@@ -49,7 +49,8 @@ interface DashboardStats {
 
 export default function UserDashboard() {
   const { user } = useAuth()
-  const [isPremium, setIsPremium] = useState(false) // TODO: Récupérer depuis la BDD
+  const [isPremium, setIsPremium] = useState(true) // TODO: Récupérer depuis la BDD (temporairement true pour tester PDF)
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [stats, setStats] = useState<DashboardStats>({
     profileCompletion: 85,
     compatibilityScore: 92,
@@ -58,9 +59,49 @@ export default function UserDashboard() {
     lastActivity: '2 heures'
   })
 
-  const handleExportPDF = () => {
-    // TODO: Implémenter l'export PDF
-    alert('Fonctionnalité Export PDF en cours de développement')
+  const handleExportPDF = async () => {
+    if (!user) {
+      alert('Vous devez être connecté pour exporter le PDF')
+      return
+    }
+
+    setIsGeneratingPDF(true)
+    
+    try {
+      // TODO: Récupérer le couple_code depuis le contexte utilisateur
+      const response = await fetch('/api/pdf/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          couple_code: 'TEST-CODE', // TODO: Remplacer par le vrai code
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la génération du PDF')
+      }
+
+      // Télécharger le PDF
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `NikahScore-Rapport-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+
+      alert('✅ PDF téléchargé avec succès !')
+    } catch (error) {
+      console.error('❌ Erreur export PDF:', error)
+      alert('❌ Erreur lors de la génération du PDF. Veuillez réessayer.')
+    } finally {
+      setIsGeneratingPDF(false)
+    }
   }
 
   const [notifications, setNotifications] = useState([
@@ -178,9 +219,14 @@ export default function UserDashboard() {
           
           <div className="flex items-center gap-3">
             {isPremium ? (
-              <Button variant="outline" size="sm" onClick={handleExportPDF}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportPDF}
+                disabled={isGeneratingPDF}
+              >
                 <Download className="w-4 h-4 mr-2" />
-                Export PDF
+                {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
               </Button>
             ) : (
               <Link href="/premium">
