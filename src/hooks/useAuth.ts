@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
@@ -13,7 +13,9 @@ interface AuthUser {
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  
+  // Créer le client Supabase une seule fois avec useMemo
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     // Récupérer la session actuelle
@@ -82,7 +84,8 @@ export function useAuth() {
     )
 
     return () => subscription.unsubscribe()
-  }, [supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // supabase est stable avec useMemo
 
   const signOut = async () => {
     await supabase.auth.signOut()

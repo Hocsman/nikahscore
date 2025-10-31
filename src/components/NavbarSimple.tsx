@@ -18,8 +18,11 @@ import { useNotifications } from '@/hooks/useNotifications'
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const { notifications, unreadCount } = useNotifications()
+
+  // Debug log pour voir l'état de l'utilisateur
+  console.log('🔍 Navbar - user:', user ? user.email : 'null', 'loading:', loading)
 
   const handleSignOut = async () => {
     await signOut()
@@ -117,7 +120,13 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          ) : loading ? (
+            // Indicateur de chargement pendant que useAuth charge
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-purple-600 rounded-full animate-spin"></div>
+            </div>
           ) : (
+            // Boutons Connexion / S'inscrire si pas connecté
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/auth?mode=login">Connexion</Link>
