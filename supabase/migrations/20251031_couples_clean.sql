@@ -1,13 +1,9 @@
--- Migration: Système de couples partagés avec codes + Résultats de compatibilité
--- Date: 31 octobre 2025
--- Tables: couples (nouveau schéma), compatibility_results
-
--- ⚠️ IMPORTANT: Si tu as l'erreur "incompatible types: uuid and bigint"
--- Utilise plutôt le fichier 20251031_couples_clean.sql qui supprime les anciennes tables
-
 -- ==========================================
--- NETTOYER LES ANCIENNES TABLES (si elles existent)
+-- ÉTAPE 1: NETTOYER LES ANCIENNES TABLES
 -- ==========================================
+-- ⚠️ ATTENTION : Ceci supprime les données existantes !
+-- Si tu as des données importantes, fais un backup d'abord
+
 DROP TABLE IF EXISTS compatibility_results CASCADE;
 DROP TABLE IF EXISTS payments CASCADE;
 DROP TABLE IF EXISTS responses CASCADE;
@@ -15,8 +11,14 @@ DROP TABLE IF EXISTS subscriptions CASCADE;
 DROP TABLE IF EXISTS couples CASCADE;
 
 -- ==========================================
--- TABLE COUPLES (avec codes et auth.users)
+-- ÉTAPE 2: CRÉER LES NOUVELLES TABLES
 -- ==========================================
+
+-- Migration: Système de couples partagés avec codes + Résultats de compatibilité
+-- Date: 31 octobre 2025
+-- Tables: couples (nouveau schéma), compatibility_results
+
+-- TABLE COUPLES (avec codes et auth.users)
 CREATE TABLE couples (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     couple_code VARCHAR(10) UNIQUE NOT NULL,
@@ -41,9 +43,7 @@ CREATE TABLE couples (
     partner_completed BOOLEAN DEFAULT FALSE
 );
 
--- ==========================================
 -- TABLE COMPATIBILITY_RESULTS
--- ==========================================
 CREATE TABLE compatibility_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     couple_id UUID NOT NULL REFERENCES couples(id) ON DELETE CASCADE,
@@ -69,6 +69,35 @@ CREATE TABLE compatibility_results (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- TABLE SUBSCRIPTIONS (pour Premium)
+CREATE TABLE subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    
+    -- Type et statut
+    plan_type VARCHAR(20) NOT NULL DEFAULT 'free' CHECK (
+        plan_type IN ('free', 'premium', 'lifetime')
+    ),
+    status VARCHAR(20) DEFAULT 'active' CHECK (
+        status IN ('active', 'cancelled', 'expired', 'past_due')
+    ),
+    
+    -- Stripe
+    stripe_customer_id VARCHAR(255),
+    stripe_subscription_id VARCHAR(255),
+    stripe_price_id VARCHAR(255),
+    
+    -- Dates
+    current_period_start TIMESTAMP WITH TIME ZONE,
+    current_period_end TIMESTAMP WITH TIME ZONE,
+    cancel_at_period_end BOOLEAN DEFAULT FALSE,
+    cancelled_at TIMESTAMP WITH TIME ZONE,
+    
+    -- Métadonnées
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- ==========================================
 -- INDEX POUR PERFORMANCES
 -- ==========================================
@@ -77,12 +106,16 @@ CREATE INDEX idx_couples_partner ON couples(partner_id);
 CREATE INDEX idx_couples_code ON couples(couple_code);
 CREATE INDEX idx_couples_status ON couples(status);
 CREATE INDEX idx_compatibility_couple ON compatibility_results(couple_id);
+CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
+CREATE INDEX idx_subscriptions_stripe_customer ON subscriptions(stripe_customer_id);
+CREATE INDEX idx_subscriptions_stripe_subscription ON subscriptions(stripe_subscription_id);
 
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS)
 -- ==========================================
 ALTER TABLE couples ENABLE ROW LEVEL SECURITY;
 ALTER TABLE compatibility_results ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Politique: Les utilisateurs peuvent voir les couples dont ils font partie
 CREATE POLICY "Users can view their own couples"
@@ -130,55 +163,19 @@ CREATE POLICY "Allow insert compatibility results"
         )
     );
 
--- ==========================================
--- TABLE SUBSCRIPTIONS (pour Premium)
--- ==========================================
-CREATE TABLE subscriptions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    
-    -- Type et statut
-    plan_type VARCHAR(20) NOT NULL DEFAULT 'free' CHECK (
-        plan_type IN ('free', 'premium', 'lifetime')
-    ),
-    status VARCHAR(20) DEFAULT 'active' CHECK (
-        status IN ('active', 'cancelled', 'expired', 'past_due')
-    ),
-    
-    -- Stripe
-    stripe_customer_id VARCHAR(255),
-    stripe_subscription_id VARCHAR(255),
-    stripe_price_id VARCHAR(255),
-    
-    -- Dates
-    current_period_start TIMESTAMP WITH TIME ZONE,
-    current_period_end TIMESTAMP WITH TIME ZONE,
-    cancel_at_period_end BOOLEAN DEFAULT FALSE,
-    cancelled_at TIMESTAMP WITH TIME ZONE,
-    
-    -- Métadonnées
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Index subscriptions
-CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
-CREATE INDEX idx_subscriptions_stripe_customer ON subscriptions(stripe_customer_id);
-CREATE INDEX idx_subscriptions_stripe_subscription ON subscriptions(stripe_subscription_id);
-
--- RLS Subscriptions
-ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
-
+-- Politique: Voir son propre abonnement
 CREATE POLICY "Users can view their own subscription"
     ON subscriptions
     FOR SELECT
     USING (auth.uid() = user_id);
 
+-- Politique: Insérer son propre abonnement
 CREATE POLICY "Users can insert their own subscription"
     ON subscriptions
     FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
+-- Politique: Mettre à jour son propre abonnement
 CREATE POLICY "Users can update their own subscription"
     ON subscriptions
     FOR UPDATE
@@ -238,3 +235,20 @@ COMMENT ON COLUMN couples.creator_id IS 'Utilisateur qui a créé le questionnai
 COMMENT ON COLUMN couples.partner_id IS 'Partenaire qui a rejoint avec le code';
 COMMENT ON COLUMN subscriptions.plan_type IS 'Type d''abonnement: free, premium, lifetime';
 COMMENT ON COLUMN subscriptions.stripe_customer_id IS 'ID client Stripe pour facturation';
+
+-- ==========================================
+-- VÉRIFICATION
+-- ==========================================
+-- Afficher les tables créées
+SELECT 
+    'Tables créées avec succès:' as status,
+    table_name 
+FROM information_schema.tables 
+WHERE table_schema = 'public' 
+AND table_name IN ('couples', 'compatibility_results', 'subscriptions')
+ORDER BY table_name;
+
+-- Test de génération de code
+SELECT 
+    'Test génération code couple:' as test,
+    generate_couple_code() as code_exemple;
