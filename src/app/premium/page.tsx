@@ -212,8 +212,7 @@ export default function PremiumPage() {
                 <div>
                   <h3 className="font-semibold text-amber-900 mb-2">💝 Garantie Satisfaction</h3>
                   <p className="text-amber-800 text-sm leading-relaxed mb-3">
-                    Nous sommes convaincus que Premium transformera votre expérience. 
-                    Si vous n'êtes pas satisfait, nous vous remboursons intégralement sous 30 jours.
+                    Nous sommes convaincus que Premium transformera votre expérience.
                   </p>
                   <p className="text-amber-700 text-xs">
                     🔒 Paiement sécurisé via Stripe • ❌ Annulation à tout moment
