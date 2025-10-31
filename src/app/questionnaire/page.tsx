@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useFeaturePermission } from '@/hooks/usePermission'
 import PremiumBlock from '@/components/PremiumBlock'
 import { useAnalytics } from '@/hooks/useAnalytics'
+import { useAuth } from '@/hooks/useAuth'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -43,6 +45,8 @@ interface Question {
 }
 
 export default function QuestionnairePage() {
+  const router = useRouter()
+  const { user } = useAuth()
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [responses, setResponses] = useState<{[key: number]: boolean | number}>({})
@@ -54,12 +58,43 @@ export default function QuestionnairePage() {
   const [showConfetti, setShowConfetti] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPremiumBlock, setShowPremiumBlock] = useState(false)
+  const [checkingCouple, setCheckingCouple] = useState(true)
 
   // Vérification des permissions
   const { allowed: hasBasicAccess, blocked: needsUpgrade, requiredPlan } = useFeaturePermission('basic_questionnaire')
   
   // Analytics tracking
   const { trackEvent } = useAnalytics()
+
+  // Vérification du couple - rediriger vers /couple si pas de couple créé/rejoint
+  useEffect(() => {
+    const checkCoupleStatus = async () => {
+      if (!user) {
+        console.log('⚠️ Pas d\'utilisateur connecté')
+        setCheckingCouple(false)
+        return
+      }
+
+      try {
+        console.log('🔍 Vérification du statut couple pour:', user.email)
+        const response = await fetch(`/api/couple/check?user_id=${user.id}`)
+        const data = await response.json()
+
+        if (!data.hasCouple) {
+          console.log('⚠️ Aucun couple trouvé - Redirection vers /couple')
+          router.push('/couple')
+        } else {
+          console.log('✅ Couple trouvé:', data.couple_code)
+          setCheckingCouple(false)
+        }
+      } catch (error) {
+        console.error('❌ Erreur vérification couple:', error)
+        setCheckingCouple(false)
+      }
+    }
+
+    checkCoupleStatus()
+  }, [user, router])
 
   // Animation variants
   const questionVariants = {
@@ -223,7 +258,7 @@ export default function QuestionnairePage() {
   const timeEstimate = Math.max(1, Math.ceil((questions.length - completedQuestions) * 0.5))
 
   // États de chargement avec animations
-  if (loading) {
+  if (loading || checkingCouple) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 flex items-center justify-center">
         <motion.div 
@@ -246,9 +281,11 @@ export default function QuestionnairePage() {
           </div>
           
           <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            Préparation de votre questionnaire...
+            {checkingCouple ? 'Vérification de votre couple...' : 'Préparation de votre questionnaire...'}
           </h2>
-          <p className="text-gray-600 mb-4">Chargement des questions personnalisées</p>
+          <p className="text-gray-600 mb-4">
+            {checkingCouple ? 'Validation de votre questionnaire partagé' : 'Chargement des questions personnalisées'}
+          </p>
           
           <div className="flex justify-center space-x-2">
             {[0, 1, 2].map((i) => (

@@ -113,7 +113,7 @@ export default function WelcomePage() {
                 </div>
 
                 <Button 
-                  onClick={() => router.push('/questionnaire')}
+                  onClick={() => router.push('/couple')}
                   className="w-full h-12 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-medium"
                   size="lg"
                 >
