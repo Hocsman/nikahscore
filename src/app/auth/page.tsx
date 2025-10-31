@@ -58,16 +58,6 @@ export default function AuthPage() {
     }
   }, [mode])
 
-  // Rediriger si déjà connecté
-  useEffect(() => {
-    console.log('🔍 useAuth state:', { user: !!user, loading, userEmail: user?.email })
-    
-    if (user && !loading) {
-      console.log('🔄 Utilisateur détecté, redirection vers welcome', user.email)
-      router.push('/welcome')
-    }
-  }, [user, loading, router])
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -115,6 +105,9 @@ export default function AuthPage() {
         console.log('✅ Inscription réussie:', result)
         setSuccess(result.message || 'Compte créé avec succès ! Vérifiez votre email.')
         
+        // Pas de redirection automatique après inscription
+        // L'utilisateur doit d'abord se connecter
+        
       } else {
         // Connexion avec Supabase
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -125,14 +118,14 @@ export default function AuthPage() {
         if (error) throw error
 
         console.log('✅ Connexion réussie, utilisateur:', data.user?.email)
-        console.log('🔄 Tentative de redirection vers /questionnaire...')
         setSuccess('Connexion réussie ! Redirection...')
         
-        // Attendre un peu pour que l'état se synchronise, puis rediriger
-        setTimeout(() => {
-          console.log('⏰ Redirection différée...')
-          window.location.href = '/questionnaire'
-        }, 1000)
+        // Attendre que la session soit bien établie
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        // Utiliser router.push au lieu de window.location.href
+        console.log('🔄 Redirection vers /welcome...')
+        router.push('/welcome')
       }
 
     } catch (err: any) {
