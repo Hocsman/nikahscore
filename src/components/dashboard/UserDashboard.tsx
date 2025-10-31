@@ -49,6 +49,7 @@ interface DashboardStats {
 
 export default function UserDashboard() {
   const { user } = useAuth()
+  const [isPremium, setIsPremium] = useState(false) // TODO: Récupérer depuis la BDD
   const [stats, setStats] = useState<DashboardStats>({
     profileCompletion: 85,
     compatibilityScore: 92,
@@ -56,6 +57,11 @@ export default function UserDashboard() {
     profileViews: 156,
     lastActivity: '2 heures'
   })
+
+  const handleExportPDF = () => {
+    // TODO: Implémenter l'export PDF
+    alert('Fonctionnalité Export PDF en cours de développement')
+  }
 
   const [notifications, setNotifications] = useState([
     {
@@ -171,14 +177,19 @@ export default function UserDashboard() {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
-              Export PDF
-            </Button>
-            <Button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white">
-              <Crown className="w-4 h-4 mr-2" />
-              Premium
-            </Button>
+            {isPremium ? (
+              <Button variant="outline" size="sm" onClick={handleExportPDF}>
+                <Download className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+            ) : (
+              <Link href="/premium">
+                <Button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600">
+                  <Crown className="w-4 h-4 mr-2" />
+                  Passer Premium
+                </Button>
+              </Link>
+            )}
           </div>
         </motion.div>
 
@@ -301,12 +312,11 @@ export default function UserDashboard() {
                         <motion.div
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="p-4 rounded-xl bg-gradient-to-br hover:shadow-lg transition-all cursor-pointer text-white"
-                          style={{ background: `linear-gradient(135deg, ${action.color.split(' ')[1]}, ${action.color.split(' ')[3]})` }}
+                          className={`p-4 rounded-xl bg-gradient-to-br ${action.color} hover:shadow-lg transition-all cursor-pointer text-white`}
                         >
                           <action.icon className="w-6 h-6 mb-2" />
                           <p className="font-semibold text-sm">{action.label}</p>
-                          <p className="text-xs opacity-80">{action.description}</p>
+                          <p className="text-xs text-white/90">{action.description}</p>
                         </motion.div>
                       </Link>
                     ))}

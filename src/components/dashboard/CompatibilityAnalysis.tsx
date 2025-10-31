@@ -308,12 +308,19 @@ export default function CompatibilityAnalysis() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={compatibilityData} layout="horizontal">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" domain={[0, 100]} />
-                    <YAxis dataKey="dimension" type="category" width={80} />
-                    <Tooltip />
-                    <Bar dataKey="score" fill="#8B5CF6" radius={[0, 4, 4, 0]} />
+                  <BarChart data={compatibilityData} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis type="number" domain={[0, 100]} stroke="#6b7280" />
+                    <YAxis dataKey="dimension" type="category" width={100} stroke="#6b7280" style={{ fontSize: '12px' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                      labelStyle={{ fontWeight: 'bold' }}
+                    />
+                    <Bar dataKey="score" fill="#8B5CF6" radius={[0, 8, 8, 0]}>
+                      {compatibilityData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
