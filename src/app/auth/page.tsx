@@ -110,22 +110,37 @@ export default function AuthPage() {
         
       } else {
         // Connexion avec Supabase
+        console.log('🔐 Tentative de connexion avec:', formData.email)
+        
         const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password
         })
 
-        if (error) throw error
+        if (error) {
+          console.error('❌ Erreur de connexion:', error)
+          throw error
+        }
 
         console.log('✅ Connexion réussie, utilisateur:', data.user?.email)
+        console.log('📊 Session:', data.session ? 'présente' : 'absente')
         setSuccess('Connexion réussie ! Redirection...')
         
         // Attendre que la session soit bien établie
+        console.log('⏳ Attente stabilisation (500ms)...')
         await new Promise(resolve => setTimeout(resolve, 500))
         
         // Utiliser router.push au lieu de window.location.href
         console.log('🔄 Redirection vers /welcome...')
-        router.push('/welcome')
+        try {
+          router.push('/welcome')
+          console.log('✅ router.push appelé')
+        } catch (routerError) {
+          console.error('❌ Erreur router.push:', routerError)
+          // Fallback : utiliser window.location en dernier recours
+          console.log('🔄 Fallback: window.location.href...')
+          window.location.href = '/welcome'
+        }
       }
 
     } catch (err: any) {
