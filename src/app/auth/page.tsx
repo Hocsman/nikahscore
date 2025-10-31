@@ -144,8 +144,12 @@ export default function AuthPage() {
       }
 
     } catch (err: any) {
+      console.error('❌ Erreur dans handleSubmit:', err)
+      console.error('❌ Message:', err.message)
+      console.error('❌ Stack:', err.stack)
       setError(err.message)
     } finally {
+      console.log('⚙️ Finally: setLoading(false)')
       setLoading(false)
     }
   }
