@@ -63,8 +63,8 @@ export default function AuthPage() {
     console.log('🔍 useAuth state:', { user: !!user, loading, userEmail: user?.email })
     
     if (user && !loading) {
-      console.log('🔄 Utilisateur détecté, redirection vers questionnaire', user.email)
-      router.push('/questionnaire')
+      console.log('🔄 Utilisateur détecté, redirection vers welcome', user.email)
+      router.push('/welcome')
     }
   }, [user, loading, router])
 

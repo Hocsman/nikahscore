@@ -120,10 +120,10 @@ export function Navbar() {
           ) : (
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/auth">Connexion</Link>
+                <Link href="/auth?mode=login">Connexion</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href="/auth">S'inscrire</Link>
+                <Link href="/auth?mode=register">S'inscrire</Link>
               </Button>
             </div>
           )}
