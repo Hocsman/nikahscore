@@ -33,17 +33,13 @@ export function useAuth() {
         if (session?.user) {
           console.log('✅ useAuth: Session trouvée:', session.user.email)
           
-          // Récupérer les infos du profil
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name')
-            .eq('id', session.user.id)
-            .single()
+          // Récupérer le nom depuis user_metadata (pas de requête DB)
+          const userName = session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
 
           setUser({
             id: session.user.id,
             email: session.user.email || '',
-            name: profile?.name || session.user.user_metadata?.name || 'Utilisateur'
+            name: userName
           })
         } else {
           console.log('ℹ️ useAuth: Pas de session active')
@@ -64,17 +60,13 @@ export function useAuth() {
         console.log('🔔 useAuth: Auth state change:', event, session?.user?.email)
         
         if (session?.user) {
-          // Récupérer les infos du profil
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name')
-            .eq('id', session.user.id)
-            .single()
+          // Récupérer le nom depuis user_metadata (pas de requête DB)
+          const userName = session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
 
           setUser({
             id: session.user.id,
             email: session.user.email || '',
-            name: profile?.name || session.user.user_metadata?.name || 'Utilisateur'
+            name: userName
           })
         } else {
           setUser(null)
