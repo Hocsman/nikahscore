@@ -58,6 +58,14 @@ export default function AuthPage() {
     }
   }, [mode])
 
+  // Rediriger vers /welcome si déjà connecté
+  useEffect(() => {
+    if (!loading && user) {
+      console.log('🔄 Déjà connecté, redirection automatique vers /welcome')
+      router.push('/welcome')
+    }
+  }, [user, loading, router])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
