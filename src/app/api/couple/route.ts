@@ -30,11 +30,12 @@ export async function POST(request: NextRequest) {
 
     // Créer l'entrée couple
     const { data: couple, error } = await supabaseAdmin
-      .from('couple_questionnaires')
+      .from('couples')
       .insert([
         {
           couple_code: codeResult,
           creator_id: user_id,
+          status: 'waiting_partner',
           created_at: new Date().toISOString()
         }
       ])
@@ -82,12 +83,8 @@ export async function GET(request: NextRequest) {
 
     // Récupérer les informations du couple
     const { data: couple, error } = await supabaseAdmin
-      .from('couple_questionnaires')
-      .select(`
-        *,
-        creator:creator_id (name, email),
-        partner:partner_id (name, email)
-      `)
+      .from('couples')
+      .select('*')
       .eq('couple_code', couple_code)
       .single()
 

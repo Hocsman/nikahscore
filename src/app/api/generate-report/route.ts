@@ -37,9 +37,10 @@ export async function POST(request: NextRequest) {
     
     // 2. Récupérer les réponses des deux partenaires
     const { data: responsesData, error: responsesError } = await supabase
-      .from('couple_responses')
+      .from('responses')
       .select('*')
-      .eq('couple_code', pairId)
+      .eq('couple_id', coupleData.id)
+      .eq('is_completed', true)
     
     if (responsesError || !responsesData || responsesData.length < 2) {
       console.error('❌ Réponses incomplètes:', responsesError)

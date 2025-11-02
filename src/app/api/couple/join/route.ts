@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Vérifier que le couple existe et n'a pas encore de partenaire
     const { data: couple, error: fetchError } = await supabaseAdmin
-      .from('couple_questionnaires')
+      .from('couples')
       .select('*')
       .eq('couple_code', couple_code)
       .single()
@@ -47,10 +47,11 @@ export async function POST(request: NextRequest) {
 
     // Associer le partenaire au couple
     const { error: updateError } = await supabaseAdmin
-      .from('couple_questionnaires')
+      .from('couples')
       .update({
         partner_id: partner_id,
-        partner_joined_at: new Date().toISOString()
+        partner_joined_at: new Date().toISOString(),
+        status: 'active'
       })
       .eq('couple_code', couple_code)
 

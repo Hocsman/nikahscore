@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Vérifier que l'utilisateur fait partie du couple
     const { data: couple, error: coupleError } = await supabaseAdmin
-      .from('couple_questionnaires')
+      .from('couples')
       .select('*')
       .eq('couple_code', couple_code)
       .single()
@@ -43,9 +43,9 @@ export async function POST(request: NextRequest) {
 
     // Vérifier si l'utilisateur a déjà répondu
     const { data: existing } = await supabaseAdmin
-      .from('couple_responses')
+      .from('responses')
       .select('id')
-      .eq('couple_code', couple_code)
+      .eq('couple_id', couple.id)
       .eq('user_id', user_id)
       .single()
 
@@ -58,14 +58,14 @@ export async function POST(request: NextRequest) {
 
     // Sauvegarder les réponses
     const { error: insertError } = await supabaseAdmin
-      .from('couple_responses')
+      .from('responses')
       .insert([
         {
-          couple_code,
+          couple_id: couple.id,
           user_id,
-          responses: JSON.stringify(responses),
-          role,
-          submitted_at: new Date().toISOString()
+          answers: responses,
+          is_completed: true,
+          completed_at: new Date().toISOString()
         }
       ])
 
@@ -79,19 +79,22 @@ export async function POST(request: NextRequest) {
 
     // Vérifier si les deux partenaires ont répondu
     const { data: allResponses } = await supabaseAdmin
-      .from('couple_responses')
-      .select('role')
-      .eq('couple_code', couple_code)
+      .from('responses')
+      .select('user_id')
+      .eq('couple_id', couple.id)
+      .eq('is_completed', true)
 
     const bothCompleted = allResponses && allResponses.length === 2
 
     if (bothCompleted) {
       // Marquer le questionnaire couple comme terminé
       await supabaseAdmin
-        .from('couple_questionnaires')
+        .from('couples')
         .update({
           completed_at: new Date().toISOString(),
-          status: 'completed'
+          status: 'completed',
+          creator_completed: true,
+          partner_completed: true
         })
         .eq('couple_code', couple_code)
     }
@@ -125,15 +128,26 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Récupérer le couple
+    const { data: couple, error: coupleError } = await supabaseAdmin
+      .from('couples')
+      .select('id')
+      .eq('couple_code', couple_code)
+      .single()
+
+    if (coupleError || !couple) {
+      return NextResponse.json(
+        { error: 'Couple not found' },
+        { status: 404 }
+      )
+    }
+
     // Récupérer toutes les réponses du couple
     const { data: responses, error } = await supabaseAdmin
-      .from('couple_responses')
-      .select(`
-        *,
-        user:user_id (name, email)
-      `)
-      .eq('couple_code', couple_code)
-      .order('submitted_at', { ascending: true })
+      .from('responses')
+      .select('*')
+      .eq('couple_id', couple.id)
+      .order('completed_at', { ascending: true })
 
     if (error) {
       console.error('Error fetching couple responses:', error)
