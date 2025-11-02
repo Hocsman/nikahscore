@@ -261,11 +261,11 @@ export default function CompatibilityAnalysis() {
 
       {/* Onglets principaux: Graphiques vs Détails (Mobile-first) */}
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 gap-2 mb-6">
-          <TabsTrigger value="charts" className="text-sm sm:text-base">
+        <TabsList className="inline-flex w-full h-auto flex-nowrap overflow-x-auto gap-2 mb-6 p-1">
+          <TabsTrigger value="charts" className="text-sm sm:text-base whitespace-nowrap">
             📊 Graphiques
           </TabsTrigger>
-          <TabsTrigger value="details" className="text-sm sm:text-base">
+          <TabsTrigger value="details" className="text-sm sm:text-base whitespace-nowrap">
             📋 Détails
           </TabsTrigger>
         </TabsList>
@@ -379,11 +379,11 @@ export default function CompatibilityAnalysis() {
         {/* TAB: DÉTAILS (avec sous-onglets) */}
         <TabsContent value="details" className="space-y-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
-              <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
-              <TabsTrigger value="strengths" className="text-xs sm:text-sm">Points Forts</TabsTrigger>
-              <TabsTrigger value="improvements" className="text-xs sm:text-sm">Axes à Revoir</TabsTrigger>
-              <TabsTrigger value="recommendations" className="text-xs sm:text-sm">Recommandations</TabsTrigger>
+            <TabsList className="inline-flex w-full h-auto flex-nowrap overflow-x-auto gap-1 mb-6 p-1">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Vue d'ensemble</TabsTrigger>
+              <TabsTrigger value="strengths" className="text-xs sm:text-sm whitespace-nowrap">Points Forts</TabsTrigger>
+              <TabsTrigger value="improvements" className="text-xs sm:text-sm whitespace-nowrap">Axes à Revoir</TabsTrigger>
+              <TabsTrigger value="recommendations" className="text-xs sm:text-sm whitespace-nowrap">Recommandations</TabsTrigger>
             </TabsList>
 
             {/* Sous-tab: Vue d'ensemble */}
