@@ -259,16 +259,19 @@ export default function CompatibilityAnalysis() {
         </Card>
       </motion.div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
-          <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="strengths" className="text-xs sm:text-sm">Points Forts</TabsTrigger>
-          <TabsTrigger value="improvements" className="text-xs sm:text-sm">Axes à Revoir</TabsTrigger>
-          <TabsTrigger value="recommendations" className="text-xs sm:text-sm">Recommandations</TabsTrigger>
+      {/* Onglets principaux: Graphiques vs Détails (Mobile-first) */}
+      <Tabs defaultValue="details" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 gap-2 mb-6">
+          <TabsTrigger value="charts" className="text-sm sm:text-base">
+            📊 Graphiques
+          </TabsTrigger>
+          <TabsTrigger value="details" className="text-sm sm:text-base">
+            📋 Détails
+          </TabsTrigger>
         </TabsList>
 
-        {/* Vue d'ensemble avec graphiques */}
-        <TabsContent value="overview" className="space-y-6">
+        {/* TAB: GRAPHIQUES */}
+        <TabsContent value="charts" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Graphique Radar */}
             <Card>
@@ -373,8 +376,65 @@ export default function CompatibilityAnalysis() {
           </Card>
         </TabsContent>
 
-        {/* Points Forts */}
-        <TabsContent value="strengths" className="space-y-6">
+        {/* TAB: DÉTAILS (avec sous-onglets) */}
+        <TabsContent value="details" className="space-y-6">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
+              <TabsTrigger value="strengths" className="text-xs sm:text-sm">Points Forts</TabsTrigger>
+              <TabsTrigger value="improvements" className="text-xs sm:text-sm">Axes à Revoir</TabsTrigger>
+              <TabsTrigger value="recommendations" className="text-xs sm:text-sm">Recommandations</TabsTrigger>
+            </TabsList>
+
+            {/* Sous-tab: Vue d'ensemble */}
+            <TabsContent value="overview" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analyse Détaillée par Dimension</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {compatibilityData.map((item, index) => (
+                      <motion.div
+                        key={item.dimension}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="p-4 rounded-lg border bg-gradient-to-br from-white to-gray-50"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div
+                            className="p-2 rounded-full"
+                            style={{ backgroundColor: `${item.color}20` }}
+                          >
+                            <item.icon 
+                              className="w-5 h-5" 
+                              style={{ color: item.color }} 
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-sm">{item.fullName}</h3>
+                            <div className="flex items-center gap-2">
+                              <Progress 
+                                value={item.score} 
+                                className="flex-1 h-2" 
+                              />
+                              <span className="text-sm font-bold" style={{ color: item.color }}>
+                                {item.score}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">{item.description}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Sous-tab: Points Forts */}
+            <TabsContent value="strengths" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {strengths.map((strength, index) => (
               <motion.div
@@ -623,6 +683,8 @@ export default function CompatibilityAnalysis() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>
