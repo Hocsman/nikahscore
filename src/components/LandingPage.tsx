@@ -143,10 +143,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
               Une Approche Complète
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Notre algorithme évalue 6 dimensions clés de la personnalité pour une union harmonieuse basée sur 100 questions approfondies
             </p>
           </motion.div>
@@ -159,15 +159,15 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center group"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center group"
               >
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-pink-600">
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-pink-600 dark:text-pink-400">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -175,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-pink-50 to-purple-50">
+      <section className="py-20 px-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -184,10 +184,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
               Témoignages
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 dark:text-gray-300">
               Découvrez l'expérience de nos utilisateurs
             </p>
           </motion.div>
@@ -200,7 +200,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="flex items-center mb-4">
                   <div className="flex text-yellow-400">
@@ -208,10 +208,10 @@ export default function LandingPage() {
                       <Star key={i} className="w-5 h-5 fill-current" />
                     ))}
                   </div>
-                  <span className="ml-2 font-semibold text-pink-600">{testimonial.score}</span>
+                  <span className="ml-2 font-semibold text-pink-600 dark:text-pink-400">{testimonial.score}</span>
                 </div>
-                <p className="text-gray-600 mb-4 italic">"{testimonial.text}"</p>
-                <p className="font-semibold text-gray-800">{testimonial.name}</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 italic">"{testimonial.text}"</p>
+                <p className="font-semibold text-gray-800 dark:text-white">{testimonial.name}</p>
               </motion.div>
             ))}
           </div>

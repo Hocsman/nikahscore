@@ -280,10 +280,10 @@ export default function QuestionnairePage() {
             />
           </div>
           
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
             {checkingCouple ? 'Vérification de votre couple...' : 'Préparation de votre questionnaire...'}
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
             {checkingCouple ? 'Validation de votre questionnaire partagé' : 'Chargement des questions personnalisées'}
           </p>
           
@@ -405,7 +405,7 @@ export default function QuestionnairePage() {
           </motion.div>
           
           <motion.h2 
-            className="text-3xl font-bold text-gray-800 mb-4"
+            className="text-3xl font-bold text-gray-800 dark:text-white mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
@@ -414,7 +414,7 @@ export default function QuestionnairePage() {
           </motion.h2>
           
           <motion.p 
-            className="text-gray-600 mb-8"
+            className="text-gray-600 dark:text-gray-300 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}
@@ -473,9 +473,9 @@ export default function QuestionnairePage() {
   const currentQ = questions[currentQuestion]
   if (!currentQ) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Aucune question disponible</p>
+          <p className="text-gray-600 dark:text-gray-300">Aucune question disponible</p>
         </div>
       </div>
     )
@@ -549,10 +549,10 @@ export default function QuestionnairePage() {
             Retour à l'accueil
           </Link>
 
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
             Questionnaire NikahScore
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
             Question {currentQuestion + 1} sur {questions.length}
           </p>
 
@@ -583,14 +583,14 @@ export default function QuestionnairePage() {
         >
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center space-x-2">
-              <Timer className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">
+              <Timer className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 ~{timeEstimate} min restantes
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 {completedQuestions}/{questions.length}
               </span>
             </div>
@@ -668,7 +668,7 @@ export default function QuestionnairePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <h2 className="text-2xl font-semibold text-gray-800 leading-relaxed">
+                <h2 className="text-2xl font-semibold text-gray-800 dark:text-white leading-relaxed">
                   {currentQ.text}
                 </h2>
               </motion.div>
@@ -738,7 +738,7 @@ export default function QuestionnairePage() {
                 ) : (
                   // Questions à échelle de Likert
                   <div className="space-y-3">
-                    <p className="text-center text-gray-600 mb-6 text-lg">
+                    <p className="text-center text-gray-600 dark:text-gray-300 mb-6 text-lg">
                       Indiquez votre niveau d'accord avec cette affirmation
                     </p>
                     <div className="space-y-3">
@@ -763,17 +763,17 @@ export default function QuestionnairePage() {
                             className={`w-full h-16 text-left justify-start text-lg border-2 transition-all duration-300 ${
                               selectedAnswer === option.value 
                                 ? `bg-gradient-to-r ${option.color} text-white border-transparent shadow-xl transform scale-105` 
-                                : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300'
+                                : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                             }`}
                             variant="outline"
                           >
                             <div className="flex items-center space-x-4 w-full">
                               <div className="text-2xl">{option.emoji}</div>
                               <div className="flex-1">
-                                <div className={`font-semibold ${selectedAnswer === option.value ? 'text-white' : 'text-gray-800'}`}>
+                                <div className={`font-semibold ${selectedAnswer === option.value ? 'text-white' : 'text-gray-800 dark:text-white'}`}>
                                   {option.label}
                                 </div>
-                                <div className={`text-sm ${selectedAnswer === option.value ? 'text-white/80' : 'text-gray-500'}`}>
+                                <div className={`text-sm ${selectedAnswer === option.value ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
                                   Niveau {option.value}/5
                                 </div>
                               </div>
