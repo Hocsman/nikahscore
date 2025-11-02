@@ -90,7 +90,7 @@ export default function AboutPage() {
             className="grid md:grid-cols-2 gap-12 items-center"
           >
             <div>
-              <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-6">
+              <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-6">
                 Notre Histoire
               </h2>
               <div className="space-y-4 text-gray-600 dark:text-gray-300">
@@ -139,10 +139,10 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
               Nos Valeurs
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Les principes qui guident notre travail quotidien
             </p>
           </motion.div>
@@ -179,10 +179,10 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
             Notre Équipe
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Des professionnels engagés au service de la communauté
           </p>
         </motion.div>
@@ -215,12 +215,12 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-12 text-white"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-6 md:p-12 text-white"
         >
-          <h2 className="text-4xl font-bold mb-6">
+          <h2 className="text-2xl md:text-4xl font-bold mb-6">
             Rejoignez-nous dans cette Mission
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-lg md:text-xl mb-8 opacity-90">
             Découvrez votre compatibilité et trouvez votre moitié selon les valeurs islamiques
           </p>
           <Link 

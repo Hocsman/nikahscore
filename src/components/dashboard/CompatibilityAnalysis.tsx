@@ -228,7 +228,7 @@ export default function CompatibilityAnalysis() {
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                 className="relative"
               >
-                <div className="text-6xl font-bold">{overallScore}%</div>
+                <div className="text-3xl md:text-6xl font-bold">{overallScore}%</div>
                 <div className="absolute -top-2 -right-2">
                   <Heart className="w-8 h-8 text-pink-200 animate-pulse" />
                 </div>
@@ -260,11 +260,11 @@ export default function CompatibilityAnalysis() {
       </motion.div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="strengths">Points Forts</TabsTrigger>
-          <TabsTrigger value="improvements">Axes à Revoir</TabsTrigger>
-          <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="strengths" className="text-xs sm:text-sm">Points Forts</TabsTrigger>
+          <TabsTrigger value="improvements" className="text-xs sm:text-sm">Axes à Revoir</TabsTrigger>
+          <TabsTrigger value="recommendations" className="text-xs sm:text-sm">Recommandations</TabsTrigger>
         </TabsList>
 
         {/* Vue d'ensemble avec graphiques */}

@@ -206,7 +206,7 @@ export default function PricingPage() {
                 {/* Prix */}
                 <div className="text-center mb-6">
                   <div className="flex items-baseline justify-center mb-2">
-                    <span className="text-4xl font-bold text-gray-800 dark:text-white">
+                    <span className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
                       {plan.price}
                     </span>
                   </div>
@@ -269,10 +269,10 @@ export default function PricingPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
             Questions Fréquentes
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Tout ce que vous devez savoir sur nos plans
           </p>
         </motion.div>
@@ -305,13 +305,13 @@ export default function PricingPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-12 text-white"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-6 md:p-12 text-white"
         >
           <Zap className="w-16 h-16 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-6">
+          <h2 className="text-2xl md:text-4xl font-bold mb-6">
             Prêt à Trouver Votre Compatibilité ?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-lg md:text-xl mb-8 opacity-90">
             Commencez gratuitement dès aujourd'hui, pas de carte bancaire requise
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

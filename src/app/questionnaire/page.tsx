@@ -559,10 +559,10 @@ export default function QuestionnairePage() {
             Retour à l'accueil
           </Link>
 
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
             Questionnaire NikahScore
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
+          <p className="text-gray-600 dark:text-gray-300 text-sm md:text-lg">
             Question {currentQuestion + 1} sur {questions.length}
           </p>
 

@@ -300,7 +300,7 @@ export default function ContactPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 rounded-3xl p-12"
+          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 rounded-3xl p-6 md:p-12"
         >
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
             Consultez d'abord notre FAQ

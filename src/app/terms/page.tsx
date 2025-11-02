@@ -29,10 +29,10 @@ export default function TermsPage() {
             </div>
           </div>
           
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
             Conditions d'utilisation
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg max-w-2xl mx-auto">
             Les présentes conditions régissent votre utilisation de NikahScore et définissent nos droits et responsabilités mutuels.
           </p>
           <p className="text-sm text-gray-500 mt-4">

@@ -110,7 +110,7 @@ export default function InteractiveResults({ result, onAction }: InteractiveResu
               transition={{ type: "spring", stiffness: 300 }}
             >
               <div className={`inline-flex items-center justify-center w-32 h-32 rounded-full border-4 ${getScoreColor(result?.globalScore || 0)} mb-6`}>
-                <span className="text-4xl font-bold">{result?.globalScore || 0}%</span>
+                <span className="text-3xl md:text-4xl font-bold">{result?.globalScore || 0}%</span>
               </div>
             </motion.div>
             

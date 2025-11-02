@@ -219,7 +219,7 @@ export default function EnhancedResultsPage({
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <div className={`text-7xl font-bold mb-4 ${getScoreColor(results.overall_score)}`}>
+              <div className={`text-4xl md:text-7xl font-bold mb-4 ${getScoreColor(results.overall_score)}`}>
                 {results.overall_score}%
               </div>
               <Progress 

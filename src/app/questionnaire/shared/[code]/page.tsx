@@ -158,10 +158,10 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
               <CardTitle className="text-2xl text-green-700">Score de Compatibilité</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-6">
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+              <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
                 {compatibilityScore}%
               </div>
-              <p className="text-gray-600">
+              <p className="text-sm md:text-base text-gray-600">
                 {compatibilityScore >= 80 ? "Excellente compatibilité !" :
                  compatibilityScore >= 60 ? "Bonne compatibilité" :
                  compatibilityScore >= 40 ? "Compatibilité modérée" :
@@ -197,10 +197,10 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                 <div className="text-center space-y-4">
                   <Trophy className="w-12 h-12 mx-auto text-yellow-500" />
                   <h3 className="text-xl font-semibold">Score de Compatibilité</h3>
-                  <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+                  <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
                     {compatibilityScore}%
                   </div>
-                  <p className="text-gray-600">
+                  <p className="text-sm md:text-base text-gray-600">
                     {compatibilityScore >= 80 ? "Excellente compatibilité !" :
                      compatibilityScore >= 60 ? "Bonne compatibilité" :
                      compatibilityScore >= 40 ? "Compatibilité modérée" :
@@ -341,13 +341,13 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                       </Button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                       {[1, 2, 3, 4, 5].map((value) => (
                         <Button
                           key={value}
                           variant="outline"
                           onClick={() => handleResponse(value)}
-                          className="h-12 hover:bg-blue-50"
+                          className="h-12 hover:bg-blue-50 text-xs sm:text-sm"
                         >
                           {value}
                         </Button>
