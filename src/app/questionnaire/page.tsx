@@ -30,6 +30,8 @@ import {
 } from 'lucide-react'
 
 import { PERSONALITY_QUESTIONS } from '@/data/personality-questions'
+import { getQuestionHint } from '@/data/question-hints'
+import QuestionTooltip from '@/components/QuestionTooltip'
 
 // Questions statiques améliorées
 const STATIC_QUESTIONS = PERSONALITY_QUESTIONS
@@ -42,6 +44,7 @@ interface Question {
   weight: number
   is_dealbreaker: boolean
   order_index: number
+  hint?: string // Explication optionnelle de la question
 }
 
 export default function QuestionnairePage() {
@@ -481,11 +484,18 @@ export default function QuestionnairePage() {
     )
   }
 
+  // Enrichir la question avec son hint si disponible
+  const questionWithHint = {
+    ...currentQ,
+    hint: currentQ.hint || getQuestionHint(currentQ.id)
+  }
+
   // Debug log
   console.log('🔍 Question actuelle:', { 
-    id: currentQ.id, 
-    category: currentQ.category, 
-    text: currentQ.text.substring(0, 50) + '...' 
+    id: questionWithHint.id, 
+    category: questionWithHint.category, 
+    text: questionWithHint.text.substring(0, 50) + '...',
+    hasHint: !!questionWithHint.hint
   })
 
   // Vérifier les permissions d'accès
@@ -560,8 +570,8 @@ export default function QuestionnairePage() {
           <motion.div className="mt-4">
             <Badge className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 text-sm font-medium">
               <Target className="w-4 h-4 mr-2" />
-              {currentQ.axis}
-              {currentQ.is_dealbreaker && (
+              {questionWithHint.axis}
+              {questionWithHint.is_dealbreaker && (
                 <motion.span 
                   className="ml-2"
                   animate={{ scale: [1, 1.2, 1] }}
@@ -640,7 +650,7 @@ export default function QuestionnairePage() {
           >
             <Card className="p-8 shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
               {/* Indicateur de question critique */}
-              {currentQ.is_dealbreaker && (
+              {questionWithHint.is_dealbreaker && (
                 <motion.div 
                   className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -668,9 +678,14 @@ export default function QuestionnairePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <h2 className="text-2xl font-semibold text-gray-800 dark:text-white leading-relaxed">
-                  {currentQ.text}
-                </h2>
+                <div className="flex items-start justify-center gap-3">
+                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-white leading-relaxed flex-1 text-center">
+                    {questionWithHint.text}
+                  </h2>
+                  {questionWithHint.hint && (
+                    <QuestionTooltip hint={questionWithHint.hint} />
+                  )}
+                </div>
               </motion.div>
 
               {/* Réponses avec animations */}
@@ -680,7 +695,7 @@ export default function QuestionnairePage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
-                {currentQ.category === 'bool' ? (
+                {questionWithHint.category === 'bool' ? (
                   // Questions Oui/Non
                   <div className="grid md:grid-cols-2 gap-4">
                     <motion.div

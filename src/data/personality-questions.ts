@@ -10,7 +10,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.5,
     is_dealbreaker: true,
-    order_index: 1
+    order_index: 1,
+    hint: 'Cette question évalue votre assiduité dans l\'accomplissement des prières obligatoires, pilier fondamental de l\'Islam.'
   },
   {
     id: 2,
@@ -19,7 +20,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 2
+    order_index: 2,
+    hint: 'Il s\'agit de mesurer votre engagement dans la lecture et la méditation du Coran, au-delà des prières.'
   },
   {
     id: 3,
@@ -28,7 +30,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.3,
     is_dealbreaker: true,
-    order_index: 3
+    order_index: 3,
+    hint: 'Cette question évalue à quel point vous intégrez les principes islamiques dans vos choix de vie majeurs.'
   },
   {
     id: 4,
@@ -37,7 +40,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'bool' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 4
+    order_index: 4,
+    hint: 'Le pèlerinage à La Mecque est un objectif spirituel important. Cette question mesure si c\'est un projet que vous souhaitez partager en couple.'
   },
   {
     id: 5,
@@ -46,7 +50,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 5
+    order_index: 5,
+    hint: 'Cette question concerne l\'importance que vous accordez à votre entourage social et son influence sur votre pratique religieuse.'
   },
   {
     id: 6,
