@@ -221,7 +221,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 22
+    order_index: 22,
+    hint: 'La capacité à pardonner est essentielle en couple. Cette question évalue votre tendance à garder rancune ou à passer l\'éponge rapidement après un conflit.'
   },
   {
     id: 23,
@@ -230,7 +231,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 23
+    order_index: 23,
+    hint: 'L\'organisation quotidienne (rangement, planning, gestion du temps) peut être source de conflits si l\'un est très structuré et l\'autre spontané.'
   },
   {
     id: 24,
@@ -266,7 +268,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 27
+    order_index: 27,
+    hint: 'L\'expression émotionnelle varie selon les personnes. Certains sont très expressifs, d\'autres plus réservés. Aucun n\'est mauvais, c\'est une question de compatibilité.'
   },
   {
     id: 28,
@@ -275,7 +278,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 28
+    order_index: 28,
+    hint: 'L\'empathie (capacité à ressentir les émotions de l\'autre) est fondamentale en couple. Elle favorise le soutien émotionnel et la compréhension mutuelle.'
   },
   {
     id: 29,
@@ -293,7 +297,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 30
+    order_index: 30,
+    hint: 'La détermination reflète votre capacité à poursuivre vos objectifs malgré les obstacles. Un atout en couple, surtout pour construire un projet de vie commun.'
   },
   {
     id: 31,
@@ -329,7 +334,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 34
+    order_index: 34,
+    hint: 'Les traditions familiales (fêtes, rituels, coutumes) créent des liens mais peuvent aussi créer des conflits si les deux familles ont des pratiques différentes.'
   },
   {
     id: 35,
@@ -367,7 +373,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 38
+    order_index: 38,
+    hint: 'Une tendance aux disputes fréquentes peut indiquer une difficulté à gérer les désaccords calmement. Important à prendre en compte pour la dynamique de couple.'
   },
   {
     id: 39,
@@ -385,7 +392,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 40
+    order_index: 40,
+    hint: 'Une communication claire de vos besoins est cruciale pour un couple sain. Cette question mesure votre capacité à exprimer ce qui est important pour vous sans attendre que l\'autre devine.'
   },
   {
     id: 41,
@@ -439,7 +447,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 46
+    order_index: 46,
+    hint: 'L\'intelligence émotionnelle (détecter les émotions non-dites) aide à anticiper les besoins de votre partenaire et éviter les malentendus.'
   },
   {
     id: 47,
@@ -466,7 +475,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 49
+    order_index: 49,
+    hint: 'Demander de l\'aide n\'est pas une faiblesse. En couple, savoir exprimer ses besoins et accepter le soutien de l\'autre renforce la relation.'
   },
   {
     id: 50,
@@ -486,7 +496,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'bool' as const,
     weight: 1.5,
     is_dealbreaker: true,
-    order_index: 51
+    order_index: 51,
+    hint: 'Question cruciale sur le timing de la parentalité. Un désaccord ici peut créer des tensions majeures dans le couple. Si vous avez des projets précis, c\'est le moment de le clarifier.'
   },
   {
     id: 52,
@@ -495,7 +506,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'bool' as const,
     weight: 1.3,
     is_dealbreaker: true,
-    order_index: 52
+    order_index: 52,
+    hint: 'Le nombre d\'enfants souhaité est un point fondamental à aligner avant le mariage. Une famille nombreuse impacte finances, espace de vie, et organisation quotidienne.'
   },
   {
     id: 53,
@@ -504,7 +516,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 53
+    order_index: 53,
+    hint: 'La proximité géographique avec la famille élargie peut être un atout (aide, soutien) ou une source de tension (manque d\'intimité). Discutez-en ouvertement.'
   },
   {
     id: 54,
@@ -513,7 +526,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 54
+    order_index: 54,
+    hint: 'L\'influence de la famille d\'origine peut être forte. En couple, il est important de trouver l\'équilibre entre respecter ses parents et prendre ses propres décisions.'
   },
   {
     id: 55,
@@ -522,7 +536,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 55
+    order_index: 55,
+    hint: 'L\'implication de la belle-famille peut être bénéfique (soutien, aide) ou problématique (intrusion). Cette question évalue vos attentes concernant la proximité avec les beaux-parents.'
   },
   {
     id: 56,
@@ -531,7 +546,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 56
+    order_index: 56,
+    hint: 'Le style d\'éducation (strict vs permissif) crée souvent des tensions si les parents ne sont pas alignés. Clarifiez votre approche disciplinaire.'
   },
   {
     id: 57,
@@ -540,7 +556,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.4,
     is_dealbreaker: true,
-    order_index: 57
+    order_index: 57,
+    hint: 'L\'éducation islamique des enfants (Coran, prière, valeurs) est un pilier pour beaucoup de familles. Un désalignement peut créer des conflits éducatifs majeurs.'
   },
   {
     id: 58,
@@ -549,7 +566,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 58
+    order_index: 58,
+    hint: 'Le choix de l\'école (publique, privée, islamique) impacte l\'éducation religieuse et la socialisation de vos enfants. Un point à discuter avant le mariage.'
   },
   {
     id: 59,
@@ -576,7 +594,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 61
+    order_index: 61,
+    hint: 'L\'approbation familiale peut être un deal-breaker pour certains. Cette question évalue l\'importance de l\'avis de votre famille dans votre choix matrimonial.'
   },
   {
     id: 62,
@@ -760,7 +779,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 81
+    order_index: 81,
+    hint: 'L\'équilibre vie pro/vie perso varie selon les personnes. Si votre carrière est prioritaire, cela impactera le temps familial et peut créer des tensions.'
   },
   {
     id: 82,
@@ -769,7 +789,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 82
+    order_index: 82,
+    hint: 'L\'indépendance financière est importante pour certains. Cette question évalue votre priorité entre stabilité financière immédiate vs construction progressive.'
   },
   {
     id: 83,
@@ -796,7 +817,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 85
+    order_index: 85,
+    hint: 'Votre relation à l\'argent influence les choix de carrière et de vie. Cette question mesure si vous priorisez l\'épanouissement personnel ou la réussite financière.'
   },
   {
     id: 86,
@@ -814,7 +836,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 87
+    order_index: 87,
+    hint: 'La générosité et la charité (sadaqah) sont des valeurs islamiques importantes. Cette question évalue votre engagement envers l\'aide aux autres et votre vision du don.'
   },
   {
     id: 88,
@@ -859,7 +882,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 92
+    order_index: 92,
+    hint: 'Devenir une figure respectée dans la communauté musulmane demande du temps et de l\'investissement. Cela peut influencer votre disponibilité familiale.'
   },
   {
     id: 93,
@@ -868,7 +892,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 93
+    order_index: 93,
+    hint: 'Un bon équilibre entre travail et famille est crucial pour la santé du couple. Cette question évalue si vous êtes prêt à sacrifier votre carrière pour votre vie personnelle.'
   },
   {
     id: 94,
@@ -877,7 +902,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.3,
     is_dealbreaker: false,
-    order_index: 94
+    order_index: 94,
+    hint: 'Au-delà des biens matériels, l\'héritage spirituel (valeurs, foi, connaissances islamiques) est ce qui perdure. Cette question évalue vos priorités à long terme.'
   },
   {
     id: 95,
@@ -895,7 +921,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 96
+    order_index: 96,
+    hint: 'La maîtrise de l\'arabe coranique permet de comprendre le Coran dans sa langue originale. Cette ambition reflète votre engagement dans l\'apprentissage religieux.'
   },
   {
     id: 97,
@@ -904,7 +931,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 97
+    order_index: 97,
+    hint: 'L\'engagement communautaire (mosquée, associations, projets sociaux) reflète votre volonté d\'aider la Oummah. Important si vous voulez un conjoint actif dans la communauté.'
   },
   {
     id: 98,
@@ -931,6 +959,7 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 100
+    order_index: 100,
+    hint: 'Aspirer à être un couple exemplaire dans la foi reflète votre désir d\'inspirer et de représenter les valeurs islamiques. Cela demande un engagement mutuel fort.'
   }
 ]
