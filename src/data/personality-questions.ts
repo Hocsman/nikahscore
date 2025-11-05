@@ -60,7 +60,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.8,
     is_dealbreaker: false,
-    order_index: 6
+    order_index: 6,
+    hint: 'Le jeûne surérogatoire (comme les lundis/jeudis) montre un engagement spirituel au-delà des obligations. Cette question évalue votre pratique personnelle.'
   },
   {
     id: 7,
@@ -69,7 +70,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.9,
     is_dealbreaker: false,
-    order_index: 7
+    order_index: 7,
+    hint: 'L\'engagement communautaire à la mosquée (cours, événements, bénévolat) reflète votre implication dans la vie religieuse collective.'
   },
   {
     id: 8,
@@ -78,7 +80,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.4,
     is_dealbreaker: true,
-    order_index: 8
+    order_index: 8,
+    hint: 'Cette question fondamentale concerne la transmission de la foi à vos futurs enfants : éducation religieuse, valeurs, et pratiques islamiques.'
   },
   {
     id: 9,
@@ -87,7 +90,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.8,
     is_dealbreaker: false,
-    order_index: 9
+    order_index: 9,
+    hint: 'Le dhikr (rappel d\'Allah) à travers les invocations quotidiennes est une pratique spirituelle personnelle qui nourrit la foi au quotidien.'
   },
   {
     id: 10,
@@ -96,7 +100,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.3,
     is_dealbreaker: true,
-    order_index: 10
+    order_index: 10,
+    hint: 'Le respect du halal dans l\'alimentation est un pilier du mode de vie islamique. Cette question évalue votre stricte observance ou votre flexibilité.'
   },
   {
     id: 11,
@@ -105,7 +110,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'bool' as const,
     weight: 1.5,
     is_dealbreaker: true,
-    order_index: 11
+    order_index: 11,
+    hint: 'Il s\'agit de savoir si vous souhaitez un mariage religieux conforme aux préceptes islamiques (walima, dot, témoins, etc.).'
   },
   {
     id: 12,
@@ -114,7 +120,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 12
+    order_index: 12,
+    hint: 'Dans l\'Islam, le mariage est considéré comme un acte de foi et d\'adoration. Cette question mesure votre vision spirituelle du mariage.'
   },
   {
     id: 13,
@@ -123,7 +130,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'bool' as const,
     weight: 1.4,
     is_dealbreaker: true,
-    order_index: 13
+    order_index: 13,
+    hint: 'Question sur votre positionnement ferme concernant l\'interdiction de l\'alcool dans votre foyer et votre vie.'
   },
   {
     id: 14,
@@ -132,7 +140,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.7,
     is_dealbreaker: false,
-    order_index: 14
+    order_index: 14,
+    hint: 'Certains pratiquants évitent la musique pour des raisons religieuses. Cette question évalue votre position personnelle sur ce sujet.'
   },
   {
     id: 15,
@@ -141,7 +150,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 15
+    order_index: 15,
+    hint: 'Certains couples aiment partager des moments spirituels comme la prière en commun. Cette question évalue si c\'est important pour vous.'
   },
 
   // DIMENSION 2: PERSONNALITÉ ET TEMPÉRAMENT (Questions 16-35)
@@ -152,7 +162,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.2,
     is_dealbreaker: false,
-    order_index: 16
+    order_index: 16,
+    hint: 'La patience est une qualité essentielle dans le mariage. Répondez honnêtement sur votre capacité à rester calme dans les situations difficiles.'
   },
   {
     id: 17,
@@ -161,7 +172,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.1,
     is_dealbreaker: false,
-    order_index: 17
+    order_index: 17,
+    hint: 'L\'optimisme aide à surmonter les épreuves du couple. Cette question évalue votre capacité à voir le positif même dans les moments difficiles.'
   },
   {
     id: 18,
@@ -170,7 +182,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.0,
     is_dealbreaker: false,
-    order_index: 18
+    order_index: 18,
+    hint: 'Il s\'agit de votre style décisionnel : réfléchi et prudent vs spontané et rapide. Aucun n\'est meilleur, c\'est une question de compatibilité.'
   },
   {
     id: 19,
@@ -179,7 +192,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 1.3,
     is_dealbreaker: false,
-    order_index: 19
+    order_index: 19,
+    hint: 'Cette question évalue votre gestion de la colère et des frustrations quotidiennes. Soyez sincère pour une meilleure compatibilité.'
   },
   {
     id: 20,
@@ -188,7 +202,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.9,
     is_dealbreaker: false,
-    order_index: 20
+    order_index: 20,
+    hint: 'Introversion vs extraversion : cette question concerne votre besoin de socialisation et votre énergie dans les interactions sociales.'
   },
   {
     id: 21,
