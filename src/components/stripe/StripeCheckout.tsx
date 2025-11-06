@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2, CreditCard, Crown, Star } from 'lucide-react'
 import { useUser } from '@/hooks/useUser'
 import { useAnalytics } from '@/lib/analytics'
+import { useRouter } from 'next/navigation'
 
 interface StripeCheckoutProps {
   plan: 'premium' | 'conseil'
@@ -26,6 +27,7 @@ export default function StripeCheckout({
   const [loading, setLoading] = useState(false)
   const { user, loading: userLoading } = useUser()
   const { trackEvent } = useAnalytics()
+  const router = useRouter()
 
   const planDetails = {
     premium: {
@@ -51,7 +53,10 @@ export default function StripeCheckout({
         error: 'user_not_authenticated',
         redirect: 'auth'
       })
-      window.location.href = `/auth?redirect=/pricing&plan=${plan}&billing=${isAnnual ? 'annual' : 'monthly'}`
+      
+      // Utiliser useRouter pour une navigation client-side fiable
+      const authUrl = `/auth?redirect=/pricing&plan=${plan}&billing=${isAnnual ? 'annual' : 'monthly'}`
+      router.push(authUrl)
       return
     }
 
