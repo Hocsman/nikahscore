@@ -5,6 +5,7 @@ import { renderToStream } from '@react-pdf/renderer'
 import CompatibilityReport from '@/components/pdf/CompatibilityReport'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs' // Forcer runtime Node.js pour supporter @react-pdf/renderer
 
 /**
  * POST /api/pdf/generate
