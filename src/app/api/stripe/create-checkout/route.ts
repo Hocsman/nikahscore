@@ -43,16 +43,26 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Validation réussie pour plan:', planConfig.name)
 
+    // Construire l'URL de base de manière robuste
+    // En production, utiliser l'URL depuis l'en-tête ou une valeur par défaut
+    const host = request.headers.get('host') || 'www.nikahscore.com'
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    const baseUrl = `${protocol}://${host}`
+
+    console.log('🌐 Base URL détectée:', baseUrl)
+
     // EN MODE DÉVELOPPEMENT : Simulation d'une session Stripe
+    const sessionId = `cs_test_dev_${Date.now()}`
     const fakeSession = {
-      id: `cs_test_dev_${Date.now()}`,
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id=cs_test_dev_${Date.now()}&mode=dev`,
+      id: sessionId,
+      url: `${baseUrl}/success?session_id=${sessionId}&mode=dev&plan=${plan}`,
       customer: `cus_dev_${userId.substring(0, 8)}`,
       mode: 'subscription',
       status: 'open'
     }
 
     console.log('🎭 Session Stripe simulée:', fakeSession.id)
+    console.log('🔗 URL de redirection:', fakeSession.url)
 
     return NextResponse.json({
       success: true,
