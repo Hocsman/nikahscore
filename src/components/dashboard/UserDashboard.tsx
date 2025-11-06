@@ -60,6 +60,12 @@ export default function UserDashboard() {
   })
 
   const handleExportPDF = async () => {
+    // Temporairement désactivé en attendant la résolution des problèmes Vercel
+    alert('🚧 Fonctionnalité en cours de développement\n\nL\'export PDF sera bientôt disponible. Nous travaillons à optimiser cette fonctionnalité pour une meilleure expérience.')
+    setIsGeneratingPDF(false)
+    return
+
+    /* CODE ORIGINAL - À réactiver plus tard
     if (!user) {
       alert('Vous devez être connecté pour exporter le PDF')
       return
@@ -102,6 +108,7 @@ export default function UserDashboard() {
     } finally {
       setIsGeneratingPDF(false)
     }
+    */
   }
 
   const [notifications, setNotifications] = useState([

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,9 +12,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { Heart, Users, BarChart3, LogOut, User } from 'lucide-react'
+
 export function Navbar() {
   const { user, signOut } = useAuth()
   const pathname = usePathname()
+  const router = useRouter()
 
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(path + '/')
@@ -22,6 +24,8 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await signOut()
+    // Rediriger vers la page d'accueil après déconnexion
+    router.push('/')
   }
 
   return (

@@ -58,7 +58,7 @@ export default function PricingPage() {
         "Accès aux nouvelles fonctionnalités"
       ],
       limitations: [],
-      cta: "Essayer Premium",
+      cta: "Passer en Premium",
       planId: "premium",
       stripeEnabled: true,
       popular: true

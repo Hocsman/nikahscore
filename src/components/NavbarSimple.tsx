@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Menu, X, Heart, Bell, User, LogOut } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
@@ -20,12 +21,15 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user, loading, signOut } = useAuth()
   const { notifications, unreadCount } = useNotifications()
+  const router = useRouter()
 
   // Debug log pour voir l'état de l'utilisateur
   console.log('🔍 Navbar - user:', user ? user.email : 'null', 'loading:', loading)
 
   const handleSignOut = async () => {
     await signOut()
+    // Rediriger vers la page d'accueil après déconnexion
+    router.push('/')
   }
 
   return (
