@@ -1,28 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Stripe from 'stripe'
 
-console.log('🔥 API Stripe create-checkout chargée (MODE DÉVELOPPEMENT)')
+console.log('🔥 API Stripe create-checkout chargée (MODE PRODUCTION)')
 
-// Configuration des prix pour chaque plan
-const PLAN_PRICES = {
-  premium: {
-    amount: 999, // 9,99€ en centimes
-    name: 'Premium',
-    features: ['Analyse détaillée', 'Rapport PDF', 'Graphiques avancés']
-  },
-  conseil: {
-    amount: 4999, // 49,99€ en centimes  
-    name: 'Conseil',
-    features: ['Consultation expert', 'Support personnalisé', 'Questions sur mesure']
-  }
+// Initialiser Stripe avec la clé secrète
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-07-30.basil'
+})
+
+// Configuration des Price IDs depuis les variables d'environnement
+const PRICE_IDS = {
+  'premium-monthly': process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID!,
+  'premium-annual': process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID!,
+  'conseil-monthly': process.env.STRIPE_CONSEIL_MONTHLY_PRICE_ID!,
+  'conseil-annual': process.env.STRIPE_CONSEIL_ANNUAL_PRICE_ID!,
 }
 
 export async function POST(request: NextRequest) {
-  console.log('🚀 API POST appelée pour create-checkout (MODE DEV)')
+  console.log('🚀 API POST appelée pour create-checkout (MODE PRODUCTION)')
   
   try {
-    const { plan, userId, email, successUrl, cancelUrl } = await request.json()
+    const { plan, billing = 'monthly', userId, email } = await request.json()
 
-    console.log('📝 Données reçues:', { plan, userId, email })
+    console.log('📝 Données reçues:', { plan, billing, userId, email })
 
     // Validation des données
     if (!plan || !userId || !email) {
@@ -32,48 +32,66 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!PLAN_PRICES[plan as keyof typeof PLAN_PRICES]) {
+    // Construire la clé du Price ID
+    const priceKey = `${plan}-${billing}` as keyof typeof PRICE_IDS
+    const priceId = PRICE_IDS[priceKey]
+
+    if (!priceId) {
+      console.error('❌ Price ID introuvable pour:', priceKey)
       return NextResponse.json(
-        { error: 'Plan invalide' },
+        { error: `Plan invalide: ${plan} (${billing})` },
         { status: 400 }
       )
     }
 
-    const planConfig = PLAN_PRICES[plan as keyof typeof PLAN_PRICES]
+    console.log('✅ Price ID trouvé:', priceId)
 
-    console.log('✅ Validation réussie pour plan:', planConfig.name)
-
-    // Construire l'URL de base de manière robuste
-    // En production, utiliser l'URL depuis l'en-tête ou une valeur par défaut
+    // Construire l'URL de base
     const host = request.headers.get('host') || 'www.nikahscore.com'
     const protocol = host.includes('localhost') ? 'http' : 'https'
     const baseUrl = `${protocol}://${host}`
 
-    console.log('🌐 Base URL détectée:', baseUrl)
+    console.log('🌐 Base URL:', baseUrl)
 
-    // EN MODE DÉVELOPPEMENT : Simulation d'une session Stripe
-    const sessionId = `cs_test_dev_${Date.now()}`
-    const fakeSession = {
-      id: sessionId,
-      url: `${baseUrl}/success?session_id=${sessionId}&mode=dev&plan=${plan}`,
-      customer: `cus_dev_${userId.substring(0, 8)}`,
+    // Créer une vraie session Stripe
+    const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      status: 'open'
-    }
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      customer_email: email,
+      client_reference_id: userId,
+      metadata: {
+        userId,
+        plan,
+        billing,
+      },
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/pricing?canceled=true`,
+      subscription_data: {
+        metadata: {
+          userId,
+          plan,
+          billing,
+        },
+      },
+    })
 
-    console.log('🎭 Session Stripe simulée:', fakeSession.id)
-    console.log('🔗 URL de redirection:', fakeSession.url)
+    console.log('✅ Session Stripe créée:', session.id)
+    console.log('🔗 URL de redirection:', session.url)
 
     return NextResponse.json({
       success: true,
-      checkoutUrl: fakeSession.url,
-      sessionId: fakeSession.id,
-      devMode: true,
-      message: 'Mode développement - Paiement simulé'
+      checkoutUrl: session.url,
+      sessionId: session.id,
     })
 
   } catch (error) {
-    console.error('Erreur création session Stripe (DEV):', error)
+    console.error('❌ Erreur création session Stripe:', error)
     return NextResponse.json(
       { 
         error: 'Erreur création session de paiement',
@@ -86,20 +104,27 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const plans = Object.entries(PLAN_PRICES).map(([key, config]) => ({
-      id: key,
-      name: config.name,
-      price: config.amount / 100,
-      priceDisplay: `${(config.amount / 100).toFixed(2)}€`,
-      features: config.features,
-      recommended: key === 'premium',
-      popular: key === 'conseil'
-    }))
+    // Retourner les informations des plans sans révéler les Price IDs
+    const plans = [
+      {
+        id: 'premium',
+        name: 'Premium',
+        monthlyPrice: 9.99,
+        annualPrice: 79,
+        features: ['Analyse détaillée', 'Rapport PDF', 'Graphiques avancés']
+      },
+      {
+        id: 'conseil',
+        name: 'Conseil',
+        monthlyPrice: 49.99,
+        annualPrice: 499,
+        features: ['Consultation expert', 'Support personnalisé', 'Questions sur mesure']
+      }
+    ]
 
     return NextResponse.json({
       success: true,
-      plans: plans,
-      devMode: true
+      plans,
     })
 
   } catch (error) {
