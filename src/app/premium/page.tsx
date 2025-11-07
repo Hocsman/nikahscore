@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -7,9 +8,13 @@ import { Badge } from '@/components/ui/badge'
 import { Crown, Check, Sparkles, Download, MessageSquare, Eye, Star, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubscription } from '@/hooks/useSubscription'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 
 export default function PremiumPage() {
   const { user } = useAuth()
+  const { isPremium, plan, loading: subscriptionLoading } = useSubscription()
+  const [isAnnual, setIsAnnual] = useState(false)
 
   const features = [
     {
@@ -55,12 +60,12 @@ export default function PremiumPage() {
         'Analyse limitée',
         'Support communautaire'
       ],
-      current: true
+      current: !isPremium && !subscriptionLoading
     },
     {
       name: 'Premium',
-      price: 9.99,
-      period: 'par mois',
+      price: isAnnual ? 6.67 : 9.99,
+      period: isAnnual ? 'par mois (79€/an)' : 'par mois',
       features: [
         'Toutes les fonctionnalités gratuites',
         'Export PDF illimité',
@@ -71,7 +76,8 @@ export default function PremiumPage() {
         'Accès anticipé aux nouveautés'
       ],
       recommended: true,
-      savings: 'Économisez 20% avec l\'abonnement annuel'
+      savings: isAnnual ? 'Économisez 33% avec l\'abonnement annuel' : null,
+      current: isPremium && plan === 'premium'
     }
   ]
 
@@ -95,6 +101,35 @@ export default function PremiumPage() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Débloquez toutes les fonctionnalités pour une analyse complète de votre compatibilité
           </p>
+
+          {/* Toggle Annual/Monthly */}
+          {!isPremium && (
+            <div className="inline-flex items-center bg-white rounded-xl p-2 shadow-lg mt-6">
+              <button
+                onClick={() => setIsAnnual(false)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  !isAnnual 
+                    ? 'bg-purple-500 text-white shadow-md' 
+                    : 'text-gray-600'
+                }`}
+              >
+                Mensuel
+              </button>
+              <button
+                onClick={() => setIsAnnual(true)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  isAnnual 
+                    ? 'bg-purple-500 text-white shadow-md' 
+                    : 'text-gray-600'
+                }`}
+              >
+                Annuel
+                <span className="ml-2 text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                  -33%
+                </span>
+              </button>
+            </div>
+          )}
         </motion.div>
 
         {/* Fonctionnalités Premium */}
@@ -183,13 +218,22 @@ export default function PremiumPage() {
                   <Button variant="outline" className="w-full" disabled>
                     Plan Actuel
                   </Button>
-                ) : (
-                  <Button 
-                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                    onClick={() => alert('Intégration Stripe à venir !')}
+                ) : plan.name === 'Premium' ? (
+                  <StripeCheckout
+                    plan="premium"
+                    isAnnual={isAnnual}
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-11"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    Choisir Premium
+                    Passer en Premium
+                  </StripeCheckout>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    className="w-full"
+                    disabled
+                  >
+                    Plan Gratuit
                   </Button>
                 )}
               </CardContent>
