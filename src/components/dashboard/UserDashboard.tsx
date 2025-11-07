@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubscription } from '@/hooks/useSubscription'
 import Link from 'next/link'
 import CompatibilityAnalysis from './CompatibilityAnalysis'
 import MatchInsights from './MatchInsights'
@@ -49,7 +50,7 @@ interface DashboardStats {
 
 export default function UserDashboard() {
   const { user } = useAuth()
-  const [isPremium, setIsPremium] = useState(true) // TODO: Récupérer depuis la BDD (temporairement true pour tester PDF)
+  const { isPremium, isConseil, plan, loading: subscriptionLoading } = useSubscription()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [stats, setStats] = useState<DashboardStats>({
     profileCompletion: 85,
@@ -60,6 +61,12 @@ export default function UserDashboard() {
   })
 
   const handleExportPDF = async () => {
+    // Vérifier si l'utilisateur est Premium
+    if (!isPremium) {
+      alert('⭐ Fonctionnalité Premium\n\nL\'export PDF est réservé aux membres Premium et Conseil.\n\nPassez Premium pour débloquer cette fonctionnalité !')
+      return
+    }
+
     // Temporairement désactivé en attendant la résolution des problèmes Vercel
     alert('🚧 Fonctionnalité en cours de développement\n\nL\'export PDF sera bientôt disponible. Nous travaillons à optimiser cette fonctionnalité pour une meilleure expérience.')
     setIsGeneratingPDF(false)
@@ -208,9 +215,20 @@ export default function UserDashboard() {
           className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
         >
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Salam {user?.email?.split('@')[0] || 'Utilisateur'} 👋
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                Salam {user?.email?.split('@')[0] || 'Utilisateur'} 👋
+              </h1>
+              {!subscriptionLoading && isPremium && (
+                <Badge className={`${
+                  isConseil 
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700' 
+                    : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+                } text-white border-0 px-3 py-1 text-sm font-semibold shadow-md`}>
+                  {isConseil ? '👑 Conseil' : '⭐ Premium'}
+                </Badge>
+              )}
+            </div>
             <p className="text-gray-600 mt-1">
               Votre parcours vers un mariage épanoui continue
             </p>
@@ -306,6 +324,95 @@ export default function UserDashboard() {
                 </CardContent>
               </Card>
             </motion.div>
+
+            {/* Avantages Premium débloqués */}
+            {isPremium && !subscriptionLoading && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className={`border-2 ${
+                  isConseil 
+                    ? 'border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/50' 
+                    : 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50'
+                }`}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      {isConseil ? (
+                        <>
+                          <Crown className="w-5 h-5 text-orange-600" />
+                          <span className="text-orange-900">Avantages Conseil Actifs</span>
+                        </>
+                      ) : (
+                        <>
+                          <Star className="w-5 h-5 text-purple-600" />
+                          <span className="text-purple-900">Avantages Premium Actifs</span>
+                        </>
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-sm text-gray-900">Tests illimités</p>
+                          <p className="text-xs text-gray-600">Aucune limite mensuelle</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-sm text-gray-900">Analyse détaillée</p>
+                          <p className="text-xs text-gray-600">Insights approfondis</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-sm text-gray-900">Historique complet</p>
+                          <p className="text-xs text-gray-600">Tous vos résultats sauvegardés</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-sm text-gray-900">Export PDF</p>
+                          <p className="text-xs text-gray-600">Rapports professionnels (bientôt)</p>
+                        </div>
+                      </div>
+                      {isConseil && (
+                        <>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="font-medium text-sm text-gray-900">Consultation mensuelle</p>
+                              <p className="text-xs text-gray-600">Expert matrimonial dédié</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="font-medium text-sm text-gray-900">Support prioritaire</p>
+                              <p className="text-xs text-gray-600">Réponse sous 24h</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <Link href="/settings/subscription">
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Gérer mon abonnement
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
             {/* Analyse de compatibilité complète avec onglets */}
             <motion.div 
