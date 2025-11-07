@@ -77,9 +77,9 @@ export default function StripeCheckout({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan,
+          billing: isAnnual ? 'annual' : 'monthly',
           userId: user.id,
           email: user.email,
-          isAnnual,
           successUrl: `${window.location.origin}/success?plan=${plan}&billing=${isAnnual ? 'annual' : 'monthly'}`,
           cancelUrl: window.location.href
         })
