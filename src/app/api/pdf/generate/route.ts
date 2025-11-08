@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createElement } from 'react'
+import React from 'react'
 import { renderToStream } from '@react-pdf/renderer'
 import CompatibilityReport from '@/components/pdf/CompatibilityReport'
 
@@ -149,15 +149,15 @@ export async function POST(request: NextRequest) {
                      'Utilisateur 2'
 
     // Générer le PDF
-    const pdfDocument = createElement(CompatibilityReport, {
+    const pdfDocument = React.createElement(CompatibilityReport, {
       coupleCode: couple_code || 'N/A',
-      user1Name,
-      user2Name,
-      overallScore,
-      dimensions,
-      strengths,
-      improvements,
-      recommendations,
+      user1Name: user1Name,
+      user2Name: user2Name,
+      overallScore: overallScore,
+      dimensions: dimensions,
+      strengths: strengths,
+      improvements: improvements,
+      recommendations: recommendations,
       generatedDate: new Date().toLocaleDateString('fr-FR', {
         day: 'numeric',
         month: 'long',
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       }),
     })
 
-    const pdfStream = await renderToStream(pdfDocument)
+    const pdfStream = await renderToStream(pdfDocument as any)
 
     // Convertir le stream en Buffer
     const chunks: Buffer[] = []
