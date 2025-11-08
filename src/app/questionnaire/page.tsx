@@ -652,7 +652,7 @@ export default function QuestionnairePage() {
               {/* Indicateur de question critique */}
               {questionWithHint.is_dealbreaker && (
                 <motion.div 
-                  className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6"
+                  className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -662,9 +662,9 @@ export default function QuestionnairePage() {
                       animate={{ rotate: [0, -10, 10, 0] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
-                      <Zap className="w-5 h-5 text-red-600 mr-2" />
+                      <Zap className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
                     </motion.div>
-                    <p className="text-red-700 font-medium">
+                    <p className="text-red-700 dark:text-red-300 font-medium">
                       Question critique - Important pour la compatibilité
                     </p>
                   </div>
@@ -821,7 +821,7 @@ export default function QuestionnairePage() {
                   onClick={handlePrevious}
                   disabled={currentQuestion === 0 || isSubmitting}
                   variant="ghost"
-                  className="text-gray-600 hover:text-gray-800 disabled:opacity-50"
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Précédent
