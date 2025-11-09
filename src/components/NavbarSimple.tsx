@@ -23,9 +23,6 @@ export function Navbar() {
   const { notifications, unreadCount } = useNotifications()
   const router = useRouter()
 
-  // Debug log pour voir l'état de l'utilisateur
-  console.log('🔍 Navbar - user:', user ? user.email : 'null', 'loading:', loading)
-
   const handleSignOut = async () => {
     await signOut()
     // Rediriger vers la page d'accueil après déconnexion

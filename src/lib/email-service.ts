@@ -145,7 +145,6 @@ class ResendEmailService implements EmailService {
       }
 
       const result = await response.json();
-      console.log('✅ Email envoyé avec succès:', result.id);
 
       return { success: true, messageId: result.id };
 
@@ -167,11 +166,6 @@ class NodemailerEmailService implements EmailService {
       // const nodemailer = require('nodemailer');
       // const transporter = nodemailer.createTransporter({...});
       
-      console.log('📧 Email simulation (Nodemailer non configuré)');
-      console.log('Destinataire:', data.partnerEmail);
-      console.log('Expéditeur:', data.initiatorName);
-      console.log('Lien:', data.inviteLink);
-      
       return { success: true, messageId: `sim_${Date.now()}` };
 
     } catch (error) {
@@ -188,10 +182,8 @@ export function createEmailService(): EmailService {
   const resendApiKey = process.env.RESEND_API_KEY;
   
   if (resendApiKey) {
-    console.log('📧 Utilisation de Resend pour les emails');
     return new ResendEmailService(resendApiKey);
   } else {
-    console.log('📧 Utilisation du service email de simulation');
     return new NodemailerEmailService();
   }
 }
@@ -201,9 +193,7 @@ export async function sendInviteEmail(data: InviteEmailData) {
   const emailService = createEmailService();
   const result = await emailService.sendInviteEmail(data);
   
-  if (result.success) {
-    console.log(`✅ Invitation envoyée à ${data.partnerEmail} (ID: ${result.messageId})`);
-  } else {
+  if (!result.success) {
     console.error(`❌ Échec envoi email: ${result.error}`);
   }
   

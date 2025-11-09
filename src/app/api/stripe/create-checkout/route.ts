@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-console.log('🔥 API Stripe create-checkout chargée (MODE PRODUCTION)')
-
 // Initialiser Stripe avec la clé secrète
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-07-30.basil'
@@ -17,12 +15,8 @@ const PRICE_IDS = {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('🚀 API POST appelée pour create-checkout (MODE PRODUCTION)')
-  
   try {
     const { plan, billing = 'monthly', userId, email } = await request.json()
-
-    console.log('📝 Données reçues:', { plan, billing, userId, email })
 
     // Validation des données
     if (!plan || !userId || !email) {
@@ -44,14 +38,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ Price ID trouvé:', priceId)
-
     // Construire l'URL de base
     const host = request.headers.get('host') || 'www.nikahscore.com'
     const protocol = host.includes('localhost') ? 'http' : 'https'
     const baseUrl = `${protocol}://${host}`
-
-    console.log('🌐 Base URL:', baseUrl)
 
     // Créer une vraie session Stripe
     const session = await stripe.checkout.sessions.create({
@@ -80,9 +70,6 @@ export async function POST(request: NextRequest) {
         },
       },
     })
-
-    console.log('✅ Session Stripe créée:', session.id)
-    console.log('🔗 URL de redirection:', session.url)
 
     return NextResponse.json({
       success: true,

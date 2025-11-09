@@ -73,21 +73,17 @@ export default function QuestionnairePage() {
   useEffect(() => {
     const checkCoupleStatus = async () => {
       if (!user) {
-        console.log('⚠️ Pas d\'utilisateur connecté')
         setCheckingCouple(false)
         return
       }
 
       try {
-        console.log('🔍 Vérification du statut couple pour:', user.email)
         const response = await fetch(`/api/couple/check?user_id=${user.id}`)
         const data = await response.json()
 
         if (!data.hasCouple) {
-          console.log('⚠️ Aucun couple trouvé - Redirection vers /couple')
           router.push('/couple')
         } else {
-          console.log('✅ Couple trouvé:', data.couple_code)
           setCheckingCouple(false)
         }
       } catch (error) {
@@ -119,7 +115,6 @@ export default function QuestionnairePage() {
   }
 
   useEffect(() => {
-    console.log('🚀 Chargement questionnaire depuis API...')
     setLoading(true)
     
     // Track page view
@@ -134,10 +129,8 @@ export default function QuestionnairePage() {
         
         if (data.questions && data.questions.length > 0) {
           setQuestions(data.questions)
-          console.log('✅ Questions chargées depuis API:', data.questions.length)
         } else {
           setQuestions(STATIC_QUESTIONS)
-          console.log('⚠️ Fallback vers questions statiques')
         }
         
         // Track questionnaire start
@@ -162,11 +155,11 @@ export default function QuestionnairePage() {
       try {
         const parsedResponses = JSON.parse(saved)
         setResponses(parsedResponses)
-        console.log('📝 Réponses restaurées:', parsedResponses)
       } catch (e) {
         console.error('❌ Erreur réponses:', e)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -177,7 +170,6 @@ export default function QuestionnairePage() {
       } else {
         setCurrentQuestion(answeredCount)
       }
-      console.log(`📊 Questions: ${questions.length}, Réponses: ${answeredCount}`)
     }
   }, [questions, responses])
 
@@ -185,18 +177,6 @@ export default function QuestionnairePage() {
   useEffect(() => {
     setSelectedAnswer(null)
   }, [currentQuestion])
-
-  // Debug: Log de la question courante
-  useEffect(() => {
-    if (questions.length > 0 && questions[currentQuestion]) {
-      const currentQ = questions[currentQuestion]
-      console.log('🎯 Question courante:', { 
-        id: currentQ.id, 
-        category: currentQ.category, 
-        text: currentQ.text.substring(0, 50) + '...' 
-      })
-    }
-  }, [currentQuestion, questions])
 
   const handleResponse = (response: boolean | number) => {
     if (questions.length === 0) return
@@ -243,8 +223,6 @@ export default function QuestionnairePage() {
           setIsSubmitting(false)
         }, 1500)
       }
-      
-      console.log('💾 Réponse sauvée:', { questionId, response })
     }, 600)
   }
 
@@ -489,14 +467,6 @@ export default function QuestionnairePage() {
     ...currentQ,
     hint: currentQ.hint || getQuestionHint(currentQ.id)
   }
-
-  // Debug log
-  console.log('🔍 Question actuelle:', { 
-    id: questionWithHint.id, 
-    category: questionWithHint.category, 
-    text: questionWithHint.text.substring(0, 50) + '...',
-    hasHint: !!questionWithHint.hint
-  })
 
   // Vérifier les permissions d'accès
   if (needsUpgrade) {
