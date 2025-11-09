@@ -87,7 +87,7 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <User className="w-4 h-4" />
-                    <span className="hidden sm:block">{user.email?.split('@')[0]}</span>
+                    <span className="hidden sm:block">{user.firstName || user.name || user.email?.split('@')[0]}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">

@@ -8,6 +8,8 @@ interface AuthUser {
   id: string
   email: string
   name?: string
+  firstName?: string
+  lastName?: string
 }
 
 export function useAuth() {
@@ -33,13 +35,16 @@ export function useAuth() {
         if (session?.user) {
           console.log('✅ useAuth: Session trouvée:', session.user.email)
           
-          // Récupérer le nom depuis user_metadata (pas de requête DB)
-          const userName = session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
+          // Récupérer le prénom et nom depuis user_metadata
+          const firstName = session.user.user_metadata?.first_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
+          const lastName = session.user.user_metadata?.last_name || null
 
           setUser({
             id: session.user.id,
             email: session.user.email || '',
-            name: userName
+            name: firstName, // Pour la rétrocompatibilité
+            firstName: firstName,
+            lastName: lastName
           })
         } else {
           console.log('ℹ️ useAuth: Pas de session active')
@@ -60,13 +65,16 @@ export function useAuth() {
         console.log('🔔 useAuth: Auth state change:', event, session?.user?.email)
         
         if (session?.user) {
-          // Récupérer le nom depuis user_metadata (pas de requête DB)
-          const userName = session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
+          // Récupérer le prénom et nom depuis user_metadata
+          const firstName = session.user.user_metadata?.first_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
+          const lastName = session.user.user_metadata?.last_name || null
 
           setUser({
             id: session.user.id,
             email: session.user.email || '',
-            name: userName
+            name: firstName, // Pour la rétrocompatibilité
+            firstName: firstName,
+            lastName: lastName
           })
         } else {
           setUser(null)

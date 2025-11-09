@@ -12,11 +12,11 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await request.json()
+    const { firstName, lastName, email, password } = await request.json()
 
-    if (!name || !email || !password) {
+    if (!firstName || !email || !password) {
       return NextResponse.json(
-        { error: 'Tous les champs sont requis' },
+        { error: 'Prénom, email et mot de passe sont requis' },
         { status: 400 }
       )
     }
@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
       password,
       options: {
         data: {
-          name: name
+          first_name: firstName,
+          last_name: lastName || null
         }
         // Note: L'email de confirmation Supabase peut être désactivé dans le dashboard
         // Pour éviter la double réception d'emails
@@ -75,21 +76,24 @@ export async function POST(request: NextRequest) {
       const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.user.id)
       
       if (authUser.user) {
-        const { error: profileError } = await supabaseAdmin
-          .from('profiles')
+        // Créer l'entrée dans la table users avec first_name et last_name
+        const { error: userError } = await supabaseAdmin
+          .from('users')
           .insert([
             {
               id: data.user.id,
-              name: name,
+              first_name: firstName,
+              last_name: lastName || null,
               email: email,
+              email_hash: '', // Sera rempli par un trigger ou fonction si nécessaire
               created_at: new Date().toISOString()
             }
           ])
 
-        if (profileError) {
-          console.error('Erreur création profil:', profileError)
+        if (userError) {
+          console.error('Erreur création utilisateur:', userError)
         } else {
-          console.log('✅ Profil créé pour:', name)
+          console.log('✅ Utilisateur créé pour:', firstName, lastName || '')
         }
       } else {
         console.warn('⚠️ Utilisateur non trouvé dans auth.users, profil non créé')
@@ -102,11 +106,11 @@ export async function POST(request: NextRequest) {
         const emailResult = await resend.emails.send({
           from: 'NikahScore <welcome@nikahscore.com>',
           to: [email], // Email directement à l'utilisateur
-          subject: `🎉 Bienvenue sur NikahScore, ${name} !`,
+          subject: `🎉 Bienvenue sur NikahScore, ${firstName} !`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h1 style="color: #8B5CF6; text-align: center;">🎉 Bienvenue sur NikahScore !</h1>
-              <p>Bonjour <strong>${name}</strong>,</p>
+              <p>Bonjour <strong>${firstName}</strong>,</p>
               
               <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
                 <p>Votre compte <strong>NikahScore</strong> a été créé avec succès ! 🎉</p>

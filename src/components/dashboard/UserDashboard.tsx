@@ -227,7 +227,7 @@ export default function UserDashboard() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Salam {user?.email?.split('@')[0] || 'Utilisateur'} 👋
+                Salam {user?.firstName || user?.name || user?.email?.split('@')[0] || 'Utilisateur'} 👋
               </h1>
               {!subscriptionLoading && isPremium && (
                 <Badge className={`${

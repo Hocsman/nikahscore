@@ -43,7 +43,8 @@ export default function AuthPage() {
   const supabase = createClient()
   
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -98,7 +99,8 @@ export default function AuthPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             password: formData.password
           })
@@ -199,28 +201,51 @@ export default function AuthPage() {
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Nom (inscription seulement) */}
+              {/* Prénom et Nom (inscription seulement) */}
               {!isLogin && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   transition={{ duration: 0.3 }}
+                  className="space-y-4"
                 >
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Nom complet
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <Input
-                      type="text"
-                      name="name"
-                      placeholder="Votre nom"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="pl-12 h-12"
-                      required={!isLogin}
-                      disabled={loading}
-                    />
+                  {/* Prénom (requis) */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Prénom <span className="text-pink-600">*</span>
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input
+                        type="text"
+                        name="firstName"
+                        placeholder="Votre prénom"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        className="pl-12 h-12"
+                        required={!isLogin}
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Nom (optionnel) */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Nom <span className="text-gray-400 text-xs">(optionnel)</span>
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input
+                        type="text"
+                        name="lastName"
+                        placeholder="Votre nom de famille"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        className="pl-12 h-12"
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -359,7 +384,7 @@ export default function AuthPage() {
                   setIsLogin(!isLogin)
                   setError('')
                   setSuccess('')
-                  setFormData({ name: '', email: '', password: '', confirmPassword: '' })
+                  setFormData({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' })
                 }}
                 className="text-blue-600 hover:text-blue-700 font-medium"
                 disabled={loading}
