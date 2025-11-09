@@ -16,6 +16,8 @@ import Link from 'next/link'
 import CompatibilityAnalysis from './CompatibilityAnalysis'
 import MatchInsights from './MatchInsights'
 import QuestionnaireHistoryCard from './QuestionnaireHistoryCard'
+import { AchievementsSummary } from '@/components/AchievementsSummary'
+import { AchievementsChecker } from '@/components/AchievementsChecker'
 import { 
   User, 
   Users,
@@ -229,6 +231,9 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 p-4 md:p-6">
+      {/* Vérificateur d'achievements en arrière-plan */}
+      <AchievementsChecker />
+      
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header avec salutation */}
@@ -684,6 +689,15 @@ export default function UserDashboard() {
                   </Button>
                 </CardContent>
               </Card>
+            </motion.div>
+
+            {/* Achievements */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <AchievementsSummary />
             </motion.div>
 
             {/* Activité récente */}
