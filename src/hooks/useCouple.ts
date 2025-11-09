@@ -223,6 +223,29 @@ export function useCouple() {
     return totalQuestions > 0 ? Math.round((matches / totalQuestions) * 100) : 0
   }
 
+  // Récupérer le couple_code de l'utilisateur courant
+  const getUserCoupleCode = async (): Promise<{ couple_code: string | null; error?: string }> => {
+    if (!user) {
+      return { couple_code: null, error: 'Utilisateur non connecté' }
+    }
+
+    try {
+      const response = await fetch(`/api/couple/check?user_id=${user.id}`)
+      const data = await response.json()
+
+      if (data.success && data.hasCouple) {
+        return { couple_code: data.couple_code }
+      } else {
+        return { couple_code: null, error: 'Aucun couple trouvé' }
+      }
+    } catch (err) {
+      return { 
+        couple_code: null, 
+        error: err instanceof Error ? err.message : 'Erreur inconnue' 
+      }
+    }
+  }
+
   return {
     loading,
     error,
@@ -233,6 +256,7 @@ export function useCouple() {
     getCoupleResponses,
     getShareUrl,
     calculateCompatibility,
+    getUserCoupleCode,
     clearError: () => setError(null)
   }
 }

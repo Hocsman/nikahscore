@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
+import { useCouple } from '@/hooks/useCouple'
 import Link from 'next/link'
 import CompatibilityAnalysis from './CompatibilityAnalysis'
 import MatchInsights from './MatchInsights'
@@ -51,6 +52,7 @@ interface DashboardStats {
 export default function UserDashboard() {
   const { user } = useAuth()
   const { isPremium, isConseil, plan, loading: subscriptionLoading } = useSubscription()
+  const { getUserCoupleCode } = useCouple()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [stats, setStats] = useState<DashboardStats>({
     profileCompletion: 85,
@@ -81,7 +83,15 @@ export default function UserDashboard() {
     setIsGeneratingPDF(true)
     
     try {
-      // TODO: Récupérer le couple_code depuis le contexte utilisateur
+      // Récupérer le couple_code de l'utilisateur
+      const { couple_code, error: coupleError } = await getUserCoupleCode()
+      
+      if (!couple_code) {
+        alert('❌ Aucun couple trouvé\n\nVous devez créer ou rejoindre un couple pour générer un rapport PDF.')
+        setIsGeneratingPDF(false)
+        return
+      }
+
       const response = await fetch('/api/pdf/generate', {
         method: 'POST',
         headers: {
@@ -89,7 +99,7 @@ export default function UserDashboard() {
         },
         body: JSON.stringify({
           user_id: user.id,
-          couple_code: 'TEST-CODE', // TODO: Remplacer par le vrai code
+          couple_code: couple_code,
         }),
       })
 

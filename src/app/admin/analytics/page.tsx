@@ -14,6 +14,7 @@ import {
   DollarSign, Activity, Target, Award, Zap, ArrowUp, ArrowDown
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useAdmin } from '@/hooks/useAdmin'
 import { redirect } from 'next/navigation'
 
 // Types pour les analytics
@@ -43,6 +44,7 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00']
 
 export default function AdminAnalyticsPage() {
   const { user, loading } = useAuth()
+  const { isAdmin, loading: adminLoading } = useAdmin()
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
   const [chartData, setChartData] = useState<ChartData[]>([])
   const [funnelData, setFunnelData] = useState<FunnelData[]>([])
@@ -51,12 +53,15 @@ export default function AdminAnalyticsPage() {
 
   // Vérification des permissions admin
   useEffect(() => {
-    if (!loading && (!user || !user.email)) {
-      redirect('/')
+    if (!loading && !adminLoading) {
+      if (!user || !user.email) {
+        redirect('/')
+      } else if (!isAdmin) {
+        // Rediriger les non-admins vers la page d'accueil
+        redirect('/')
+      }
     }
-    // TODO: Ajouter vérification role admin via database query
-    // Pour l'instant, on vérifie juste l'authentification
-  }, [user, loading])
+  }, [user, loading, isAdmin, adminLoading])
 
   // Chargement des données analytics
   useEffect(() => {

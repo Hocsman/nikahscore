@@ -158,20 +158,22 @@ class ResendEmailService implements EmailService {
   }
 }
 
-// Implémentation alternative avec Nodemailer (si pas Resend)
+/**
+ * Fallback email service (simulation uniquement)
+ * Utilisé uniquement en développement local si RESEND_API_KEY n'est pas défini
+ * En production, Resend est TOUJOURS utilisé
+ */
 class NodemailerEmailService implements EmailService {
   async sendInviteEmail(data: InviteEmailData): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      // TODO: Implémenter avec nodemailer si nécessaire
-      // const nodemailer = require('nodemailer');
-      // const transporter = nodemailer.createTransporter({...});
-      
-      return { success: true, messageId: `sim_${Date.now()}` };
+      // Service de simulation pour développement local uniquement
+      // En production, utiliser RESEND_API_KEY obligatoire
+      return { success: true, messageId: `dev_sim_${Date.now()}` };
 
     } catch (error) {
       return { 
         success: false, 
-        error: error instanceof Error ? error.message : 'Erreur Nodemailer' 
+        error: error instanceof Error ? error.message : 'Erreur service email simulation' 
       };
     }
   }

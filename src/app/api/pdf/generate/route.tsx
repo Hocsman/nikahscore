@@ -26,8 +26,22 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
 
     // Vérifier que l'utilisateur est Premium
-    // TODO: Implémenter la vérification Premium depuis la BDD
-    // Pour l'instant, on autorise tout le monde (à des fins de test)
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('subscription_status, subscription_plan')
+      .eq('id', user_id)
+      .single()
+
+    const isPremium = userProfile?.subscription_status === 'active' &&
+                     (userProfile?.subscription_plan === 'premium' || 
+                      userProfile?.subscription_plan === 'conseil')
+
+    if (!isPremium) {
+      return NextResponse.json(
+        { success: false, error: 'Fonctionnalité réservée aux membres Premium et Conseil' },
+        { status: 403 }
+      )
+    }
     
     let coupleData: any = null
     let dimensions: any[] = []
