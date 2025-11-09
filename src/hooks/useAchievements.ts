@@ -43,6 +43,7 @@ export function useAchievements() {
     }
 
     loadAchievements()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const loadAchievements = async () => {

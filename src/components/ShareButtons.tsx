@@ -59,7 +59,7 @@ export function ShareButtons({ pairId, overallScore, partnerName }: ShareButtons
   }
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'share' in navigator) {
       try {
         await navigator.share({
           title: 'NikahScore - Résultats de Compatibilité',
@@ -75,10 +75,13 @@ export function ShareButtons({ pairId, overallScore, partnerName }: ShareButtons
     }
   }
 
+  // Vérifier si le partage natif est disponible
+  const hasNativeShare = typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'share' in navigator
+
   return (
     <div className="flex items-center gap-2">
       {/* Bouton principal de partage */}
-      {typeof navigator !== 'undefined' && navigator.share ? (
+      {hasNativeShare ? (
         <Button
           onClick={handleNativeShare}
           className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
