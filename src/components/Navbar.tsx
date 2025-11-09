@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { Heart, Users, BarChart3, LogOut, User } from 'lucide-react'
+import { NotificationBell } from '@/components/NotificationBell'
 
 export function Navbar() {
   const { user, signOut } = useAuth()
@@ -83,36 +84,39 @@ export function Navbar() {
 
             {/* User Menu */}
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span className="hidden sm:block">{user.firstName || user.name || user.email?.split('@')[0]}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile" className="flex items-center space-x-2">
+              <>
+                <NotificationBell />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                       <User className="w-4 h-4" />
-                      <span>Profil</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/couple" className="flex items-center space-x-2">
-                      <Users className="w-4 h-4" />
-                      <span>Mes Questionnaires Couple</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={handleLogout}
-                    className="flex items-center space-x-2 text-red-600 focus:text-red-600"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Se Déconnecter</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <span className="hidden sm:block">{user.firstName || user.name || user.email?.split('@')[0]}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="flex items-center space-x-2">
+                        <User className="w-4 h-4" />
+                        <span>Profil</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/couple" className="flex items-center space-x-2">
+                        <Users className="w-4 h-4" />
+                        <span>Mes Questionnaires Couple</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={handleLogout}
+                      className="flex items-center space-x-2 text-red-600 focus:text-red-600"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Se Déconnecter</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <div className="flex items-center space-x-2">
                 <Button variant="ghost" size="sm" asChild>

@@ -86,6 +86,29 @@ export function useNotifications() {
     }
   }
 
+  // Supprimer une notification
+  const deleteNotification = async (notificationId: string) => {
+    if (!user?.id) return
+
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', notificationId)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      const wasUnread = notifications.find(n => n.id === notificationId)?.read === false
+      setNotifications(prev => prev.filter(n => n.id !== notificationId))
+      if (wasUnread) {
+        setUnreadCount(prev => Math.max(0, prev - 1))
+      }
+    } catch (error) {
+      console.error('Erreur suppression notification:', error)
+    }
+  }
+
   // Créer une nouvelle notification
   const createNotification = async (
     userId: string,
@@ -182,6 +205,7 @@ export function useNotifications() {
     unreadCount,
     markAsRead,
     markAllAsRead,
+    deleteNotification,
     createNotification,
     requestNotificationPermission,
     sendPushNotification,
