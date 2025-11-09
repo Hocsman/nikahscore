@@ -68,7 +68,7 @@ INSERT INTO achievements (code, title, description, icon, category, requirement_
   
   -- Engagement
   ('active_week', 'Utilisateur Actif', 'Connectez-vous 7 jours consécutifs', '📅', 'engagement', 'action', 7, 30, 'rare'),
-  ('active_month', 'Fidèle', 'Utilisez l\'application pendant 30 jours', '💎', 'engagement', 'action', 30, 75, 'epic'),
+  ('active_month', 'Fidèle', 'Utilisez l''application pendant 30 jours', '💎', 'engagement', 'action', 30, 75, 'epic'),
   
   -- Couple
   ('first_couple', 'Ensemble', 'Créez votre premier questionnaire en couple', '👥', 'questionnaire', 'action', 1, 20, 'common'),
