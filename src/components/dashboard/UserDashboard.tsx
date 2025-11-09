@@ -11,11 +11,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import { useCouple } from '@/hooks/useCouple'
+import { useUserStats } from '@/hooks/useUserStats'
 import Link from 'next/link'
 import CompatibilityAnalysis from './CompatibilityAnalysis'
 import MatchInsights from './MatchInsights'
+import QuestionnaireHistoryCard from './QuestionnaireHistoryCard'
 import { 
   User, 
+  Users,
   Heart, 
   Trophy, 
   TrendingUp, 
@@ -53,14 +56,24 @@ export default function UserDashboard() {
   const { user } = useAuth()
   const { isPremium, isConseil, plan, loading: subscriptionLoading } = useSubscription()
   const { getUserCoupleCode } = useCouple()
+  const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
-  const [stats, setStats] = useState<DashboardStats>({
-    profileCompletion: 85,
-    compatibilityScore: 92,
-    messagesCount: 24,
-    profileViews: 156,
-    lastActivity: '2 heures'
-  })
+  
+  // Utiliser les stats réelles ou des valeurs par défaut pendant le chargement
+  const stats = userStats || {
+    profileCompletion: 40,
+    questionnairesCompleted: 0,
+    couplesCreated: 0,
+    averageCompatibilityScore: null,
+    lastActivity: 'Jamais',
+    hasActiveCouples: false
+  }
+  
+  // Anciennes stats pour compatibilité UI (à supprimer progressivement)
+  const legacyStats = {
+    messagesCount: 0, // Fonctionnalité future
+    profileViews: 0, // Fonctionnalité future
+  }
 
   const handleExportPDF = async () => {
     // Vérifier si l'utilisateur est Premium
@@ -290,8 +303,12 @@ export default function UserDashboard() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-pink-100 text-sm">Score</p>
-                      <p className="text-2xl font-bold">{stats.compatibilityScore}%</p>
+                      <p className="text-pink-100 text-sm">Score moyen</p>
+                      <p className="text-2xl font-bold">
+                        {stats.averageCompatibilityScore !== null 
+                          ? `${stats.averageCompatibilityScore}%` 
+                          : 'N/A'}
+                      </p>
                     </div>
                     <Heart className="w-8 h-8 text-pink-200" />
                   </div>
@@ -302,10 +319,10 @@ export default function UserDashboard() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100 text-sm">Messages</p>
-                      <p className="text-2xl font-bold">{stats.messagesCount}</p>
+                      <p className="text-blue-100 text-sm">Tests complétés</p>
+                      <p className="text-2xl font-bold">{stats.questionnairesCompleted}</p>
                     </div>
-                    <MessageSquare className="w-8 h-8 text-blue-200" />
+                    <Trophy className="w-8 h-8 text-blue-200" />
                   </div>
                 </CardContent>
               </Card>
@@ -314,10 +331,10 @@ export default function UserDashboard() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100 text-sm">Vues profil</p>
-                      <p className="text-2xl font-bold">{stats.profileViews}</p>
+                      <p className="text-purple-100 text-sm">Couples créés</p>
+                      <p className="text-2xl font-bold">{stats.couplesCreated}</p>
                     </div>
-                    <Activity className="w-8 h-8 text-purple-200" />
+                    <Users className="w-8 h-8 text-purple-200" />
                   </div>
                 </CardContent>
               </Card>
@@ -462,6 +479,18 @@ export default function UserDashboard() {
               </Card>
             </motion.div>
 
+            {/* Historique des questionnaires */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <QuestionnaireHistoryCard 
+                questionnaires={questionnaires}
+                loading={statsLoading}
+              />
+            </motion.div>
+
             {/* Actions rapides */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -519,10 +548,17 @@ export default function UserDashboard() {
                   
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Niveau de compatibilité</span>
-                      <span className="text-sm text-gray-500">{stats.compatibilityScore}%</span>
+                      <span className="text-sm font-medium">Score moyen</span>
+                      <span className="text-sm text-gray-500">
+                        {stats.averageCompatibilityScore !== null 
+                          ? `${stats.averageCompatibilityScore}%` 
+                          : 'N/A'}
+                      </span>
                     </div>
-                    <Progress value={stats.compatibilityScore} className="h-2" />
+                    <Progress 
+                      value={stats.averageCompatibilityScore || 0} 
+                      className="h-2" 
+                    />
                   </div>
 
                   <div className="pt-2">
