@@ -9,9 +9,9 @@ UPDATE subscription_plans
 SET 
   name = 'conseil',
   display_name = 'Conseil Premium',
-  description = 'Accompagnement personnalisé avec un coach matrimonial dédié',
-  price_monthly = 49.99,
-  price_yearly = 499.99,
+  description = 'Avec accompagnement personnel par un coach matrimonial',
+  price_monthly = 41.67,
+  price_yearly = 499.00,
   sort_order = 3
 WHERE name = 'premium';
 
@@ -20,9 +20,9 @@ UPDATE subscription_plans
 SET 
   name = 'premium',
   display_name = 'Premium',
-  description = 'Accès complet aux fonctionnalités pour trouver votre âme sœur',
-  price_monthly = 9.99,
-  price_yearly = 99.99,
+  description = 'Pour une analyse approfondie de votre compatibilité',
+  price_monthly = 6.67,
+  price_yearly = 79.00,
   sort_order = 2
 WHERE name = 'essential';
 
