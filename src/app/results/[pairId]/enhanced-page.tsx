@@ -29,6 +29,9 @@ import { PersonalizedAdvice } from '@/components/PersonalizedAdvice'
 import { CompatibilityRadarChart } from '@/components/CompatibilityRadarChart'
 import { QuestionMatchesChart } from '@/components/QuestionMatchesChart'
 import { OverallScorePieChart } from '@/components/OverallScorePieChart'
+import { PDFReportView } from '@/components/PDFReportView'
+import { usePDFExport } from '@/hooks/usePDFExport'
+import { Toast } from '@/components/Toast'
 
 interface DimensionData {
   dimension: string
@@ -80,6 +83,38 @@ export default function EnhancedResultsPage({
   const [results, setResults] = useState<CompatibilityResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showPDFView, setShowPDFView] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
+  const { generatePDF, isGenerating, error: pdfError } = usePDFExport()
+
+  const handleExportPDF = async () => {
+    if (!results) return
+    
+    // Afficher temporairement la vue PDF
+    setShowPDFView(true)
+    
+    // Attendre que le rendu soit terminé
+    setTimeout(async () => {
+      const filename = `nikahscore-${results.user1_name}-${results.user2_name}-${new Date().toISOString().split('T')[0]}.pdf`
+      const success = await generatePDF('pdf-report-content', { filename })
+      
+      if (success) {
+        console.log('✅ PDF généré avec succès')
+        setToastMessage('✅ Rapport PDF téléchargé avec succès !')
+        setToastType('success')
+        setShowToast(true)
+      } else {
+        setToastMessage('❌ Erreur lors de la génération du PDF')
+        setToastType('error')
+        setShowToast(true)
+      }
+      
+      // Cacher la vue PDF après génération
+      setShowPDFView(false)
+    }, 100)
+  }
 
   const generateReport = async () => {
     setLoading(true)
@@ -175,11 +210,27 @@ export default function EnhancedResultsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
-      <div className="max-w-6xl mx-auto p-4 py-8">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <>
+      {/* Toast de notification */}
+      <Toast 
+        message={toastMessage}
+        type={toastType}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
+      {/* Vue PDF (cachée, pour génération uniquement) */}
+      {showPDFView && results && (
+        <div className="fixed -left-[9999px] top-0">
+          <PDFReportView results={results} />
+        </div>
+      )}
+
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+        <div className="max-w-6xl mx-auto p-4 py-8">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
           <div className="flex items-center">
             <Button 
               onClick={() => router.back()} 
@@ -205,9 +256,22 @@ export default function EnhancedResultsPage({
               overallScore={results.overall_score}
               partnerName={results.user2_name}
             />
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Télécharger PDF
+            <Button 
+              variant="outline"
+              onClick={handleExportPDF}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-2"></div>
+                  Génération...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4 mr-2" />
+                  Télécharger PDF
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -463,5 +527,6 @@ export default function EnhancedResultsPage({
         </Card>
       </div>
     </div>
+    </>
   )
 }
