@@ -26,6 +26,9 @@ import {
 } from 'lucide-react'
 import { ShareButtons } from '@/components/ShareButtons'
 import { PersonalizedAdvice } from '@/components/PersonalizedAdvice'
+import { CompatibilityRadarChart } from '@/components/CompatibilityRadarChart'
+import { QuestionMatchesChart } from '@/components/QuestionMatchesChart'
+import { OverallScorePieChart } from '@/components/OverallScorePieChart'
 
 interface DimensionData {
   dimension: string
@@ -257,55 +260,38 @@ export default function EnhancedResultsPage({
           </Card>
         </motion.div>
 
-        {/* Statistiques des Réponses */}
+        {/* Graphiques Interactifs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8 grid md:grid-cols-2 gap-6"
         >
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Analyse des Réponses
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-1">
-                    {results.question_matches.perfect_matches}
-                  </div>
-                  <div className="text-sm text-gray-600">Parfaitement alignés</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-1">
-                    {results.question_matches.good_matches}
-                  </div>
-                  <div className="text-sm text-gray-600">Très compatibles</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-1">
-                    {results.question_matches.minor_differences}
-                  </div>
-                  <div className="text-sm text-gray-600">Différences mineures</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-red-600 mb-1">
-                    {results.question_matches.major_differences}
-                  </div>
-                  <div className="text-sm text-gray-600">Différences importantes</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <OverallScorePieChart score={results.overall_score} />
+          <QuestionMatchesChart matches={results.question_matches} />
+        </motion.div>
+
+        {/* Radar Chart des Dimensions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="mb-8"
+        >
+          <CompatibilityRadarChart 
+            dimensions={results.dimension_breakdown.map(d => ({
+              dimension: d.dimension,
+              score: d.score
+            }))}
+            height={450}
+          />
         </motion.div>
 
         {/* Analyse par Dimensions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
         >
           <Card className="mb-8">
             <CardHeader>
