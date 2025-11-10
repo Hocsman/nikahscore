@@ -2,7 +2,20 @@
 -- Date : 2025-11-10
 -- Description : Aligner avec la stratégie Stripe existante
 
--- 1. Renommer et ajuster le plan "essential" en "premium" 
+-- IMPORTANT : Renommer dans l'ordre pour éviter les conflits de clés uniques
+
+-- 1. D'ABORD renommer l'ancien "premium" (19.99€) en "conseil"
+UPDATE subscription_plans 
+SET 
+  name = 'conseil',
+  display_name = 'Conseil Premium',
+  description = 'Accompagnement personnalisé avec un coach matrimonial dédié',
+  price_monthly = 49.99,
+  price_yearly = 499.99,
+  sort_order = 3
+WHERE name = 'premium';
+
+-- 2. ENSUITE renommer "essential" en "premium" (maintenant libre)
 UPDATE subscription_plans 
 SET 
   name = 'premium',
@@ -12,17 +25,6 @@ SET
   price_yearly = 99.99,
   sort_order = 2
 WHERE name = 'essential';
-
--- 2. Renommer l'ancien "premium" en "conseil"
-UPDATE subscription_plans 
-SET 
-  name = 'conseil',
-  display_name = 'Conseil Premium',
-  description = 'Accompagnement personnalisé avec un coach matrimonial dédié',
-  price_monthly = 49.99,
-  price_yearly = 499.99,
-  sort_order = 3
-WHERE name = 'premium' AND price_monthly = 19.99;
 
 -- 3. Ajouter des features exclusives pour le plan Conseil
 INSERT INTO features (code, name, description, category) VALUES
