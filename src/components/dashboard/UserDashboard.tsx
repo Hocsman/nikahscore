@@ -56,7 +56,7 @@ interface DashboardStats {
 
 export default function UserDashboard() {
   const { user } = useAuth()
-  const { isPremium, isConseil, plan, loading: subscriptionLoading } = useSubscription()
+  const { isPremium, isEssential, plan, planName, loading: subscriptionLoading } = useSubscription()
   const { getUserCoupleCode } = useCouple()
   const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
@@ -247,13 +247,13 @@ export default function UserDashboard() {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
                 Salam {user?.firstName || user?.name || user?.email?.split('@')[0] || 'Utilisateur'} 👋
               </h1>
-              {!subscriptionLoading && isPremium && (
+              {!subscriptionLoading && (isPremium || isEssential) && (
                 <Badge className={`${
-                  isConseil 
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700' 
-                    : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+                  isPremium 
+                    ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700' 
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
                 } text-white border-0 px-3 py-1 text-sm font-semibold shadow-md`}>
-                  {isConseil ? '👑 Conseil' : '⭐ Premium'}
+                  {isPremium ? '👑 Premium' : '⭐ Essentiel'}
                 </Badge>
               )}
             </div>
@@ -365,16 +365,16 @@ export default function UserDashboard() {
                 transition={{ delay: 0.2 }}
               >
                 <Card className={`border-2 ${
-                  isConseil 
-                    ? 'border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/50' 
-                    : 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50'
+                  isPremium 
+                    ? 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50' 
+                    : 'border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50'
                 }`}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      {isConseil ? (
+                      {isPremium ? (
                         <>
-                          <Crown className="w-5 h-5 text-orange-600" />
-                          <span className="text-orange-900">Avantages Conseil Actifs</span>
+                          <Crown className="w-5 h-5 text-purple-600" />
+                          <span className="text-purple-900">Avantages Premium Actifs</span>
                         </>
                       ) : (
                         <>
@@ -414,10 +414,10 @@ export default function UserDashboard() {
                           <p className="text-xs text-gray-600">Rapports professionnels (bientôt)</p>
                         </div>
                       </div>
-                      {isConseil && (
+                      {isPremium && (
                         <>
                           <div className="flex items-start gap-2">
-                            <CheckCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                             <div>
                               <p className="font-medium text-sm text-gray-900">Consultation mensuelle</p>
                               <p className="text-xs text-gray-600">Expert matrimonial dédié</p>
