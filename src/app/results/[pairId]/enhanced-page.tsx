@@ -32,6 +32,7 @@ import { OverallScorePieChart } from '@/components/OverallScorePieChart'
 import { PDFReportView } from '@/components/PDFReportView'
 import { usePDFExport } from '@/hooks/usePDFExport'
 import { Toast } from '@/components/Toast'
+import FeatureGate from '@/components/premium/FeatureGate'
 
 interface DimensionData {
   dimension: string
@@ -256,23 +257,25 @@ export default function EnhancedResultsPage({
               overallScore={results.overall_score}
               partnerName={results.user2_name}
             />
-            <Button 
-              variant="outline"
-              onClick={handleExportPDF}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-2"></div>
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <Download className="h-4 w-4 mr-2" />
-                  Télécharger PDF
-                </>
-              )}
-            </Button>
+            <FeatureGate featureCode="pdf_export">
+              <Button 
+                variant="outline"
+                onClick={handleExportPDF}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-2"></div>
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Télécharger PDF
+                  </>
+                )}
+              </Button>
+            </FeatureGate>
           </div>
         </div>
 

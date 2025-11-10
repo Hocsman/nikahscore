@@ -18,6 +18,7 @@ import MatchInsights from './MatchInsights'
 import QuestionnaireHistoryCard from './QuestionnaireHistoryCard'
 import { AchievementsSummary } from '@/components/AchievementsSummary'
 import { AchievementsChecker } from '@/components/AchievementsChecker'
+import FeatureGate from '@/components/premium/FeatureGate'
 import { 
   User, 
   Users,
@@ -273,7 +274,10 @@ export default function UserDashboard() {
           </div>
           
           <div className="flex items-center gap-3">
-            {isPremium ? (
+            <FeatureGate 
+              featureCode="pdf_export"
+              customMessage="L'export PDF est limité à 10 par mois pour Premium, illimité pour Conseil"
+            >
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -283,8 +287,10 @@ export default function UserDashboard() {
                 <Download className="w-4 h-4 mr-2" />
                 {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
               </Button>
-            ) : (
-              <Link href="/premium">
+            </FeatureGate>
+            
+            {!isPremium && !isConseil && (
+              <Link href="/pricing">
                 <Button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600">
                   <Crown className="w-4 h-4 mr-2" />
                   Passer Premium
