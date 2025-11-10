@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/hooks/useAuth'
+import { useAchievements } from '@/hooks/useAchievements'
 import { useRouter } from 'next/navigation'
 import { 
   User, 
@@ -24,6 +25,7 @@ import Link from 'next/link'
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth()
+  const { checkAchievements } = useAchievements()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -83,6 +85,9 @@ export default function ProfilePage() {
       }
 
       setSuccess('✅ Profil mis à jour avec succès !')
+      
+      // Vérifier les achievements de profil
+      await checkAchievements()
       
       // Rafraîchir la page après 2 secondes
       setTimeout(() => {

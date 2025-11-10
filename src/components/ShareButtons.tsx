@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useAchievements } from '@/hooks/useAchievements'
 
 interface ShareButtonsProps {
   pairId: string
@@ -26,6 +27,7 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ pairId, overallScore, partnerName }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
+  const { checkAchievements } = useAchievements()
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
   const resultsUrl = `${baseUrl}/results/${pairId}`
@@ -43,19 +45,25 @@ export function ShareButtons({ pairId, overallScore, partnerName }: ShareButtons
       await navigator.clipboard.writeText(resultsUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+      // Vérifier les achievements de partage
+      await checkAchievements()
     } catch (err) {
       console.error('Erreur copie lien:', err)
     }
   }
 
-  const handleWhatsAppShare = () => {
+  const handleWhatsAppShare = async () => {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`
     window.open(whatsappUrl, '_blank')
+    // Vérifier les achievements de partage
+    await checkAchievements()
   }
 
-  const handleEmailShare = () => {
+  const handleEmailShare = async () => {
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`
     window.open(mailtoUrl)
+    // Vérifier les achievements de partage
+    await checkAchievements()
   }
 
   const handleNativeShare = async () => {
@@ -66,6 +74,8 @@ export function ShareButtons({ pairId, overallScore, partnerName }: ShareButtons
           text: shareMessage,
           url: resultsUrl,
         })
+        // Vérifier les achievements de partage
+        await checkAchievements()
       } catch (err) {
         console.error('Erreur partage natif:', err)
       }

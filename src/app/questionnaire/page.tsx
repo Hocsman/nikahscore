@@ -12,6 +12,7 @@ import { useFeaturePermission } from '@/hooks/usePermission'
 import PremiumBlock from '@/components/PremiumBlock'
 import { useAnalytics } from '@/hooks/useAnalytics'
 import { useAuth } from '@/hooks/useAuth'
+import { useAchievements } from '@/hooks/useAchievements'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -68,6 +69,9 @@ export default function QuestionnairePage() {
   
   // Analytics tracking
   const { trackEvent } = useAnalytics()
+  
+  // Achievements tracking
+  const { checkAchievements } = useAchievements()
 
   // Vérification du couple - rediriger vers /couple si pas de couple créé/rejoint
   useEffect(() => {
@@ -218,9 +222,11 @@ export default function QuestionnairePage() {
         })
         
         setShowConfetti(true)
-        setTimeout(() => {
+        setTimeout(async () => {
           setIsCompleted(true)
           setIsSubmitting(false)
+          // Vérifier les achievements de questionnaire
+          await checkAchievements()
         }, 1500)
       }
     }, 600)
