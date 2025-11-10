@@ -24,6 +24,8 @@ import {
   Briefcase,
   Sparkles
 } from 'lucide-react'
+import { ShareButtons } from '@/components/ShareButtons'
+import { PersonalizedAdvice } from '@/components/PersonalizedAdvice'
 
 interface DimensionData {
   dimension: string
@@ -76,10 +78,6 @@ export default function EnhancedResultsPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    generateReport()
-  }, [params.pairId])
-
   const generateReport = async () => {
     setLoading(true)
     setError(null)
@@ -110,6 +108,11 @@ export default function EnhancedResultsPage({
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    generateReport()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.pairId])
 
   const getScoreColor = (score: number) => {
     if (score >= 85) return 'text-green-600'
@@ -194,10 +197,11 @@ export default function EnhancedResultsPage({
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline">
-              <Share2 className="h-4 w-4 mr-2" />
-              Partager
-            </Button>
+            <ShareButtons 
+              pairId={params.pairId}
+              overallScore={results.overall_score}
+              partnerName={results.user2_name}
+            />
             <Button variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Télécharger PDF
@@ -439,6 +443,23 @@ export default function EnhancedResultsPage({
               </CardContent>
             </Card>
           </div>
+        </motion.div>
+
+        {/* Conseils Personnalisés */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mb-8"
+        >
+          <PersonalizedAdvice
+            overallScore={results.overall_score}
+            axisScores={results.dimension_breakdown.reduce((acc, dim) => {
+              acc[dim.dimension] = dim.score
+              return acc
+            }, {} as Record<string, number>)}
+            dealbreakerConflicts={results.dealbreaker_conflicts}
+          />
         </motion.div>
 
         {/* Footer */}
