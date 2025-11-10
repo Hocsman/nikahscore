@@ -128,7 +128,7 @@ export function useSubscription() {
 
   // Fonctions utilitaires
   const isPremium = subscription?.plan?.name === 'premium'
-  const isEssential = subscription?.plan?.name === 'essential'
+  const isConseil = subscription?.plan?.name === 'conseil'
   const isFree = !subscription || subscription?.plan?.name === 'free'
   const isActive = subscription?.status === 'active'
   const planName = subscription?.plan?.display_name || 'Gratuit'
@@ -139,7 +139,7 @@ export function useSubscription() {
     loading,
     error,
     isPremium,
-    isEssential,
+    isConseil,
     isFree,
     isActive,
     planName,

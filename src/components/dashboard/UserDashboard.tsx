@@ -56,7 +56,7 @@ interface DashboardStats {
 
 export default function UserDashboard() {
   const { user } = useAuth()
-  const { isPremium, isEssential, plan, planName, loading: subscriptionLoading } = useSubscription()
+  const { isPremium, isConseil, plan, planName, loading: subscriptionLoading } = useSubscription()
   const { getUserCoupleCode } = useCouple()
   const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
@@ -247,13 +247,15 @@ export default function UserDashboard() {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
                 Salam {user?.firstName || user?.name || user?.email?.split('@')[0] || 'Utilisateur'} 👋
               </h1>
-              {!subscriptionLoading && (isPremium || isEssential) && (
+              {!subscriptionLoading && (isPremium || isConseil) && (
                 <Badge className={`${
-                  isPremium 
-                    ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700' 
+                  isConseil
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700' 
+                    : isPremium 
+                    ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
                 } text-white border-0 px-3 py-1 text-sm font-semibold shadow-md`}>
-                  {isPremium ? '👑 Premium' : '⭐ Essentiel'}
+                  {isConseil ? '👑 Conseil Premium' : isPremium ? '⭐ Premium' : '🆓 Gratuit'}
                 </Badge>
               )}
             </div>
