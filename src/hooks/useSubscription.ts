@@ -53,12 +53,10 @@ export function useSubscription() {
       try {
         const supabase = createClient()
         
-        const { data, error: fetchError } = await supabase
+        // 1. Récupérer la subscription de l'utilisateur
+        const { data: userSubData, error: fetchError } = await supabase
           .from('user_subscriptions')
-          .select(`
-            *,
-            plan:subscription_plans(*)
-          `)
+          .select('*')
           .eq('user_id', user.id)
           .single()
 
@@ -70,8 +68,27 @@ export function useSubscription() {
           } else {
             throw fetchError
           }
-        } else {
-          setSubscription(data as Subscription)
+        } else if (userSubData) {
+          // 2. Récupérer le plan correspondant via plan_code
+          const { data: planData, error: planError } = await supabase
+            .from('subscription_plans')
+            .select('*')
+            .eq('name', userSubData.plan_code)
+            .single()
+
+          if (planError) {
+            console.error('❌ Erreur récupération plan:', planError)
+            throw planError
+          }
+
+          // 3. Combiner les données
+          const fullData = {
+            ...userSubData,
+            plan: planData
+          }
+          
+          console.log('✅ Abonnement chargé:', fullData.plan_code, '-', fullData.plan?.display_name)
+          setSubscription(fullData as Subscription)
         }
       } catch (err) {
         console.error('Erreur lors de la récupération de l\'abonnement:', err)
