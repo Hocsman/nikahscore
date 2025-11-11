@@ -91,7 +91,11 @@ export async function POST(request: NextRequest) {
           ])
 
         if (userError) {
-          // Erreur silencieuse en production
+          console.error('❌ Erreur création profil users:', userError)
+          return NextResponse.json(
+            { error: 'Database error saving new user', details: userError.message },
+            { status: 400 }
+          )
         }
       }
 
