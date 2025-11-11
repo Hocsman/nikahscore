@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
         'Compte créé ! Vérifiez votre email pour activer votre compte.',
       user: {
         id: data.user?.id,
-        name: name,
+        name: firstName + (lastName ? ' ' + lastName : ''),
         email: data.user?.email,
         emailConfirmed: !!data.user?.email_confirmed_at
       }
