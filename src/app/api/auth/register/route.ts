@@ -76,6 +76,10 @@ export async function POST(request: NextRequest) {
       const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.user.id)
       
       if (authUser.user) {
+        // Générer le hash SHA-256 de l'email
+        const crypto = require('crypto')
+        const emailHash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex')
+        
         // Créer l'entrée dans la table users avec first_name et last_name
         const { error: userError } = await supabaseAdmin
           .from('users')
@@ -85,7 +89,7 @@ export async function POST(request: NextRequest) {
               first_name: firstName,
               last_name: lastName || null,
               email: email,
-              email_hash: '', // Sera rempli par un trigger ou fonction si nécessaire
+              email_hash: emailHash,
               created_at: new Date().toISOString()
             }
           ])
