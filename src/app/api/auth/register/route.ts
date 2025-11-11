@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
+      console.error('❌ Erreur signUp:', error)
       if (error.message.includes('already registered')) {
         return NextResponse.json(
           { error: 'Cette adresse email est déjà utilisée' },
@@ -62,10 +63,20 @@ export async function POST(request: NextRequest) {
         )
       }
       return NextResponse.json(
-        { error: error.message },
+        { error: error.message, signUpError: error },
         { status: 400 }
       )
     }
+
+    if (!data.user) {
+      console.error('❌ signUp réussi mais data.user est null:', data)
+      return NextResponse.json(
+        { error: 'User creation failed - no user returned', data },
+        { status: 400 }
+      )
+    }
+
+    console.log('✅ signUp réussi, user ID:', data.user.id)
 
     // Créer le profil utilisateur avec un client admin (bypass RLS)
     if (data.user) {
@@ -119,6 +130,25 @@ export async function POST(request: NextRequest) {
             },
             { status: 400 }
           )
+        }
+
+        // Créer la subscription gratuite pour le nouvel utilisateur
+        const freePlanResult = await supabaseAdmin
+          .from('subscription_plans')
+          .select('id')
+          .eq('name', 'free')
+          .single()
+
+        if (freePlanResult.data) {
+          await supabaseAdmin
+            .from('user_subscriptions')
+            .insert([{
+              user_id: data.user.id,
+              plan_code: 'free',
+              plan_id: freePlanResult.data.id,
+              status: 'active'
+            }])
+          console.log('✅ Subscription gratuite créée')
         }
       }
 
