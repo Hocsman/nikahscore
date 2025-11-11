@@ -62,7 +62,6 @@ export default function AuthPage() {
   // Rediriger vers /welcome si déjà connecté
   useEffect(() => {
     if (!loading && user) {
-      console.log('🔄 Déjà connecté, redirection automatique vers /welcome')
       router.push('/welcome')
     }
   }, [user, loading, router])
@@ -90,8 +89,6 @@ export default function AuthPage() {
           throw new Error('Le mot de passe doit contenir au moins 6 caractères')
         }
 
-        console.log('🚀 Inscription via API...')
-        
         // Inscription via notre API (avec envoi d'email)
         const response = await fetch('/api/auth/register', {
           method: 'POST',
@@ -112,54 +109,37 @@ export default function AuthPage() {
           throw new Error(result.error || 'Erreur lors de l\'inscription')
         }
 
-        console.log('✅ Inscription réussie:', result)
-        setSuccess(result.message || 'Compte créé avec succès ! Vérifiez votre email.')
+        setSuccess('✅ Compte créé ! Redirection vers la connexion...')
         
-        // Pas de redirection automatique après inscription
-        // L'utilisateur doit d'abord se connecter
+        // Rediriger vers la page de connexion après 2 secondes
+        setTimeout(() => {
+          setIsLogin(true) // Basculer vers le formulaire de connexion
+          setFormData({ ...formData, password: '', confirmPassword: '' }) // Vider les mots de passe
+        }, 2000)
         
       } else {
         // Connexion avec Supabase
-        console.log('🔐 Tentative de connexion avec:', formData.email)
-        
         const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password
         })
 
         if (error) {
-          console.error('❌ Erreur de connexion:', error)
           throw error
         }
 
-        console.log('✅ Connexion réussie, utilisateur:', data.user?.email)
-        console.log('📊 Session:', data.session ? 'présente' : 'absente')
         setSuccess('Connexion réussie ! Redirection...')
         
         // Attendre que la session soit bien établie
-        console.log('⏳ Attente stabilisation (500ms)...')
         await new Promise(resolve => setTimeout(resolve, 500))
         
-        // Utiliser router.push au lieu de window.location.href
-        console.log('🔄 Redirection vers /welcome...')
-        try {
-          router.push('/welcome')
-          console.log('✅ router.push appelé')
-        } catch (routerError) {
-          console.error('❌ Erreur router.push:', routerError)
-          // Fallback : utiliser window.location en dernier recours
-          console.log('🔄 Fallback: window.location.href...')
-          window.location.href = '/welcome'
-        }
+        // Rediriger vers la page d'accueil
+        router.push('/welcome')
       }
 
     } catch (err: any) {
-      console.error('❌ Erreur dans handleSubmit:', err)
-      console.error('❌ Message:', err.message)
-      console.error('❌ Stack:', err.stack)
       setError(err.message)
     } finally {
-      console.log('⚙️ Finally: setLoading(false)')
       setLoading(false)
     }
   }

@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('❌ Erreur signUp:', error)
       if (error.message.includes('already registered')) {
         return NextResponse.json(
           { error: 'Cette adresse email est déjà utilisée' },
@@ -69,14 +68,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (!data.user) {
-      console.error('❌ signUp réussi mais data.user est null:', data)
       return NextResponse.json(
-        { error: 'User creation failed - no user returned', data },
+        { error: 'User creation failed - no user returned' },
         { status: 400 }
       )
     }
-
-    console.log('✅ signUp réussi, user ID:', data.user.id)
 
     // Créer le profil utilisateur avec un client admin (bypass RLS)
     if (data.user) {
@@ -121,8 +117,6 @@ export async function POST(request: NextRequest) {
             }
           }
           
-          console.error('❌ Erreur création profil users:', JSON.stringify(errorDetails, null, 2))
-          
           return NextResponse.json(
             { 
               error: 'Database error saving new user', 
@@ -148,7 +142,6 @@ export async function POST(request: NextRequest) {
               plan_id: freePlanResult.data.id,
               status: 'active'
             }])
-          console.log('✅ Subscription gratuite créée')
         }
       }
 
