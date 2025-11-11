@@ -95,22 +95,27 @@ export async function POST(request: NextRequest) {
           ])
 
         if (userError) {
-          console.error('❌ Erreur création profil users:', userError)
-          console.error('❌ userError complet:', JSON.stringify(userError, null, 2))
-          console.error('❌ Data tentée:', {
-            id: data.user.id,
-            first_name: firstName,
-            last_name: lastName || null,
-            email: email,
-            email_hash: emailHash,
-          })
+          // Log complet pour debugging
+          const errorDetails = {
+            message: userError.message,
+            code: userError.code,
+            hint: userError.hint,
+            details: userError.details,
+            data_attempted: {
+              id: data.user.id,
+              first_name: firstName,
+              last_name: lastName || null,
+              email: email,
+              email_hash_length: emailHash?.length || 0,
+            }
+          }
+          
+          console.error('❌ Erreur création profil users:', JSON.stringify(errorDetails, null, 2))
+          
           return NextResponse.json(
             { 
               error: 'Database error saving new user', 
-              details: userError.message,
-              code: userError.code,
-              hint: userError.hint,
-              fullError: userError
+              ...errorDetails
             },
             { status: 400 }
           )
