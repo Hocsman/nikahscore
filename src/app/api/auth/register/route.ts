@@ -91,19 +91,13 @@ export async function POST(request: NextRequest) {
           ])
 
         if (userError) {
-          console.error('Erreur création utilisateur:', userError)
-        } else {
-          console.log('✅ Utilisateur créé pour:', firstName, lastName || '')
+          // Erreur silencieuse en production
         }
-      } else {
-        console.warn('⚠️ Utilisateur non trouvé dans auth.users, profil non créé')
       }
 
       // Envoyer l'email de bienvenue via Resend
       try {
-        console.log('🚀 Tentative envoi email de bienvenue à:', email)
-        
-        const emailResult = await resend.emails.send({
+        await resend.emails.send({
           from: 'NikahScore <welcome@nikahscore.com>',
           to: [email], // Email directement à l'utilisateur
           subject: `🎉 Bienvenue sur NikahScore, ${firstName} !`,
@@ -140,10 +134,7 @@ export async function POST(request: NextRequest) {
             </div>
           `
         })
-        
-        console.log('✅ Email envoyé avec succès:', emailResult)
       } catch (emailError) {
-        console.error('❌ Erreur envoi email:', emailError)
         // Ne pas échouer l'inscription si l'email ne marche pas
       }
     }
@@ -162,7 +153,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Erreur inscription:', error)
     return NextResponse.json(
       { error: 'Erreur lors de la création du compte' },
       { status: 500 }
