@@ -34,7 +34,11 @@ const FEATURE_NAMES: Record<FeatureCode, string> = {
   leaderboard: 'Classement',
   couple_mode: 'Mode couple',
   couple_insights: 'Analyses couple',
-  compatibility_tracking: 'Suivi de compatibilité'
+  compatibility_tracking: 'Suivi de compatibilité',
+  results_charts: 'Graphiques de compatibilité',
+  results_detailed_analysis: 'Analyse détaillée des résultats',
+  results_comparison: 'Comparaison avec la communauté',
+  results_recommendations: 'Recommandations Premium'
 }
 
 const PLAN_INFO = {
