@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     // 6. Envoyer l'email
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'NikahScore <notifications@nikahscore.com>',
+      from: 'NikahScore <noreply@nikahscore.com>',
       to: creatorData.email,
       subject: `${partnerName} a complété le questionnaire NikahScore ! 💕`,
       react: PartnerCompletedNotification({
