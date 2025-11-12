@@ -33,6 +33,8 @@ import {
 import { PERSONALITY_QUESTIONS } from '@/data/personality-questions'
 import { getQuestionHint } from '@/data/question-hints'
 import QuestionTooltip from '@/components/QuestionTooltip'
+import ShareQuestionnaire from '@/components/questionnaire/ShareQuestionnaire'
+import FeatureGate from '@/components/premium/FeatureGate'
 
 // Questions statiques améliorées
 const STATIC_QUESTIONS = PERSONALITY_QUESTIONS
@@ -63,6 +65,8 @@ export default function QuestionnairePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPremiumBlock, setShowPremiumBlock] = useState(false)
   const [checkingCouple, setCheckingCouple] = useState(true)
+  const [questionnaireId, setQuestionnaireId] = useState<string | null>(null)
+  const [showShareSection, setShowShareSection] = useState(false)
 
   // Vérification des permissions
   const { allowed: hasBasicAccess, blocked: needsUpgrade, requiredPlan } = useFeaturePermission('basic_questionnaire')
@@ -428,6 +432,23 @@ export default function QuestionnairePage() {
                 </Button>
               </motion.div>
             </Link>
+
+            {/* Section Partager avec Feature Gate */}
+            {user && (
+              <FeatureGate featureCode="questionnaire_shareable">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1, duration: 0.6 }}
+                  className="pt-4"
+                >
+                  <ShareQuestionnaire 
+                    questionnaireId={questionnaireId || 'temp-id'}
+                    userId={user.id}
+                  />
+                </motion.div>
+              </FeatureGate>
+            )}
             
             <motion.div className="flex space-x-3">
               <Button 

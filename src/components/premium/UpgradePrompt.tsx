@@ -38,7 +38,8 @@ const FEATURE_NAMES: Record<FeatureCode, string> = {
   results_charts: 'Graphiques de compatibilité',
   results_detailed_analysis: 'Analyse détaillée des résultats',
   results_comparison: 'Comparaison avec la communauté',
-  results_recommendations: 'Recommandations Premium'
+  results_recommendations: 'Recommandations Premium',
+  questionnaire_shareable: 'Questionnaire partageable'
 }
 
 const PLAN_INFO = {
