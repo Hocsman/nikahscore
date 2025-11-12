@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar } from 'lucide-react'
 import FeatureGate from '@/components/premium/FeatureGate'
+import CoupleRadarChart from '@/components/couple/CoupleRadarChart'
+import QuestionComparison from '@/components/couple/QuestionComparison'
+import CoupleStatistics from '@/components/couple/CoupleStatistics'
 
 interface CoupleResultsPageProps {
   params: Promise<{ shareCode: string }>
@@ -23,6 +26,25 @@ interface SharedQuestionnaire {
   partner_questionnaire_id: string | null
 }
 
+interface Question {
+  id: string
+  text: string
+  category: string
+  type: 'boolean' | 'scale'
+  axis: string
+  order_index: number
+}
+
+interface Response {
+  questionId: string
+  value: boolean | number
+}
+
+interface CategoryScore {
+  category: string
+  score: number
+}
+
 export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
   const router = useRouter()
   const [shareCode, setShareCode] = useState<string>('')
@@ -31,6 +53,12 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
   const [error, setError] = useState<string | null>(null)
   const [creatorName, setCreatorName] = useState<string>('Partenaire 1')
   const [partnerName, setPartnerName] = useState<string>('Partenaire 2')
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [creatorResponses, setCreatorResponses] = useState<Response[]>([])
+  const [partnerResponses, setPartnerResponses] = useState<Response[]>([])
+  const [creatorScores, setCreatorScores] = useState<CategoryScore[]>([])
+  const [partnerScores, setPartnerScores] = useState<CategoryScore[]>([])
+  const [overallScore, setOverallScore] = useState<number>(0)
 
   useEffect(() => {
     params.then(p => setShareCode(p.shareCode))
@@ -43,7 +71,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
       try {
         const supabase = createClient()
 
-        // Charger les données du questionnaire partagé
+        // 1. Charger les données du questionnaire partagé
         const { data, error: fetchError } = await supabase
           .from('shared_questionnaires')
           .select('*')
@@ -69,7 +97,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
 
         setSharedData(data as SharedQuestionnaire)
 
-        // Charger les noms
+        // 2. Charger les noms
         const { data: creatorUser } = await supabase
           .from('users')
           .select('display_name, email')
@@ -83,6 +111,132 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
         if (data.partner_name) {
           setPartnerName(data.partner_name)
         }
+
+        // 3. Charger toutes les questions
+        const { data: questionsData, error: questionsError } = await supabase
+          .from('questions')
+          .select('*')
+          .order('order_index')
+
+        if (questionsError || !questionsData) {
+          setError('Erreur lors du chargement des questions')
+          return
+        }
+
+        const formattedQuestions: Question[] = questionsData.map(q => ({
+          id: q.id,
+          text: q.text,
+          category: q.axis,
+          type: q.response_type === 'boolean' ? 'boolean' : 'scale',
+          axis: q.axis,
+          order_index: q.order_index
+        }))
+        setQuestions(formattedQuestions)
+
+        // 4. Charger les réponses du créateur
+        const { data: creatorResponsesData, error: creatorResponsesError } = await supabase
+          .from('questionnaire_responses')
+          .select('question_id, response_value')
+          .eq('questionnaire_id', data.creator_questionnaire_id)
+
+        if (creatorResponsesError) {
+          console.error('Error loading creator responses:', creatorResponsesError)
+        } else {
+          const formattedCreatorResponses: Response[] = creatorResponsesData.map(r => ({
+            questionId: r.question_id,
+            value: r.response_value
+          }))
+          setCreatorResponses(formattedCreatorResponses)
+        }
+
+        // 5. Charger les réponses du partenaire
+        const { data: partnerResponsesData, error: partnerResponsesError } = await supabase
+          .from('questionnaire_responses')
+          .select('question_id, response_value')
+          .eq('questionnaire_id', data.partner_questionnaire_id)
+
+        if (partnerResponsesError) {
+          console.error('Error loading partner responses:', partnerResponsesError)
+        } else {
+          const formattedPartnerResponses: Response[] = partnerResponsesData.map(r => ({
+            questionId: r.question_id,
+            value: r.response_value
+          }))
+          setPartnerResponses(formattedPartnerResponses)
+        }
+
+        // 6. Calculer les scores par catégorie
+        const categories = [...new Set(formattedQuestions.map(q => q.category))]
+        
+        const creatorCategoryScores: CategoryScore[] = categories.map(category => {
+          const categoryQuestions = formattedQuestions.filter(q => q.category === category)
+          let totalScore = 0
+          let maxScore = 0
+
+          categoryQuestions.forEach(q => {
+            const response = creatorResponsesData?.find(r => r.question_id === q.id)
+            if (response) {
+              if (q.type === 'boolean') {
+                totalScore += response.response_value ? 100 : 0
+                maxScore += 100
+              } else {
+                totalScore += (response.response_value as number) * 20
+                maxScore += 100
+              }
+            }
+          })
+
+          return {
+            category,
+            score: maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0
+          }
+        })
+        setCreatorScores(creatorCategoryScores)
+
+        const partnerCategoryScores: CategoryScore[] = categories.map(category => {
+          const categoryQuestions = formattedQuestions.filter(q => q.category === category)
+          let totalScore = 0
+          let maxScore = 0
+
+          categoryQuestions.forEach(q => {
+            const response = partnerResponsesData?.find(r => r.question_id === q.id)
+            if (response) {
+              if (q.type === 'boolean') {
+                totalScore += response.response_value ? 100 : 0
+                maxScore += 100
+              } else {
+                totalScore += (response.response_value as number) * 20
+                maxScore += 100
+              }
+            }
+          })
+
+          return {
+            category,
+            score: maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0
+          }
+        })
+        setPartnerScores(partnerCategoryScores)
+
+        // 7. Calculer le score de compatibilité global
+        let agreements = 0
+        formattedQuestions.forEach(q => {
+          const creatorResp = creatorResponsesData?.find(r => r.question_id === q.id)
+          const partnerResp = partnerResponsesData?.find(r => r.question_id === q.id)
+          
+          if (creatorResp && partnerResp) {
+            if (q.type === 'boolean') {
+              if (creatorResp.response_value === partnerResp.response_value) agreements++
+            } else {
+              const diff = Math.abs((creatorResp.response_value as number) - (partnerResp.response_value as number))
+              if (diff <= 1) agreements += 1
+              else if (diff <= 3) agreements += 0.5
+            }
+          }
+        })
+        
+        const compatibilityScore = Math.round((agreements / formattedQuestions.length) * 100)
+        setOverallScore(compatibilityScore)
 
       } catch (err) {
         console.error('Error loading couple results:', err)
@@ -130,14 +284,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
     )
   }
 
-  // Mock data pour démonstration (à remplacer par vraies données)
-  const overallScore = 78
-  const agreementStats = {
-    perfectMatch: 35,
-    minorDifference: 12,
-    majorDifference: 3,
-    total: 50
-  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
@@ -178,45 +325,31 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* TODO: Ajouter CoupleRadarChart ici */}
-                <div className="h-96 flex items-center justify-center bg-gray-50 rounded-lg">
-                  <p className="text-gray-500">Graphique radar comparatif (à implémenter)</p>
-                </div>
-
-                {/* Statistiques d'accord */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="text-3xl font-bold text-green-700">
-                      {agreementStats.perfectMatch}
-                    </div>
-                    <div className="text-sm text-green-600">
-                      Points d'accord ({Math.round(agreementStats.perfectMatch / agreementStats.total * 100)}%)
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="text-3xl font-bold text-yellow-700">
-                      {agreementStats.minorDifference}
-                    </div>
-                    <div className="text-sm text-yellow-600">
-                      Différences mineures ({Math.round(agreementStats.minorDifference / agreementStats.total * 100)}%)
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="text-3xl font-bold text-red-700">
-                      {agreementStats.majorDifference}
-                    </div>
-                    <div className="text-sm text-red-600">
-                      Désaccords majeurs ({Math.round(agreementStats.majorDifference / agreementStats.total * 100)}%)
-                    </div>
-                  </div>
-                </div>
+                {/* Graphique Radar Comparatif */}
+                {creatorScores.length > 0 && partnerScores.length > 0 && (
+                  <CoupleRadarChart
+                    creatorName={creatorName}
+                    partnerName={partnerName}
+                    creatorScores={creatorScores}
+                    partnerScores={partnerScores}
+                  />
+                )}
               </CardContent>
             </Card>
           </FeatureGate>
 
-          {/* Section 2 : Comparaison détaillée */}
+          {/* Section 2 : Statistiques détaillées */}
+          <FeatureGate featureCode="couple_results_comparison">
+            {questions.length > 0 && creatorResponses.length > 0 && partnerResponses.length > 0 && (
+              <CoupleStatistics
+                questions={questions}
+                creatorResponses={creatorResponses}
+                partnerResponses={partnerResponses}
+              />
+            )}
+          </FeatureGate>
+
+          {/* Section 3 : Comparaison détaillée par question */}
           <FeatureGate featureCode="couple_results_comparison">
             <Card className="border-purple-200">
               <CardHeader>
@@ -229,76 +362,22 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* TODO: Ajouter QuestionComparison ici */}
-                <div className="space-y-4">
+                {questions.length > 0 && creatorResponses.length > 0 && partnerResponses.length > 0 ? (
+                  <QuestionComparison
+                    questions={questions}
+                    creatorName={creatorName}
+                    partnerName={partnerName}
+                    creatorResponses={creatorResponses}
+                    partnerResponses={partnerResponses}
+                  />
+                ) : (
                   <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-gray-500 text-center">
-                      Comparaison détaillée des réponses (à implémenter)
-                    </p>
+                    <p className="text-gray-500 text-center">Chargement des réponses...</p>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </FeatureGate>
-
-          {/* Section 3 : Points forts */}
-          <Card className="border-green-200 bg-green-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-700">
-                <CheckCircle className="h-5 w-5" />
-                Vos Forces en Commun
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
-                  <span>Vous êtes alignés sur vos valeurs religieuses (95%)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
-                  <span>Vous partagez la même vision du rôle parental (92%)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
-                  <span>Vous avez des objectifs financiers similaires (88%)</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Section 4 : Points d'attention */}
-          <Card className="border-orange-200 bg-orange-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-700">
-                <AlertCircle className="h-5 w-5" />
-                Sujets à Approfondir Ensemble
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 bg-white rounded-lg border border-orange-200">
-                  <h4 className="font-semibold text-orange-900 mb-2">
-                    1. Vision du mariage (traditionnel vs moderne)
-                  </h4>
-                  <p className="text-sm text-orange-700 flex items-start gap-2">
-                    <MessageCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                    Discutez de vos attentes concrètes sur les cérémonies et traditions
-                  </p>
-                </div>
-                
-                <div className="p-4 bg-white rounded-lg border border-orange-200">
-                  <h4 className="font-semibold text-orange-900 mb-2">
-                    2. Gestion des conflits (méthodes différentes)
-                  </h4>
-                  <p className="text-sm text-orange-700 flex items-start gap-2">
-                    <MessageCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                    Essayez de comprendre le style de communication de l'autre
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Section 5 : Recommandations */}
           <Card className="border-purple-200">

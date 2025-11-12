@@ -16,6 +16,7 @@ import Link from 'next/link'
 import CompatibilityAnalysis from './CompatibilityAnalysis'
 import MatchInsights from './MatchInsights'
 import QuestionnaireHistoryCard from './QuestionnaireHistoryCard'
+import SharedQuestionnairesCard from './SharedQuestionnairesCard'
 import { AchievementsSummary } from '@/components/AchievementsSummary'
 import { AchievementsChecker } from '@/components/AchievementsChecker'
 import FeatureGate from '@/components/premium/FeatureGate'
@@ -502,6 +503,15 @@ export default function UserDashboard() {
                 questionnaires={questionnaires}
                 loading={statsLoading}
               />
+            </motion.div>
+
+            {/* Questionnaires partagés */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <SharedQuestionnairesCard />
             </motion.div>
 
             {/* Actions rapides */}
