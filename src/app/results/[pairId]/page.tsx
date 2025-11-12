@@ -35,7 +35,8 @@ interface PairInfo {
   created_at: string
 }
 
-export default function ResultsPage({ params }: { params: { pairId: string } }) {
+export default function ResultsPage({ params }: { params: Promise<{ pairId: string }> }) {
+  const [pairId, setPairId] = useState<string>('')
   const [results, setResults] = useState<CompatibilityResult | null>(null)
   const [pairInfo, setPairInfo] = useState<PairInfo | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -46,8 +47,16 @@ export default function ResultsPage({ params }: { params: { pairId: string } }) 
   const supabase = createClient()
 
   useEffect(() => {
-    loadResults()
-  }, [params.pairId])
+    params.then(p => {
+      setPairId(p.pairId)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (pairId) {
+      loadResults()
+    }
+  }, [pairId])
   
   const loadResults = async () => {
     try {
@@ -152,7 +161,7 @@ export default function ResultsPage({ params }: { params: { pairId: string } }) 
               Votre Rapport de Compatibilité
             </h1>
             <p className="text-gray-600">
-              Analyse détaillée pour le couple {params.pairId}
+              Analyse détaillée pour le couple {pairId}
             </p>
           </div>
         </div>
