@@ -105,6 +105,23 @@ export async function POST(request: NextRequest) {
         .eq('share_code', share_code)
     }
 
+    // 🆕 ENVOYER EMAIL DE NOTIFICATION si le partenaire vient de compléter
+    if (role === 'participant' && updated.partner_completed_at && !updated.notification_sent) {
+      try {
+        // Appeler l'API de notification en arrière-plan (ne pas attendre)
+        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://nikahscore.com'}/api/questionnaire/notify-completion`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ shareCode: share_code }),
+        }).catch(err => {
+          console.error('Erreur envoi notification email:', err)
+        })
+      } catch (error) {
+        console.error('Erreur déclenchement notification:', error)
+        // Ne pas bloquer la réponse si l'email échoue
+      }
+    }
+
     console.log('✅ Réponses sauvegardées:', role, share_code)
 
     return NextResponse.json({
