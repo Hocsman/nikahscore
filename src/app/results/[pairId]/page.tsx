@@ -69,7 +69,7 @@ export default function ResultsPage({ params }: { params: Promise<{ pairId: stri
       const { data: resultData, error: resultError } = await supabase
         .from('compatibility_results')
         .select('*')
-        .eq('pair_id', params.pairId)
+        .eq('pair_id', pairId)
         .single()
 
       if (resultError) throw resultError
