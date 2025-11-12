@@ -34,6 +34,7 @@ export type FeatureCode =
   | 'results_recommendations'
   | 'questionnaire_shareable'
   | 'couple_results_comparison'
+  | 'ai_coach'
   | 'basic_achievements'
   | 'all_achievements'
   | 'leaderboard'

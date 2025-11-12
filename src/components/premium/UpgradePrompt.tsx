@@ -40,7 +40,8 @@ const FEATURE_NAMES: Record<FeatureCode, string> = {
   results_comparison: 'Comparaison avec la communauté',
   results_recommendations: 'Recommandations Premium',
   questionnaire_shareable: 'Questionnaire partageable',
-  couple_results_comparison: 'Comparaison résultats couple'
+  couple_results_comparison: 'Comparaison résultats couple',
+  ai_coach: 'Coach AI Matrimonial'
 }
 
 const PLAN_INFO = {
