@@ -101,6 +101,11 @@ export function useFeaturePermission(featureCode: FeatureCode): FeaturePermissio
 
 // Fonction utilitaire pour déterminer le plan minimum requis
 function getRequiredPlanForFeature(featureCode: FeatureCode): string {
+  // Features Conseil uniquement (exclusives)
+  const conseilFeatures: FeatureCode[] = [
+    'ai_coach'
+  ]
+
   // Features Premium uniquement
   const premiumFeatures: FeatureCode[] = [
     'compatibility_trends',
@@ -122,12 +127,16 @@ function getRequiredPlanForFeature(featureCode: FeatureCode): string {
     'priority_support'
   ]
 
+  if (conseilFeatures.includes(featureCode)) {
+    return 'Conseil'
+  }
+
   if (premiumFeatures.includes(featureCode)) {
     return 'Premium'
   }
 
   if (essentialFeatures.includes(featureCode)) {
-    return 'Essentiel'
+    'Essentiel'
   }
 
   return 'Gratuit'
