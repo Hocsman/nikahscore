@@ -39,7 +39,8 @@ const FEATURE_NAMES: Record<FeatureCode, string> = {
   results_detailed_analysis: 'Analyse détaillée des résultats',
   results_comparison: 'Comparaison avec la communauté',
   results_recommendations: 'Recommandations Premium',
-  questionnaire_shareable: 'Questionnaire partageable'
+  questionnaire_shareable: 'Questionnaire partageable',
+  couple_results_comparison: 'Comparaison résultats couple'
 }
 
 const PLAN_INFO = {

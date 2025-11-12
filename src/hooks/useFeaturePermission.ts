@@ -33,6 +33,7 @@ export type FeatureCode =
   | 'results_comparison'
   | 'results_recommendations'
   | 'questionnaire_shareable'
+  | 'couple_results_comparison'
   | 'basic_achievements'
   | 'all_achievements'
   | 'leaderboard'
