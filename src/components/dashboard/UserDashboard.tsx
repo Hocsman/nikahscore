@@ -45,7 +45,8 @@ import {
   Clock,
   CheckCircle,
   Eye,
-  EyeOff
+  EyeOff,
+  Bot
 } from 'lucide-react'
 
 interface DashboardStats {
@@ -289,6 +290,15 @@ export default function UserDashboard() {
                 {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
               </Button>
             </FeatureGate>
+            
+            {isConseil && (
+              <Link href="/coach-ai">
+                <Button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700">
+                  <Bot className="w-4 h-4 mr-2" />
+                  Coach AI
+                </Button>
+              </Link>
+            )}
             
             {!isPremium && !isConseil && (
               <Link href="/pricing">

@@ -78,8 +78,7 @@ export default function PricingPage() {
         "Plan d'action matrimonial sur-mesure",
         "Support téléphonique illimité",
         "Accompagnement durant les rencontres",
-        "Accès aux événements VIP",
-        "Garantie satisfaction 30 jours"
+        "Accès aux événements VIP"
       ],
       limitations: [],
       cta: "Réserver une consultation",

@@ -263,7 +263,7 @@ export default function AuthPage() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="pl-12 pr-12 h-12"
+                    className="pl-12 pr-12 h-12 dark:text-white"
                     required
                     disabled={loading}
                   />
@@ -296,7 +296,7 @@ export default function AuthPage() {
                       placeholder="••••••••"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="pl-12 h-12"
+                      className="pl-12 h-12 dark:text-white"
                       required={!isLogin}
                       disabled={loading}
                     />
