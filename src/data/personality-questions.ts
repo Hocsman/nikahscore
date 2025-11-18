@@ -466,7 +466,8 @@ export const PERSONALITY_QUESTIONS = [
     category: 'scale' as const,
     weight: 0.8,
     is_dealbreaker: false,
-    order_index: 48
+    order_index: 48,
+    hint: 'Certaines personnes sont plus à l\'aise dans les conversations intimes que dans les interactions de groupe. Cela influence la vie sociale du couple.'
   },
   {
     id: 49,
