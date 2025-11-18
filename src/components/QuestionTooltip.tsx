@@ -13,16 +13,16 @@ export default function QuestionTooltip({ hint, className = '' }: QuestionToolti
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block ml-2">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className={`p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors duration-200 ${className}`}
+        className={`p-2 rounded-full bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-800/40 transition-all duration-200 shadow-sm ${className}`}
         aria-label="Aide pour comprendre la question"
       >
-        <Lightbulb className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
+        <Lightbulb className="w-6 h-6 text-yellow-600 dark:text-yellow-400 fill-yellow-400 dark:fill-yellow-600" />
       </button>
 
       <AnimatePresence>

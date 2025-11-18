@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar } from 'lucide-react'
+import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar, Clock, Copy, Mail, Loader2 } from 'lucide-react'
 import FeatureGate from '@/components/premium/FeatureGate'
 import CoupleRadarChart from '@/components/couple/CoupleRadarChart'
 import QuestionComparison from '@/components/couple/QuestionComparison'
@@ -59,6 +59,9 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
   const [creatorScores, setCreatorScores] = useState<CategoryScore[]>([])
   const [partnerScores, setPartnerScores] = useState<CategoryScore[]>([])
   const [overallScore, setOverallScore] = useState<number>(0)
+  const [copied, setCopied] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [sendingEmail, setSendingEmail] = useState(false)
 
   useEffect(() => {
     params.then(p => setShareCode(p.shareCode))
@@ -83,15 +86,17 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
           return
         }
 
-        // Vérifier que les 2 ont complété
-        if (!data.creator_questionnaire_id || !data.partner_questionnaire_id) {
-          setError('Les deux partenaires doivent avoir complété le questionnaire')
-          return
-        }
-
         // Vérifier expiration
         if (new Date(data.expires_at) < new Date()) {
           setError('Ce lien a expiré')
+          return
+        }
+
+        // Vérifier que les 2 ont complété - État d'attente spécifique
+        if (!data.creator_questionnaire_id || !data.partner_questionnaire_id) {
+          setSharedData(data as SharedQuestionnaire)
+          setLoading(false)
+          // Ne pas définir d'erreur, on affichera un état d'attente
           return
         }
 
@@ -284,7 +289,180 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
     )
   }
 
+  // État d'attente si le partenaire n'a pas encore complété
+  if (sharedData && (!sharedData.creator_questionnaire_id || !sharedData.partner_questionnaire_id)) {
+    const shareUrl = `${window.location.origin}/questionnaire/shared/${shareCode}`
+    
+    const handleCopyLink = () => {
+      navigator.clipboard.writeText(shareUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
 
+    const handleSendReminder = async () => {
+      if (!sharedData.partner_name) return
+      
+      setSendingEmail(true)
+      try {
+        const response = await fetch('/api/questionnaire/shared/send-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: sharedData.partner_name, // Assuming partner_name contains email
+            shareCode: shareCode
+          })
+        })
+        
+        if (response.ok) {
+          setEmailSent(true)
+          setTimeout(() => setEmailSent(false), 3000)
+        }
+      } catch (error) {
+        console.error('Error sending reminder:', error)
+      } finally {
+        setSendingEmail(false)
+      }
+    }
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-2xl w-full shadow-2xl">
+          <CardHeader className="text-center pb-4">
+            {/* Badge animé */}
+            <div className="flex justify-center mb-4">
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 text-lg animate-pulse">
+                <Clock className="w-5 h-5 mr-2 inline animate-spin" />
+                En attente
+              </Badge>
+            </div>
+            
+            {/* Animation de coeurs */}
+            <div className="flex justify-center items-center gap-4 mb-6">
+              <div className="relative">
+                <Heart className="w-16 h-16 md:w-20 md:h-20 text-purple-400 fill-purple-200 animate-pulse" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 md:w-10 md:h-10 text-purple-600 animate-spin" />
+                </div>
+              </div>
+            </div>
+
+            <CardTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+              Patience, les résultats arrivent bientôt ! 💫
+            </CardTitle>
+            
+            <CardDescription className="text-base md:text-lg text-gray-600">
+              Votre partenaire n'a pas encore terminé le questionnaire
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            {/* Message encourageant */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6">
+              <div className="flex items-start gap-3">
+                <MessageCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-gray-800 text-lg">Que se passe-t-il maintenant ?</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Vous avez complété votre partie du questionnaire avec succès ! 🎉
+                    <br />
+                    Dès que votre partenaire aura également terminé, vous pourrez découvrir vos résultats de compatibilité détaillés.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Partage du lien */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                <Users className="w-5 h-5 text-purple-600" />
+                Partagez le questionnaire
+              </h3>
+              
+              <p className="text-sm text-gray-600">
+                Envoyez ce lien à votre partenaire pour qu'il puisse compléter sa partie :
+              </p>
+              
+              {/* Lien à copier */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-700 font-mono overflow-x-auto">
+                  {shareUrl}
+                </div>
+                <Button
+                  onClick={handleCopyLink}
+                  variant={copied ? "default" : "outline"}
+                  className={`whitespace-nowrap ${copied ? 'bg-green-500 hover:bg-green-600 text-white' : ''}`}
+                >
+                  {copied ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Copié !
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copier
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Bouton email de rappel */}
+              {sharedData.partner_name && (
+                <Button
+                  onClick={handleSendReminder}
+                  disabled={sendingEmail || emailSent}
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                >
+                  {sendingEmail ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Envoi...
+                    </>
+                  ) : emailSent ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Email envoyé !
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4 mr-2" />
+                      Envoyer un rappel par email
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+
+            {/* Info supplémentaire */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-blue-800">
+                  <p className="font-medium mb-1">💡 Le saviez-vous ?</p>
+                  <p>
+                    Vous recevrez une notification automatique par email dès que votre partenaire aura terminé le questionnaire.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bouton retour */}
+            <div className="pt-4 border-t">
+              <Button 
+                onClick={() => router.push('/dashboard')}
+                variant="outline"
+                className="w-full"
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Retour au tableau de bord
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
