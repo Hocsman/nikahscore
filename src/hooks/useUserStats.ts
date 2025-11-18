@@ -45,7 +45,7 @@ export function useUserStats() {
       const { data: couplesData, error: couplesError } = await supabase
         .from('couples')
         .select('*')
-        .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
+        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
 
       if (couplesError) {
@@ -57,8 +57,8 @@ export function useUserStats() {
 
       // 2. Transformer les données pour l'historique
       const history: QuestionnaireHistory[] = (couplesData || []).map(couple => {
-        const isUserA = couple.user_a_id === user.id
-        const partnerEmail = isUserA ? couple.user_b_email : couple.user_a_email
+        const isCreator = couple.creator_id === user.id
+        const partnerEmail = null // TODO: récupérer l'email du partenaire depuis auth.users
 
         return {
           id: couple.id,
@@ -67,7 +67,7 @@ export function useUserStats() {
           status: couple.status,
           partner_email: partnerEmail,
           compatibility_score: couple.compatibility_score,
-          user_role: isUserA ? 'user_a' : 'user_b'
+          user_role: isCreator ? 'user_a' : 'user_b'
         }
       })
 

@@ -205,7 +205,7 @@ export function useAchievements() {
       const { count: questionnaireCount } = await supabase
         .from('couples')
         .select('*', { count: 'exact', head: true })
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
         .eq('status', 'completed')
 
       // Vérifier first_questionnaire
@@ -227,7 +227,7 @@ export function useAchievements() {
       const { data: couples } = await supabase
         .from('couples')
         .select('compatibility_score')
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
         .eq('status', 'completed')
         .not('compatibility_score', 'is', null)
 

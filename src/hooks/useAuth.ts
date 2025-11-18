@@ -20,11 +20,14 @@ export function useAuth() {
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
+    let mounted = true
+    
     // Récupérer la session actuelle
     const getSession = async () => {
       try {
-        console.log('🔍 useAuth: Récupération de la session...')
         const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (!mounted) return
         
         if (error) {
           console.error('❌ useAuth: Erreur session:', error)
@@ -33,8 +36,6 @@ export function useAuth() {
         }
         
         if (session?.user) {
-          console.log('✅ useAuth: Session trouvée:', session.user.email)
-          
           // Récupérer le prénom et nom depuis user_metadata
           const firstName = session.user.user_metadata?.first_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
           const lastName = session.user.user_metadata?.last_name || null
@@ -46,14 +47,12 @@ export function useAuth() {
             firstName: firstName,
             lastName: lastName
           })
-        } else {
-          console.log('ℹ️ useAuth: Pas de session active')
         }
         
         setLoading(false)
       } catch (err) {
         console.error('❌ useAuth: Erreur getSession:', err)
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
@@ -62,7 +61,10 @@ export function useAuth() {
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔔 useAuth: Auth state change:', event, session?.user?.email)
+        if (!mounted) return
+        
+        // Ignorer INITIAL_SESSION car déjà géré par getSession()
+        if (event === 'INITIAL_SESSION') return
         
         if (session?.user) {
           // Récupérer le prénom et nom depuis user_metadata
@@ -83,7 +85,10 @@ export function useAuth() {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // supabase est stable avec useMemo
 
