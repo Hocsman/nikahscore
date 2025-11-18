@@ -197,8 +197,8 @@ export async function POST(request: NextRequest) {
       user: {
         id: data.user?.id,
         name: firstName + (lastName ? ' ' + lastName : ''),
-        email: data.user?.email,
-        emailConfirmed: !!data.user?.email_confirmed_at
+        email: data.user?.email
+        // emailConfirmed retiré pour éviter l'exploitation par des bots
       }
     })
 

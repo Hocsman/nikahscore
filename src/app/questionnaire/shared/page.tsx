@@ -229,7 +229,7 @@ export default function SharedQuestionnairePage() {
                 <form onSubmit={handleRegister} className="space-y-4">
                   {/* Prénom */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Prénom *
                     </label>
                     <div className="relative">
@@ -240,7 +240,7 @@ export default function SharedQuestionnairePage() {
                         placeholder="Votre prénom"
                         value={registerData.firstName}
                         onChange={handleRegisterInputChange}
-                        className="pl-12 h-12"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required
                         disabled={registerLoading}
                       />
@@ -249,7 +249,7 @@ export default function SharedQuestionnairePage() {
 
                   {/* Nom (optionnel) */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Nom <span className="text-gray-400 text-xs">(optionnel)</span>
                     </label>
                     <div className="relative">
@@ -260,7 +260,7 @@ export default function SharedQuestionnairePage() {
                         placeholder="Votre nom de famille"
                         value={registerData.lastName}
                         onChange={handleRegisterInputChange}
-                        className="pl-12 h-12"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         disabled={registerLoading}
                       />
                     </div>
@@ -268,7 +268,7 @@ export default function SharedQuestionnairePage() {
 
                   {/* Email */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Adresse email *
                     </label>
                     <div className="relative">
@@ -279,7 +279,7 @@ export default function SharedQuestionnairePage() {
                         placeholder="votre@email.com"
                         value={registerData.email}
                         onChange={handleRegisterInputChange}
-                        className="pl-12 h-12"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required
                         disabled={registerLoading}
                       />
@@ -288,7 +288,7 @@ export default function SharedQuestionnairePage() {
 
                   {/* Mot de passe */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Mot de passe *
                     </label>
                     <div className="relative">
@@ -299,7 +299,7 @@ export default function SharedQuestionnairePage() {
                         placeholder="••••••••"
                         value={registerData.password}
                         onChange={handleRegisterInputChange}
-                        className="pl-12 pr-12 h-12 dark:text-white"
+                        className="pl-12 pr-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required
                         disabled={registerLoading}
                       />
@@ -316,7 +316,7 @@ export default function SharedQuestionnairePage() {
 
                   {/* Confirmation mot de passe */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Confirmer le mot de passe *
                     </label>
                     <div className="relative">
@@ -327,7 +327,7 @@ export default function SharedQuestionnairePage() {
                         placeholder="••••••••"
                         value={registerData.confirmPassword}
                         onChange={handleRegisterInputChange}
-                        className="pl-12 h-12 dark:text-white"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required
                         disabled={registerLoading}
                       />

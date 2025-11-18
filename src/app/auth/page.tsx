@@ -191,7 +191,7 @@ export default function AuthPage() {
                 >
                   {/* Prénom (requis) */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Prénom <span className="text-pink-600">*</span>
                     </label>
                     <div className="relative">
@@ -202,7 +202,7 @@ export default function AuthPage() {
                         placeholder="Votre prénom"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className="pl-12 h-12"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required={!isLogin}
                         disabled={loading}
                       />
@@ -211,7 +211,7 @@ export default function AuthPage() {
 
                   {/* Nom (optionnel) */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Nom <span className="text-gray-400 text-xs">(optionnel)</span>
                     </label>
                     <div className="relative">
@@ -222,7 +222,7 @@ export default function AuthPage() {
                         placeholder="Votre nom de famille"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        className="pl-12 h-12"
+                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         disabled={loading}
                       />
                     </div>
@@ -232,7 +232,7 @@ export default function AuthPage() {
 
               {/* Email */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Adresse email
                 </label>
                 <div className="relative">
@@ -243,7 +243,7 @@ export default function AuthPage() {
                     placeholder="votre@email.com"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="pl-12 h-12"
+                    className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                     required
                     disabled={loading}
                   />
@@ -252,7 +252,7 @@ export default function AuthPage() {
 
               {/* Mot de passe */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -263,7 +263,7 @@ export default function AuthPage() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="pl-12 pr-12 h-12 dark:text-white"
+                    className="pl-12 pr-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                     required
                     disabled={loading}
                   />
@@ -285,7 +285,7 @@ export default function AuthPage() {
                   animate={{ opacity: 1, height: 'auto' }}
                   transition={{ duration: 0.3, delay: 0.1 }}
                 >
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                     Confirmer le mot de passe
                   </label>
                   <div className="relative">
@@ -296,7 +296,7 @@ export default function AuthPage() {
                       placeholder="••••••••"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="pl-12 h-12 dark:text-white"
+                      className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                       required={!isLogin}
                       disabled={loading}
                     />
@@ -377,12 +377,18 @@ export default function AuthPage() {
 
             {/* Lien de retour */}
             <div className="text-center">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Retour à l'accueil
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-500 hover:text-gray-700"
+                onClick={() => {
+                  router.push('/')
+                  router.refresh()
+                }}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Retour à l'accueil
+              </Button>
             </div>
           </CardContent>
         </Card>

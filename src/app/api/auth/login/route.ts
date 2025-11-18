@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         name: profile?.name || data.user.email?.split('@')[0] || 'Utilisateur',
         email: data.user.email
       }
-    })
+    }, { status: 200 })
 
   } catch (error) {
     console.error('Erreur connexion:', error)
