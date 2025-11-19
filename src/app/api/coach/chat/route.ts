@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-// Initialiser OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
+  // Initialiser OpenAI dans la fonction pour éviter l'erreur au build
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
