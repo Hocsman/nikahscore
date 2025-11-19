@@ -490,9 +490,11 @@ export default function QuestionnairePage() {
   }
 
   // Enrichir la question avec son hint si disponible
+  // Chercher le hint dans PERSONALITY_QUESTIONS par order_index
+  const staticQuestion = PERSONALITY_QUESTIONS.find(q => q.order_index === currentQ.order_index)
   const questionWithHint = {
     ...currentQ,
-    hint: currentQ.hint || getQuestionHint(currentQ.id)
+    hint: currentQ.hint || staticQuestion?.hint || getQuestionHint(currentQ.order_index)
   }
 
   // Vérifier les permissions d'accès
