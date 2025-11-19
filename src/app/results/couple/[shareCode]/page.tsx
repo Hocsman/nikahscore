@@ -610,9 +610,11 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
             <Button variant="outline" onClick={() => router.push('/dashboard')}>
               Retour au Dashboard
             </Button>
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              Télécharger le Rapport PDF
-            </Button>
+            <FeatureGate featureCode="pdf_export">
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                Télécharger le Rapport PDF
+              </Button>
+            </FeatureGate>
           </div>
 
         </div>
