@@ -680,12 +680,8 @@ export default function QuestionnairePage() {
                   <h2 className="text-2xl font-semibold text-gray-800 dark:text-white leading-relaxed flex-1 text-center">
                     {questionWithHint.text}
                   </h2>
-                  {questionWithHint.hint ? (
+                  {questionWithHint.hint && (
                     <QuestionTooltip hint={questionWithHint.hint} />
-                  ) : (
-                    <div className="text-xs text-red-500 bg-red-100 px-2 py-1 rounded">
-                      Q{currentQ.id}: Pas de hint
-                    </div>
                   )}
                 </div>
               </motion.div>
