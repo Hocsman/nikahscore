@@ -224,12 +224,19 @@ export function useAchievements() {
       }
 
       // Vérifier les scores
-      const { data: couples } = await supabase
+      const { data: allCouples } = await supabase
         .from('couples')
-        .select('compatibility_score')
-        .or(`and(creator_id.eq.${user.id},status.eq.completed,compatibility_score.not.is.null),and(partner_id.eq.${user.id},status.eq.completed,compatibility_score.not.is.null)`)
+        .select('compatibility_score, status')
+        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
 
-      if (couples && couples.length > 0) {
+      // Filtrer en JavaScript pour éviter les problèmes de syntaxe PostgREST
+      const couples = allCouples?.filter(c =>
+        c.status === 'completed' &&
+        c.compatibility_score !== null &&
+        c.compatibility_score !== undefined
+      ) || []
+
+      if (couples.length > 0) {
         const maxScore = Math.max(...couples.map(c => c.compatibility_score || 0))
         
         if (maxScore >= 90 && !isUnlocked('perfect_match')) {
