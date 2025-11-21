@@ -112,11 +112,7 @@ function getRequiredPlanForFeature(featureCode: FeatureCode): string {
     'custom_branding',
     'leaderboard',
     'compatibility_tracking',
-    'dedicated_support'
-  ]
-
-  // Features Essentiel ou supérieur
-  const essentialFeatures: FeatureCode[] = [
+    'dedicated_support',
     'unlimited_questionnaires',
     'advanced_questions',
     'detailed_analysis',
@@ -133,10 +129,6 @@ function getRequiredPlanForFeature(featureCode: FeatureCode): string {
 
   if (premiumFeatures.includes(featureCode)) {
     return 'Premium'
-  }
-
-  if (essentialFeatures.includes(featureCode)) {
-    'Essentiel'
   }
 
   return 'Gratuit'
