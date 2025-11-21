@@ -227,9 +227,7 @@ export function useAchievements() {
       const { data: couples } = await supabase
         .from('couples')
         .select('compatibility_score')
-        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
-        .eq('status', 'completed')
-        .not('compatibility_score', 'is', null)
+        .or(`and(creator_id.eq.${user.id},status.eq.completed,compatibility_score.not.is.null),and(partner_id.eq.${user.id},status.eq.completed,compatibility_score.not.is.null)`)
 
       if (couples && couples.length > 0) {
         const maxScore = Math.max(...couples.map(c => c.compatibility_score || 0))
