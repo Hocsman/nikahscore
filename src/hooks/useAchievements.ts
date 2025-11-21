@@ -223,18 +223,29 @@ export function useAchievements() {
         await unlockAchievement('ten_questionnaires')
       }
 
-      // Vérifier les scores
-      const { data: allCouples } = await supabase
-        .from('couples')
-        .select('compatibility_score, status')
-        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
+      // Vérifier les scores - Faire deux requêtes séparées pour éviter les problèmes de RLS
+      const [creatorCouples, partnerCouples] = await Promise.all([
+        supabase
+          .from('couples')
+          .select('compatibility_score, status')
+          .eq('creator_id', user.id),
+        supabase
+          .from('couples')
+          .select('compatibility_score, status')
+          .eq('partner_id', user.id)
+      ])
 
-      // Filtrer en JavaScript pour éviter les problèmes de syntaxe PostgREST
-      const couples = allCouples?.filter(c =>
+      // Combiner et filtrer les résultats
+      const allCouples = [
+        ...(creatorCouples.data || []),
+        ...(partnerCouples.data || [])
+      ]
+
+      const couples = allCouples.filter(c =>
         c.status === 'completed' &&
         c.compatibility_score !== null &&
         c.compatibility_score !== undefined
-      ) || []
+      )
 
       if (couples.length > 0) {
         const maxScore = Math.max(...couples.map(c => c.compatibility_score || 0))
