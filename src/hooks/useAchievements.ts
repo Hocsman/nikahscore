@@ -232,14 +232,15 @@ export function useAchievements() {
       }
 
       // Vérifier les scores - Faire deux requêtes séparées pour éviter les problèmes de RLS
+      // Note: On utilise select('*') car select avec colonnes spécifiques cause des erreurs 400
       const [creatorCouples, partnerCouples] = await Promise.all([
         supabase
           .from('couples')
-          .select('compatibility_score, status')
+          .select('*')
           .eq('creator_id', user.id),
         supabase
           .from('couples')
-          .select('compatibility_score, status')
+          .select('*')
           .eq('partner_id', user.id)
       ])
 
