@@ -21,29 +21,48 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Vérifier si l'utilisateur est créateur ou partenaire d'un couple
-    const { data: couples, error } = await supabase
-      .from('couples')
-      .select('id, couple_code, status, creator_id, partner_id')
-      .or(`creator_id.eq.${user_id},partner_id.eq.${user_id}`)
-      .limit(1)
-      .single()
+    // Vérifier si l'utilisateur est créateur ou partenaire d'un couple - Deux requêtes séparées
+    const [creatorResult, partnerResult] = await Promise.all([
+      supabase
+        .from('couples')
+        .select('id, couple_code, status, creator_id, partner_id')
+        .eq('creator_id', user_id)
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from('couples')
+        .select('id, couple_code, status, creator_id, partner_id')
+        .eq('partner_id', user_id)
+        .limit(1)
+        .maybeSingle()
+    ])
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // Aucun couple trouvé
-        return NextResponse.json({
-          success: true,
-          hasCouple: false,
-          message: 'Aucun couple trouvé pour cet utilisateur'
-        })
-      }
-      
-      console.error('❌ Erreur Supabase check couple:', error)
+    if (creatorResult.error && creatorResult.error.code !== 'PGRST116') {
+      console.error('❌ Erreur Supabase check couple (creator):', creatorResult.error)
       return NextResponse.json(
-        { success: false, error: error.message },
+        { success: false, error: creatorResult.error.message },
         { status: 500 }
       )
+    }
+
+    if (partnerResult.error && partnerResult.error.code !== 'PGRST116') {
+      console.error('❌ Erreur Supabase check couple (partner):', partnerResult.error)
+      return NextResponse.json(
+        { success: false, error: partnerResult.error.message },
+        { status: 500 }
+      )
+    }
+
+    // Prendre le premier couple trouvé (priorité au créateur)
+    const couples = creatorResult.data || partnerResult.data
+
+    if (!couples) {
+      // Aucun couple trouvé
+      return NextResponse.json({
+        success: true,
+        hasCouple: false,
+        message: 'Aucun couple trouvé pour cet utilisateur'
+      })
     }
 
     // Couple trouvé

@@ -41,17 +41,32 @@ export function useUserStats() {
       setLoading(true)
       setError(null)
 
-      // 1. Récupérer tous les questionnaires de l'utilisateur (couples)
-      const { data: couplesData, error: couplesError } = await supabase
-        .from('couples')
-        .select('*')
-        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
-        .order('created_at', { ascending: false })
+      // 1. Récupérer tous les questionnaires de l'utilisateur (couples) - Deux requêtes séparées
+      const [creatorCouples, partnerCouples] = await Promise.all([
+        supabase
+          .from('couples')
+          .select('*')
+          .eq('creator_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('couples')
+          .select('*')
+          .eq('partner_id', user.id)
+          .order('created_at', { ascending: false })
+      ])
 
-      if (couplesError) {
-        console.error('Erreur récupération couples:', couplesError)
-        throw couplesError
+      if (creatorCouples.error) {
+        console.error('Erreur récupération couples (creator):', creatorCouples.error)
+        throw creatorCouples.error
       }
+      if (partnerCouples.error) {
+        console.error('Erreur récupération couples (partner):', partnerCouples.error)
+        throw partnerCouples.error
+      }
+
+      // Combiner et trier par date
+      const couplesData = [...(creatorCouples.data || []), ...(partnerCouples.data || [])]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
       console.log('📊 Couples trouvés:', couplesData?.length || 0)
 

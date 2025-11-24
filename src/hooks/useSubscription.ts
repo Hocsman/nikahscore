@@ -53,27 +53,33 @@ export function useSubscription() {
       try {
         const supabase = createClient()
         
-        // 1. Récupérer la subscription de l'utilisateur
-        const { data: userSubData, error: fetchError } = await supabase
-          .from('user_subscriptions')
-          .select('*')
-          .eq('user_id', user.id)
+        // IMPORTANT: Lire depuis la table users directement (colonnes: subscription_plan, subscription_status)
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('subscription_plan, subscription_status, subscription_start, subscription_end')
+          .eq('id', user.id)
           .single()
 
-        if (fetchError) {
-          if (fetchError.code === 'PGRST116') {
-            // Pas de subscription trouvée - utilisateur free
-            console.log('ℹ️ Pas d\'abonnement trouvé, utilisateur sur plan gratuit')
-            setSubscription(null)
-          } else {
-            throw fetchError
-          }
-        } else if (userSubData) {
-          // 2. Récupérer le plan correspondant via plan_code
+        if (userError) {
+          console.error('❌ Erreur récupération utilisateur:', userError)
+          throw userError
+        }
+
+        const planName = userData?.subscription_plan || 'free'
+        const planStatus = userData?.subscription_status || 'inactive'
+
+        console.log('📋 Plan utilisateur:', planName, '- Status:', planStatus)
+
+        // Si pas de plan ou plan gratuit
+        if (planName === 'free' || planStatus !== 'active') {
+          console.log('ℹ️ Utilisateur sur plan gratuit')
+          setSubscription(null)
+        } else {
+          // Récupérer les détails du plan depuis subscription_plans
           const { data: planData, error: planError } = await supabase
             .from('subscription_plans')
             .select('*')
-            .eq('name', userSubData.plan_code)
+            .eq('name', planName)
             .single()
 
           if (planError) {
@@ -81,14 +87,25 @@ export function useSubscription() {
             throw planError
           }
 
-          // 3. Combiner les données
-          const fullData = {
-            ...userSubData,
+          // Créer un objet subscription compatible
+          const subscriptionData = {
+            id: user.id,
+            user_id: user.id,
+            plan_id: planData.id,
+            stripe_customer_id: null,
+            stripe_subscription_id: null,
+            status: planStatus as 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing',
+            billing_cycle: 'monthly' as 'monthly' | 'yearly',
+            current_period_start: userData.subscription_start || null,
+            current_period_end: userData.subscription_end || null,
+            cancel_at_period_end: false,
+            created_at: userData.subscription_start || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             plan: planData
           }
           
-          console.log('✅ Abonnement chargé:', fullData.plan_code, '-', fullData.plan?.display_name)
-          setSubscription(fullData as Subscription)
+          console.log('✅ Abonnement chargé:', planName, '-', planData.display_name)
+          setSubscription(subscriptionData as Subscription)
         }
       } catch (err) {
         console.error('Erreur lors de la récupération de l\'abonnement:', err)

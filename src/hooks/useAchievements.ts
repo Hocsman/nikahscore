@@ -201,12 +201,20 @@ export function useAchievements() {
     try {
       const supabase = createClient()
 
-      // Compter les questionnaires complétés
-      const { count: questionnaireCount } = await supabase
-        .from('couples')
-        .select('*', { count: 'exact', head: true })
-        .or(`creator_id.eq.${user.id},partner_id.eq.${user.id}`)
-        .eq('status', 'completed')
+      // Compter les questionnaires complétés - Deux requêtes séparées
+      const [creatorCount, partnerCount] = await Promise.all([
+        supabase
+          .from('couples')
+          .select('*', { count: 'exact', head: true })
+          .eq('creator_id', user.id)
+          .eq('status', 'completed'),
+        supabase
+          .from('couples')
+          .select('*', { count: 'exact', head: true })
+          .eq('partner_id', user.id)
+          .eq('status', 'completed')
+      ])
+      const questionnaireCount = (creatorCount.count || 0) + (partnerCount.count || 0)
 
       // Vérifier first_questionnaire
       if (questionnaireCount && questionnaireCount >= 1 && !isUnlocked('first_questionnaire')) {
