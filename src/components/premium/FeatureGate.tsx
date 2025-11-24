@@ -39,12 +39,6 @@ export default function FeatureGate({
   const { planName, planCode, isPremium, isConseil } = useSubscription()
   const [showPrompt, setShowPrompt] = useState(false)
 
-  console.log(`🚪 FeatureGate ${featureCode}:`, {
-    allowed: permission.allowed,
-    blocked: permission.blocked,
-    loading: 'loading' in permission ? permission.loading : false
-  })
-
   // Si loading, on affiche le contenu (évite le flash)
   if ('loading' in permission && permission.loading) {
     return <>{children}</>
