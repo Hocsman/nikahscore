@@ -6,11 +6,12 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar, Clock, Copy, Mail, Loader2 } from 'lucide-react'
+import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar, Clock, Copy, Mail, Loader2, Download } from 'lucide-react'
 import FeatureGate from '@/components/premium/FeatureGate'
 import CoupleRadarChart from '@/components/couple/CoupleRadarChart'
 import QuestionComparison from '@/components/couple/QuestionComparison'
 import CoupleStatistics from '@/components/couple/CoupleStatistics'
+import { usePDFExport } from '@/hooks/usePDFExport'
 
 interface CoupleResultsPageProps {
   params: Promise<{ shareCode: string }>
@@ -62,6 +63,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
   const [copied, setCopied] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [sendingEmail, setSendingEmail] = useState(false)
+  const { generatePDF, isGenerating, error: pdfError } = usePDFExport()
 
   useEffect(() => {
     params.then(p => setShareCode(p.shareCode))
@@ -253,6 +255,20 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
 
     loadCoupleResults()
   }, [shareCode])
+
+  const handleExportPDF = async () => {
+    if (!sharedData) return
+
+    // Générer le PDF à partir du contenu visible
+    const filename = `nikahscore-couple-${creatorName}-${partnerName}-${new Date().toISOString().split('T')[0]}.pdf`
+    const success = await generatePDF('couple-results-content', { filename })
+
+    if (success) {
+      console.log('✅ PDF généré avec succès')
+    } else {
+      console.error('❌ Erreur lors de la génération du PDF')
+    }
+  }
 
   if (loading) {
     return (
@@ -467,7 +483,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div id="couple-results-content" className="max-w-6xl mx-auto space-y-6">
           
           {/* En-tête */}
           <div className="text-center space-y-4">
@@ -611,8 +627,22 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
               Retour au Dashboard
             </Button>
             <FeatureGate featureCode="pdf_export">
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                Télécharger le Rapport PDF
+              <Button
+                className="bg-purple-600 hover:bg-purple-700"
+                onClick={handleExportPDF}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Génération en cours...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Télécharger le Rapport PDF
+                  </>
+                )}
               </Button>
             </FeatureGate>
           </div>
