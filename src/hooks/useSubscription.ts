@@ -53,9 +53,9 @@ export function useSubscription() {
       try {
         const supabase = createClient()
         
-        // IMPORTANT: Lire depuis la table users directement (colonnes: subscription_plan, subscription_status)
+        // IMPORTANT: Lire depuis la table profiles (colonnes: subscription_plan, subscription_status)
         const { data: userData, error: userError } = await supabase
-          .from('users')
+          .from('profiles')
           .select('subscription_plan, subscription_status, subscription_start, subscription_end')
           .eq('id', user.id)
           .single()

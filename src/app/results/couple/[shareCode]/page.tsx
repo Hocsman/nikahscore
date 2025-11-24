@@ -104,13 +104,13 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
 
         // 2. Charger les noms
         const { data: creatorUser } = await supabase
-          .from('users')
-          .select('display_name, email')
+          .from('profiles')
+          .select('name, email')
           .eq('id', data.creator_id)
           .single()
 
         if (creatorUser) {
-          setCreatorName(creatorUser.display_name || creatorUser.email?.split('@')[0] || 'Partenaire 1')
+          setCreatorName(creatorUser.name || creatorUser.email?.split('@')[0] || 'Partenaire 1')
         }
 
         if (data.partner_name) {

@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // Mettre à jour le plan de l'utilisateur
     const { error: updateError } = await supabase
-      .from('users')
+      .from('profiles')
       .update({
         subscription_plan: plan,
         subscription_status: 'active',

@@ -37,19 +37,17 @@ export async function POST(request: NextRequest) {
       throw updateAuthError
     }
 
-    // Mettre à jour la table users si elle existe
+    // Mettre à jour la table profiles
     const { error: updateUserError } = await supabase
-      .from('users')
+      .from('profiles')
       .update({
-        first_name: firstName,
-        last_name: lastName || null,
+        name: `${firstName} ${lastName || ''}`.trim(),
         updated_at: new Date().toISOString()
       })
       .eq('id', user.id)
 
     if (updateUserError) {
-      console.warn('Erreur mise à jour table users (peut être normale si table n\'existe pas):', updateUserError)
-      // Ne pas bloquer si la table users n'existe pas
+      console.warn('Erreur mise à jour table profiles:', updateUserError)
     }
 
     return NextResponse.json({

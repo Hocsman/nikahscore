@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
 
     // 4. Récupérer les informations du créateur
     const { data: creatorData, error: creatorError } = await supabase
-      .from('users')
-      .select('email, display_name')
+      .from('profiles')
+      .select('email, name')
       .eq('id', sharedData.creator_id)
       .single()
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. Préparer les données pour l'email
-    const creatorName = creatorData.display_name || creatorData.email.split('@')[0]
+    const creatorName = creatorData.name || creatorData.email.split('@')[0]
     const partnerName = sharedData.partner_name || 'Votre partenaire'
     const completionDate = new Date().toLocaleDateString('fr-FR', {
       day: 'numeric',

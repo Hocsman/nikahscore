@@ -83,23 +83,16 @@ export async function POST(request: NextRequest) {
       const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.user.id)
       
       if (authUser.user) {
-        // Générer le hash SHA-256 de l'email
-        const crypto = require('crypto')
-        const emailHash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex')
-        
-        // Créer l'entrée dans la table users avec first_name et last_name
+        // Mettre à jour le profil créé automatiquement par Supabase
         const { error: userError } = await supabaseAdmin
-          .from('users')
-          .insert([
-            {
-              id: data.user.id,
-              first_name: firstName,
-              last_name: lastName || null,
-              email: email,
-              email_hash: emailHash,
-              created_at: new Date().toISOString()
-            }
-          ])
+          .from('profiles')
+          .upsert({
+            id: data.user.id,
+            name: `${firstName} ${lastName || ''}`.trim(),
+            email: email,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
 
         if (userError) {
           // Log complet pour debugging
@@ -110,16 +103,14 @@ export async function POST(request: NextRequest) {
             details: userError.details,
             data_attempted: {
               id: data.user.id,
-              first_name: firstName,
-              last_name: lastName || null,
+              name: `${firstName} ${lastName || ''}`.trim(),
               email: email,
-              email_hash_length: emailHash?.length || 0,
             }
           }
-          
+
           return NextResponse.json(
-            { 
-              error: 'Database error saving new user', 
+            {
+              error: 'Database error saving new user',
               ...errorDetails
             },
             { status: 400 }
