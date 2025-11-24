@@ -57,6 +57,7 @@ export function useFeaturePermission(featureCode: FeatureCode): FeaturePermissio
 
       try {
         const access = await checkFeatureAccess(featureCode)
+        console.log(`🔐 Feature ${featureCode} access:`, access)
 
         if (access.has_access) {
           setPermission({
