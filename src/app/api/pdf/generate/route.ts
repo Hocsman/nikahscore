@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
       .single()
 
     const isPremium = userProfile?.subscription_status === 'active' &&
-                     (userProfile?.subscription_plan === 'premium' || 
-                      userProfile?.subscription_plan === 'conseil')
+      (userProfile?.subscription_plan === 'premium' ||
+        userProfile?.subscription_plan === 'conseil')
 
     if (!isPremium) {
       return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       )
     }
-    
+
     let coupleData: any = null
     let dimensions: any[] = []
     let strengths: string[] = []
@@ -155,12 +155,12 @@ export async function POST(request: NextRequest) {
     )
 
     // Récupérer les noms des utilisateurs
-    const user1Name = coupleData?.creator?.raw_user_meta_data?.name || 
-                     coupleData?.creator?.email?.split('@')[0] || 
-                     'Utilisateur 1'
-    const user2Name = coupleData?.partner?.raw_user_meta_data?.name || 
-                     coupleData?.partner?.email?.split('@')[0] || 
-                     'Utilisateur 2'
+    const user1Name = coupleData?.creator?.raw_user_meta_data?.name ||
+      coupleData?.creator?.email?.split('@')[0] ||
+      'Utilisateur 1'
+    const user2Name = coupleData?.partner?.raw_user_meta_data?.name ||
+      coupleData?.partner?.email?.split('@')[0] ||
+      'Utilisateur 2'
 
     // Générer le PDF
     const pdfDocument = React.createElement(CompatibilityReport, {
@@ -179,7 +179,9 @@ export async function POST(request: NextRequest) {
       }),
     })
 
-    const pdfStream = await renderToStream(pdfDocument as any)
+    const pdfStream = await renderToStream(
+      pdfDocument as React.ReactElement<any>
+    )
 
     // Convertir le stream en Buffer
     const chunks: Buffer[] = []
@@ -200,9 +202,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Erreur génération PDF:', error)
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Erreur serveur' 
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Erreur serveur'
       },
       { status: 500 }
     )

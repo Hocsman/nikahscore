@@ -37,7 +37,6 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
   useEffect(() => {
     const resolveParams = async () => {
       const resolved = await params
-      console.log('🔍 Params résolus:', resolved)
       setResolvedParams(resolved)
     }
     resolveParams()
@@ -45,23 +44,19 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
 
   const loadSharedQuestionnaire = useCallback(async () => {
     if (!resolvedParams?.code) return
-    
-    console.log('🔍 Chargement questionnaire pour code:', resolvedParams.code)
-    
+
     try {
       const response = await fetch(`/api/questionnaire/shared?code=${resolvedParams.code}`)
-      console.log('🔍 Réponse API status:', response.status)
-      
+
       const data = await response.json()
-      console.log('🔍 Données reçues:', data)
-      
+
       if (data.success) {
         setQuestions(data.questions)
-        
+
         if (data.creator_responses || data.participant_responses) {
           setIsCompleted(true)
           setBothCompleted(data.both_completed)
-          
+
           if (data.compatibility_score) {
             setCompatibilityScore(data.compatibility_score)
           }
@@ -87,7 +82,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
 
   const handleResponse = (response: boolean | number) => {
     if (!questions || questions.length === 0 || currentQuestion >= questions.length) return
-    
+
     const questionId = questions[currentQuestion].id
     const newResponses = { ...responses, [questionId]: response }
     setResponses(newResponses)
@@ -116,17 +111,17 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
           role: userRole
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setIsCompleted(true)
         setBothCompleted(data.both_completed)
-        
+
         if (data.compatibility_score) {
           setCompatibilityScore(data.compatibility_score)
         }
-        
+
         toast.success('Réponses sauvegardées avec succès!')
       } else {
         toast.error(data.error)
@@ -163,9 +158,9 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
               </div>
               <p className="text-sm md:text-base text-gray-600">
                 {compatibilityScore >= 80 ? "Excellente compatibilité !" :
-                 compatibilityScore >= 60 ? "Bonne compatibilité" :
-                 compatibilityScore >= 40 ? "Compatibilité modérée" :
-                 "Différences importantes à explorer"}
+                  compatibilityScore >= 60 ? "Bonne compatibilité" :
+                    compatibilityScore >= 40 ? "Compatibilité modérée" :
+                      "Différences importantes à explorer"}
               </p>
             </CardContent>
           </Card>
@@ -202,9 +197,9 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                   </div>
                   <p className="text-sm md:text-base text-gray-600">
                     {compatibilityScore >= 80 ? "Excellente compatibilité !" :
-                     compatibilityScore >= 60 ? "Bonne compatibilité" :
-                     compatibilityScore >= 40 ? "Compatibilité modérée" :
-                     "Différences importantes à explorer"}
+                      compatibilityScore >= 60 ? "Bonne compatibilité" :
+                        compatibilityScore >= 40 ? "Compatibilité modérée" :
+                          "Différences importantes à explorer"}
                   </p>
                 </div>
               ) : (
@@ -218,7 +213,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
               )}
 
               <div className="text-center">
-                <Button 
+                <Button
                   onClick={() => router.push('/questionnaire/shared')}
                   variant="outline"
                 >
@@ -258,8 +253,8 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                 />
               </div>
-              
-              <Button 
+
+              <Button
                 onClick={() => {
                   if (email.trim()) {
                     setUserRole('participant')
@@ -289,7 +284,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
 
   if (userRole && email && questions && questions.length > 0 && currentQuestion < questions.length) {
     const currentQ = questions[currentQuestion]
-    
+
     if (!currentQ) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
@@ -299,7 +294,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
         </div>
       )
     }
-    
+
     const progress = ((currentQuestion + 1) / questions.length) * 100
 
     return (
@@ -319,66 +314,66 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg leading-relaxed">
-                    {currentQ.label}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {currentQ.type === 'bool' ? (
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleResponse(true)}
-                        className="h-12 text-green-600 border-green-200 hover:bg-green-50"
-                      >
-                        Oui
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleResponse(false)}
-                        className="h-12 text-red-600 border-red-200 hover:bg-red-50"
-                      >
-                        Non
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                      {[1, 2, 3, 4, 5].map((value) => (
-                        <Button
-                          key={value}
-                          variant="outline"
-                          onClick={() => handleResponse(value)}
-                          className="h-12 hover:bg-blue-50 text-xs sm:text-sm"
-                        >
-                          {value}
-                        </Button>
-                      ))}
-                      <div className="col-span-5 flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Pas du tout</span>
-                        <span>Extrêmement</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between pt-4">
+                  {currentQ.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {currentQ.type === 'bool' ? (
+                  <div className="grid grid-cols-2 gap-3">
                     <Button
-                      variant="ghost"
-                      onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
-                      disabled={currentQuestion === 0}
+                      variant="outline"
+                      onClick={() => handleResponse(true)}
+                      className="h-12 text-green-600 border-green-200 hover:bg-green-50"
                     >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Précédent
+                      Oui
                     </Button>
                     <Button
-                      variant="ghost"
-                      onClick={() => handleResponse(currentQ.type === 'bool' ? false : 3)}
+                      variant="outline"
+                      onClick={() => handleResponse(false)}
+                      className="h-12 text-red-600 border-red-200 hover:bg-red-50"
                     >
-                      Passer
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      Non
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                ) : (
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                    {[1, 2, 3, 4, 5].map((value) => (
+                      <Button
+                        key={value}
+                        variant="outline"
+                        onClick={() => handleResponse(value)}
+                        className="h-12 hover:bg-blue-50 text-xs sm:text-sm"
+                      >
+                        {value}
+                      </Button>
+                    ))}
+                    <div className="col-span-5 flex justify-between text-xs text-gray-500 mt-1">
+                      <span>Pas du tout</span>
+                      <span>Extrêmement</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between pt-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+                    disabled={currentQuestion === 0}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Précédent
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleResponse(currentQ.type === 'bool' ? false : 3)}
+                  >
+                    Passer
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     )
