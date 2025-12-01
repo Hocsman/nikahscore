@@ -19,7 +19,7 @@ export default function PricingPage() {
       description: "Pour découvrir NikahScore",
       price: "0€",
       period: "toujours",
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-8 h-8" aria-hidden="true" />,
       color: "from-pink-500 to-pink-600",
       features: [
         "Test de compatibilité complet (100 questions personnalité)",
@@ -44,7 +44,7 @@ export default function PricingPage() {
       price: isAnnual ? "6,67€" : "9,99€",
       period: isAnnual ? "par mois (79€/an)" : "par mois",
       savings: isAnnual ? "Économisez 33%" : "",
-      icon: <Star className="w-8 h-8" />,
+      icon: <Star className="w-8 h-8" aria-hidden="true" />,
       color: "from-purple-500 to-purple-600",
       features: [
         "Tout du plan Gratuit",
@@ -69,7 +69,7 @@ export default function PricingPage() {
       price: isAnnual ? "41,67€" : "49,99€",
       period: isAnnual ? "par mois (499€/an)" : "par mois",
       savings: isAnnual ? "Économisez 17%" : "",
-      icon: <Crown className="w-8 h-8" />,
+      icon: <Crown className="w-8 h-8" aria-hidden="true" />,
       color: "from-orange-500 to-orange-600",
       features: [
         "Tout du plan Premium",
@@ -110,10 +110,10 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <ThemeToggle />
-      
+
       {/* Header avec navigation */}
       <div className="container mx-auto px-4 py-8">
-        <Link 
+        <Link
           href="/"
           className="inline-flex items-center text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 mb-8 transition-colors"
         >
@@ -141,21 +141,19 @@ export default function PricingPage() {
           <div className="inline-flex items-center bg-white dark:bg-gray-800 rounded-xl p-2 shadow-lg mb-12">
             <button
               onClick={() => setIsAnnual(false)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                !isAnnual 
-                  ? 'bg-pink-500 text-white shadow-md' 
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${!isAnnual
+                  ? 'bg-pink-500 text-white shadow-md'
                   : 'text-gray-600 dark:text-gray-300'
-              }`}
+                }`}
             >
               Mensuel
             </button>
             <button
               onClick={() => setIsAnnual(true)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                isAnnual 
-                  ? 'bg-pink-500 text-white shadow-md' 
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${isAnnual
+                  ? 'bg-pink-500 text-white shadow-md'
                   : 'text-gray-600 dark:text-gray-300'
-              }`}
+                }`}
             >
               Annuel
               <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
@@ -176,9 +174,8 @@ export default function PricingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden ${
-                plan.popular ? 'ring-2 ring-blue-500 transform scale-105' : ''
-              }`}
+              className={`relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 transform scale-105' : ''
+                }`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center py-2 text-sm font-semibold">
@@ -227,7 +224,7 @@ export default function PricingPage() {
                   <ul className="space-y-2">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                        <Check className="w-5 h-5 text-pink-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-pink-500 mt-0.5 mr-3 flex-shrink-0" aria-hidden="true" />
                         <span className="text-gray-600 dark:text-gray-300 text-sm">
                           {feature}
                         </span>
@@ -246,7 +243,7 @@ export default function PricingPage() {
                     {plan.cta}
                   </StripeCheckout>
                 ) : (
-                  <Link 
+                  <Link
                     href={plan.href || '/questionnaire'}
                     className={`block w-full bg-gradient-to-r ${plan.color} text-white text-center py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity`}
                   >
@@ -314,13 +311,13 @@ export default function PricingPage() {
             Commencez gratuitement dès aujourd'hui, pas de carte bancaire requise
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
+            <Link
               href="/questionnaire"
               className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-lg"
             >
               Commencer Gratuitement
             </Link>
-            <Link 
+            <Link
               href="/contact"
               className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-pink-600 transition-colors"
             >

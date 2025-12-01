@@ -18,22 +18,22 @@ export default function LandingPage() {
 
   const features = [
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-8 h-8" aria-hidden="true" />,
       title: "Compatibilité Spirituelle",
       description: "Évaluez vos valeurs religieuses et votre pratique islamique"
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-8 h-8" aria-hidden="true" />,
       title: "Projet de Vie",
       description: "Alignez vos objectifs familiaux et professionnels"
     },
     {
-      icon: <MessageCircle className="w-8 h-8" />,
+      icon: <MessageCircle className="w-8 h-8" aria-hidden="true" />,
       title: "Communication",
       description: "Mesurez votre compatibilité communicationnelle"
     },
     {
-      icon: <Zap className="w-8 h-8" />,
+      icon: <Zap className="w-8 h-8" aria-hidden="true" />,
       title: "Résultats Instantanés",
       description: "Obtenez votre score détaillé immédiatement"
     }
@@ -60,10 +60,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300">
       <ThemeToggle />
-      
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 pt-20">
-        <motion.div 
+        <motion.div
           className="absolute inset-0 opacity-10"
           style={{ y: y1 }}
         >
@@ -92,14 +92,14 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
           >
-            <Link 
-              href="/questionnaire/shared" 
+            <Link
+              href="/questionnaire/shared"
               className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
             >
               Créer un Questionnaire Partagé
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link 
+            <Link
               href="/pricing"
               className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
             >
@@ -233,7 +233,7 @@ export default function LandingPage() {
           <p className="text-xl mb-8 opacity-90">
             Rejoignez des milliers de musulmans qui ont déjà trouvé leur compatibilité
           </p>
-          <Link 
+          <Link
             href="/questionnaire/shared"
             className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >

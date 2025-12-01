@@ -8,12 +8,12 @@ import { Menu, X, Heart, Bell, User, LogOut } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useNotifications } from '@/hooks/useNotifications'
 
@@ -56,6 +56,9 @@ export function Navbar() {
           <Link href="/faq" className="text-sm font-medium hover:text-primary transition-colors">
             FAQ
           </Link>
+          <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
+            À propos
+          </Link>
           {user && (
             <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
               Dashboard
@@ -73,8 +76,8 @@ export function Navbar() {
                   <Button variant="ghost" size="sm" className="relative">
                     <Bell className="w-5 h-5" />
                     {unreadCount > 0 && (
-                      <Badge 
-                        variant="destructive" 
+                      <Badge
+                        variant="destructive"
                         className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs"
                       >
                         {unreadCount}
@@ -161,24 +164,31 @@ export function Navbar() {
         >
           <nav className="container py-4 flex flex-col space-y-3">
             {user && (
-              <Link 
-                href="/questionnaire" 
+              <Link
+                href="/questionnaire"
                 className="text-sm font-medium hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Questionnaire
               </Link>
             )}
-            <Link 
-              href="/faq" 
+            <Link
+              href="/faq"
               className="text-sm font-medium hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               FAQ
             </Link>
+            <Link
+              href="/about"
+              className="text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              À propos
+            </Link>
             {user && (
-              <Link 
-                href="/dashboard" 
+              <Link
+                href="/dashboard"
                 className="text-sm font-medium hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
