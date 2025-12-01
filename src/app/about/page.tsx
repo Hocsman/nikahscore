@@ -2,62 +2,73 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Heart, Shield, Users, Target, ArrowLeft, Star } from 'lucide-react'
+import { ArrowLeft, Heart, Users, Shield, Lightbulb, Award, Target, Calendar, ArrowRight } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 
 export default function AboutPage() {
   const values = [
     {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Valeurs Islamiques",
-      description: "Respecter les principes du mariage selon l'Islam et favoriser les unions basées sur la piété et la compatibilité spirituelle."
+      icon: <Heart className="w-6 h-6" />,
+      title: "Respect",
+      description: "Respect des valeurs islamiques et de la dignité de chaque personne"
     },
     {
-      icon: <Shield className="w-8 h-8" />,
+      icon: <Shield className="w-6 h-6" />,
       title: "Confidentialité",
-      description: "Protéger la vie privée de nos utilisateurs avec des données chiffrées et aucun stockage permanent des réponses personnelles."
+      description: "Protection absolue de vos données personnelles et de votre vie privée"
     },
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Communauté",
-      description: "Servir la Oummah en facilitant les rencontres respectueuses et les mariages durables au sein de la communauté musulmane."
+      icon: <Award className="w-6 h-6" />,
+      title: "Authenticité",
+      description: "Des résultats honnêtes basés sur une méthodologie scientifique rigoureuse"
     },
     {
-      icon: <Target className="w-8 h-8" />,
-      title: "Précision",
-      description: "Fournir des analyses fiables basées sur des critères pertinents pour évaluer la compatibilité matrimoniale."
+      icon: <Lightbulb className="w-6 h-6" />,
+      title: "Excellence",
+      description: "Un service de qualité supérieur pour accompagner votre projet matrimonial"
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: "Innovation Halal",
+      description: "Une approche moderne qui allie technologie et principes islamiques"
     }
   ]
 
-  const team = [
+  const timeline = [
     {
-      name: "Équipe de Développement",
-      role: "Développeurs & Designers",
-      description: "Une équipe passionnée de musulmans engagés dans l'amélioration des outils matrimoniaux halal."
+      year: "Inspiration",
+      title: "Prise de Conscience",
+      description: "Face au nombre alarmant de divorces dans notre communauté, une question émerge : comment mieux préparer les unions matrimoniales ?"
     },
     {
-      name: "Conseillers Religieux",
-      role: "Guidance Islamique",
-      description: "Des érudits et conseillers qui veillent au respect des principes islamiques dans notre approche."
+      year: "2025",
+      title: "Lancement du Projet",
+      description: "Après mûre réflexion et études approfondies, NikahScore voit le jour pour offrir un outil d'aide à la décision matrimoniale"
     },
     {
-      name: "Psychologues",
-      role: "Expertise Comportementale",
-      description: "Des spécialistes en relations humaines qui contribuent à l'élaboration de nos algorithmes de compatibilité."
+      year: "Aujourd'hui",
+      title: "Phase de Test",
+      description: "La plateforme est partagée avec des proches pour affiner l'algorithme et l'expérience utilisateur"
+    },
+    {
+      year: "Vision 2026-2028",
+      title: "Expansion & Impact",
+      description: "Aider des milliers de couples musulmans à construire des mariages solides et harmonieux insha'Allah"
     }
   ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <ThemeToggle />
-      
-      {/* Header avec navigation */}
+
+      {/* Navigation */}
       <div className="container mx-auto px-4 py-8">
-        <Link 
+        <Link
           href="/"
           className="inline-flex items-center text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 mb-8 transition-colors"
+          aria-label="Retour à la page d'accueil"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
+          <ArrowLeft className="w-5 h-5 mr-2" aria-hidden="true" />
           Retour à l'accueil
         </Link>
       </div>
@@ -74,103 +85,91 @@ export default function AboutPage() {
             À Propos de NikahScore
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
-            Notre mission est de faciliter les rencontres matrimoniales halal en offrant un outil moderne et respectueux des valeurs islamiques.
+            Une mission née d'une conviction : prévenir plutôt que guérir
           </p>
         </motion.div>
       </section>
 
       {/* Histoire Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div>
-              <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-6">
-                Notre Histoire
-              </h2>
-              <div className="space-y-4 text-gray-600 dark:text-gray-300">
-                <p>
-                  NikahScore est né de la volonté de créer un outil moderne qui respecte les traditions islamiques du mariage. Face aux défis des rencontres matrimoniales dans notre époque, nous avons développé une solution qui allie technologie et spiritualité.
-                </p>
-                <p>
-                  Notre plateforme évalue la compatibilité sur 6 dimensions clés de la personnalité : spiritualité et pratique religieuse, traits de personnalité et tempérament, communication et relations, famille et projets de vie, style de vie et valeurs, ainsi que vos ambitions et projets futurs.
-                </p>
-                <p>
-                  Chaque question a été soigneusement élaborée en collaboration avec des conseillers religieux et des experts en relations humaines pour garantir une évaluation juste et pertinente.
-                </p>
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 rounded-2xl p-8">
-              <div className="grid grid-cols-2 gap-6 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">2025</div>
-                  <div className="text-gray-600 dark:text-gray-400">Lancement</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">100</div>
-                  <div className="text-gray-600 dark:text-gray-400">Questions</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">6</div>
-                  <div className="text-gray-600 dark:text-gray-400">Dimensions</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">100%</div>
-                  <div className="text-gray-600 dark:text-gray-400">Halal</div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto"
+        >
+          <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+            L'Histoire de NikahScore
+          </h2>
+
+          <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p>
+              <strong className="text-pink-600 dark:text-pink-400">Notre histoire commence par une observation douloureuse :</strong> le nombre croissant de divorces dans notre communauté musulmane. Chaque séparation représente non seulement deux cœurs brisés, mais aussi des familles déchirées et des enfants marqués.
+            </p>
+
+            <p>
+              En observant mon entourage, en écoutant les témoignages sur les réseaux sociaux, et en vivant mes propres expériences, j'ai réalisé qu'un problème récurrent émergeait : <strong className="text-purple-600 dark:text-purple-400">la compatibilité n'était pas suffisamment explorée avant le mariage</strong>.
+            </p>
+
+            <p>
+              Trop de couples se découvrent après le nikah, réalisant alors des différences fondamentales sur des sujets cruciaux : la pratique religieuse, la vision de la vie de famille, la communication, les projets futurs... Des éléments qui auraient pu être discutés, anticipés, et mieux compris avant l'engagement.
+            </p>
+
+            <p className="bg-pink-50 dark:bg-pink-900/20 p-6 rounded-xl border-l-4 border-pink-500">
+              <strong className="text-gray-800 dark:text-white">C'est de cette prise de conscience qu'est né NikahScore en 2025.</strong> Non pas pour remplacer les méthodes traditionnelles de recherche matrimoniale, mais pour les compléter avec un outil moderne, scientifique et respectueux de nos valeurs islamiques.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
-      {/* Valeurs Section */}
-      <section className="py-16 bg-white/50 dark:bg-gray-800/50">
+      {/* Mission & Vision */}
+      <section className="py-16 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-              Nos Valeurs
-            </h2>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Les principes qui guident notre travail quotidien
-            </p>
-          </motion.div>
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {values.map((value, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center"
-              >
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <div className="text-pink-600 dark:text-pink-400">
-                    {value.icon}
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">{value.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{value.description}</p>
-              </motion.div>
-            ))}
+            {/* Mission */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl"
+            >
+              <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6">
+                <Target className="w-8 h-8 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+                Notre Mission
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                Fournir à la communauté musulmane des éléments supplémentaires pour prendre des décisions matrimoniales éclairées. Nous voulons être un outil d'aide, un guide qui révèle les compatibilités et les points de vigilance, pour construire des unions plus solides insha'Allah.
+              </p>
+            </motion.div>
+
+            {/* Vision */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl"
+            >
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                <Heart className="w-8 h-8 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+                Notre Vision
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                Dans 3 à 5 ans, nous espérons avoir contribué à des centaines, voire des milliers de mariages harmonieux. Notre rêve est simple mais puissant : <strong className="text-purple-600 dark:text-purple-400">réduire le taux de divorce en aidant les couples à mieux se connaître avant de s'engager</strong>.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Équipe Section */}
+      {/* Valeurs */}
       <section className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -179,57 +178,154 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            Notre Équipe
+          <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            Nos Valeurs Fondamentales
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Des professionnels engagés au service de la communauté
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Les principes qui guident chacune de nos décisions
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {team.map((member, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {values.map((value, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
-              <div className="w-20 h-20 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-10 h-10 text-white" />
+              <div className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="text-pink-600 dark:text-pink-400">
+                  {value.icon}
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{member.name}</h3>
-              <p className="text-pink-600 dark:text-pink-400 font-medium mb-3">{member.role}</p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{member.description}</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+                {value.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                {value.description}
+              </p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Timeline */}
+      <section className="py-16 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+              Notre Parcours
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              De l'idée à la réalisation, une aventure au service de la Oummah
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            {timeline.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative mb-8 last:mb-0"
+              >
+                <div className="flex items-center gap-6">
+                  {/* Timeline dot */}
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Calendar className="w-8 h-8 text-white" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-sm font-semibold text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 px-3 py-1 rounded-full">
+                        {item.year}
+                      </span>
+                      <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Connector line */}
+                {index < timeline.length - 1 && (
+                  <div className="absolute left-8 top-16 w-0.5 h-8 bg-gradient-to-b from-pink-300 to-purple-300 dark:from-pink-700 dark:to-purple-700" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Garantie Islamique */}
       <section className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-6 md:p-12 text-white"
+          className="max-w-4xl mx-auto bg-gradient-to-r from-pink-500 to-purple-600 rounded-3xl p-8 md:p-12 text-white text-center"
         >
-          <h2 className="text-2xl md:text-4xl font-bold mb-6">
-            Rejoignez-nous dans cette Mission
+          <Shield className="w-16 h-16 mx-auto mb-6" aria-hidden="true" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Notre Engagement Islamique
           </h2>
-          <p className="text-lg md:text-xl mb-8 opacity-90">
-            Découvrez votre compatibilité et trouvez votre moitié selon les valeurs islamiques
+          <p className="text-lg md:text-xl mb-6 opacity-90 leading-relaxed">
+            NikahScore est développé avec le soutien de sources de grands savants de l'Islam. Nous nous engageons à contacter et consulter des imams et érudits pour garantir que notre méthodologie reste conforme aux enseignements islamiques.
           </p>
-          <Link 
-            href="/questionnaire"
-            className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            Commencer le Test
-            <Heart className="ml-2 w-5 h-5" />
-          </Link>
+          <p className="text-lg opacity-90">
+            Notre promesse : <strong>Faire au mieux pour servir la communauté tout en respectant nos valeurs</strong>
+          </p>
+        </motion.div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto text-center"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-6">
+            Rejoignez Notre Mission
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            Ensemble, construisons une communauté de mariages épanouis et durables
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/questionnaire/shared"
+              className="inline-flex items-center bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              Créer un Questionnaire
+              <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
+            </Link>
+            <Link
+              href="/contact"
+              className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
+            >
+              Nous Contacter
+            </Link>
+          </div>
         </motion.div>
       </section>
     </div>
