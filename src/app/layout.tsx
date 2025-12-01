@@ -7,16 +7,33 @@ import { Toaster as Sonner } from 'sonner'
 import { ClientProviders } from '@/components/ClientProviders'
 import { Navbar } from '@/components/NavbarSimple'
 import { Analytics } from '@vercel/analytics/react'
+import { StructuredData } from '@/components/StructuredData'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
-  title: 'NikahScore - Compatibilité Matrimoniale Islamique',
-  description: 'Découvrez votre compatibilité matrimoniale selon les valeurs islamiques avec notre questionnaire détaillé et nos analyses approfondies.',
-  keywords: 'mariage islamique, compatibilité, nikah, musulman, questionnaire matrimonial',
+  title: {
+    default: 'NikahScore - Compatibilité Matrimoniale Islamique',
+    template: '%s | NikahScore',
+  },
+  description: 'Découvrez votre compatibilité matrimoniale selon les valeurs islamiques avec notre questionnaire scientifique. Test de couple détaillé, analyse approfondie et conseils personnalisés pour un mariage réussi.',
+  keywords: [
+    'mariage musulman',
+    'compatibilité matrimoniale',
+    'nikah',
+    'test couple musulman',
+    'mariage halal',
+    'questionnaire mariage islamique',
+    'compatibilité couple islam',
+    'préparation nikah',
+    'conseil matrimonial musulman',
+    'mariage islamique en ligne',
+    'test compatibilité halal',
+    'couple musulman',
+  ],
   authors: [{ name: 'NikahScore Team' }],
   creator: 'NikahScore',
   publisher: 'NikahScore',
@@ -25,18 +42,21 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nikahscore.com'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'NikahScore - Compatibilité Matrimoniale Islamique',
-    description: 'Découvrez votre compatibilité matrimoniale selon les valeurs islamiques',
-    url: '/',
+    description: 'Test de compatibilité matrimoniale scientifique pour couples musulmans. Découvrez vos forces, points d\'amélioration et recevez des conseils personnalisés.',
+    url: 'https://nikahscore.com',
     siteName: 'NikahScore',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'NikahScore - Compatibilité Matrimoniale Islamique',
+        alt: 'NikahScore - Plateforme de Compatibilité Matrimoniale Islamique',
       },
     ],
     locale: 'fr_FR',
@@ -45,8 +65,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'NikahScore - Compatibilité Matrimoniale Islamique',
-    description: 'Découvrez votre compatibilité matrimoniale selon les valeurs islamiques',
-    images: ['/og-image.png'],
+    description: 'Test de compatibilité pour couples musulmans. Analyse détaillée et conseils personnalisés.',
+    images: ['/twitter-image.png'],
+    creator: '@NikahScore',
   },
   robots: {
     index: true,
@@ -82,6 +103,7 @@ export default function RootLayout({
           <Toaster />
           <Sonner />
         </ClientProviders>
+        <StructuredData />
         <Analytics />
       </body>
     </html>
