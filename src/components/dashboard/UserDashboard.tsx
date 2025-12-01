@@ -87,6 +87,18 @@ export default function UserDashboard() {
       return
     }
 
+    // Temporairement désactivé - Problème technique Vercel avec @react-pdf/renderer
+    alert(
+      '🔧 Export PDF Temporairement Indisponible\n\n' +
+      'Nous rencontrons un problème technique avec la génération de PDF sur notre serveur.\n\n' +
+      '💡 Alternative disponible :\n' +
+      '• Vous pouvez faire des captures d\'écran de vos résultats\n' +
+      '• Ou consulter vos résultats directement dans la section "Résultats"\n\n' +
+      'Nous travaillons à résoudre ce problème rapidement. Merci de votre patience ! 🙏'
+    )
+    return
+
+    /* CODE ORIGINAL - À réactiver quand @react-pdf/renderer sera compatible avec Vercel
     if (!user) {
       alert('Vous devez être connecté pour exporter le PDF')
       return
@@ -142,6 +154,7 @@ export default function UserDashboard() {
     } finally {
       setIsGeneratingPDF(false)
     }
+    */
   }
 
   const [notifications, setNotifications] = useState([
