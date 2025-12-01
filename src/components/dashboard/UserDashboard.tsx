@@ -81,24 +81,12 @@ export default function UserDashboard() {
   }
 
   const handleExportPDF = async () => {
-    // Vérifier si l'utilisateur est Premium
+    // Vérifier si l'utilisateur est Premium ou Conseil
     if (!isPremium && !isConseil) {
       alert('⭐ Fonctionnalité Premium\n\nL\'export PDF est réservé aux membres Premium et Conseil.\n\nPassez Premium pour débloquer cette fonctionnalité !')
       return
     }
 
-    // Temporairement désactivé - Problème technique Vercel avec @react-pdf/renderer
-    alert(
-      '🔧 Export PDF Temporairement Indisponible\n\n' +
-      'Nous rencontrons un problème technique avec la génération de PDF sur notre serveur.\n\n' +
-      '💡 Alternative disponible :\n' +
-      '• Vous pouvez faire des captures d\'écran de vos résultats\n' +
-      '• Ou consulter vos résultats directement dans la section "Résultats"\n\n' +
-      'Nous travaillons à résoudre ce problème rapidement. Merci de votre patience ! 🙏'
-    )
-    return
-
-    /* CODE ORIGINAL - À réactiver quand @react-pdf/renderer sera compatible avec Vercel
     if (!user) {
       alert('Vous devez être connecté pour exporter le PDF')
       return
@@ -116,31 +104,49 @@ export default function UserDashboard() {
         return
       }
 
-      const response = await fetch('/api/pdf/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          couple_code: couple_code,
-        }),
-      })
+      // Récupérer les données du couple depuis l'API
+      const response = await fetch(`/api/couple?code=${couple_code}`)
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('⏳ Service PDF temporairement indisponible. Veuillez réessayer dans quelques minutes.')
-        }
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Erreur lors de la génération du PDF')
+        throw new Error('Impossible de récupérer les données du couple')
       }
 
+      const coupleData = await response.json()
+
+      // Vérifier que les deux partenaires ont répondu
+      if (!coupleData.creator_responses || !coupleData.participant_responses) {
+        alert('⏳ Questionnaires incomplets\n\nLes deux partenaires doivent avoir complété le questionnaire pour générer le PDF.')
+        setIsGeneratingPDF(false)
+        return
+      }
+
+      // Générer le PDF avec jsPDF (import dynamique pour réduire le bundle)
+      const { generateCompatibilityPDF } = await import('@/lib/pdfGenerator')
+
+      // Préparer les données pour le PDF
+      const pdfData = {
+        user1Name: coupleData.creator_name || 'Partenaire 1',
+        user2Name: coupleData.participant_name || 'Partenaire 2',
+        overallScore: coupleData.compatibility_score || 0,
+        dimensions: coupleData.dimensions || [],
+        strengths: coupleData.strengths || [],
+        improvements: coupleData.improvements || [],
+        recommendations: coupleData.recommendations || [],
+        coupleCode: couple_code,
+        generatedDate: new Date().toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }),
+      }
+
+      const pdfBlob = generateCompatibilityPDF(pdfData)
+
       // Télécharger le PDF
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
+      const url = window.URL.createObjectURL(pdfBlob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `NikahScore-Rapport-${new Date().toISOString().split('T')[0]}.pdf`
+      a.download = `NikahScore-Rapport-${couple_code}-${new Date().toISOString().split('T')[0]}.pdf`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -154,7 +160,6 @@ export default function UserDashboard() {
     } finally {
       setIsGeneratingPDF(false)
     }
-    */
   }
 
   const [notifications, setNotifications] = useState([
