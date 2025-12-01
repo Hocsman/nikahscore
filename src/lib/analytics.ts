@@ -102,7 +102,6 @@ class AnalyticsManager {
     
     // Log en développement
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Analytics Event:', eventData)
     }
   }
 

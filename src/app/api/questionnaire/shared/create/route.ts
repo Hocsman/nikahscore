@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
 
     const shareCode = codeResult
     
-    console.log('🔍 Tentative de création avec code:', shareCode)
 
     // Créer l'entrée questionnaire partagé
     const { data: shared, error } = await supabaseAdmin
@@ -54,7 +53,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ Questionnaire partagé créé:', shareCode)
 
     // Utiliser l'URL de la requête pour générer l'URL de partage
     const url = new URL(request.url)
@@ -65,7 +63,6 @@ export async function POST(request: NextRequest) {
     let emailSent = false
     if (resend && creator_email) {
       try {
-        console.log('📧 Envoi automatique de l\'email à:', creator_email)
         
         const emailHtml = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -108,13 +105,10 @@ export async function POST(request: NextRequest) {
           html: emailHtml,
         })
 
-        console.log('✅ Email envoyé automatiquement')
         emailSent = true
       } catch (emailError) {
-        console.log('⚠️ Erreur envoi email automatique:', emailError)
       }
     } else {
-      console.log('⚠️ Email non envoyé: service non configuré ou email manquant')
     }
 
     return NextResponse.json({

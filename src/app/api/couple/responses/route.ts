@@ -99,7 +99,6 @@ export async function POST(request: NextRequest) {
         .eq('couple_code', couple_code)
     }
 
-    console.log('✅ Réponses couple sauvegardées:', couple_code, role)
 
     return NextResponse.json({
       success: true,

@@ -3,14 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Initialisation conditionnelle de Resend
 let resend: Resend | null = null
-console.log('🔑 RESEND_API_KEY présente:', !!process.env.RESEND_API_KEY)
-console.log('🔑 RESEND_API_KEY valeur:', process.env.RESEND_API_KEY?.substring(0, 8) + '...')
 
 if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
   resend = new Resend(process.env.RESEND_API_KEY)
-  console.log('✅ Resend initialisé avec succès')
 } else {
-  console.log('❌ Resend NON initialisé - API key manquante ou invalide')
 }
 
 interface EmailRequest {
@@ -44,12 +40,6 @@ export async function POST(request: NextRequest) {
 
     // Vérifier si Resend est configuré
     if (!resend) {
-      console.log('🚧 Mode démo - Resend non configuré')
-      console.log('🚧 Mode démo - Email simulé:', {
-        to: data.email,
-        name: data.name,
-        score: data.globalScore
-      })
       
       // Mode démo - simulation d'envoi réussi
       return NextResponse.json({
@@ -60,13 +50,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    console.log('📧 Tentative d\'envoi d\'email réel avec Resend...')
     
     // Template HTML de l'email
     const htmlContent = generateEmailTemplate(data)
     
-    console.log('📧 Envoi vers:', data.email)
-    console.log('📧 Expéditeur: onboarding@resend.dev (domaine vérifié)')
     
     let emailResult: any = null
     
@@ -83,8 +70,6 @@ export async function POST(request: NextRequest) {
         html: htmlContent
       })
 
-      console.log('✅ Email envoyé avec succès depuis:', fromEmail)
-      console.log('✅ Structure de la réponse:', JSON.stringify(emailResult, null, 2))
       
       if (emailResult.error) {
         console.error('❌ Erreur Resend:', emailResult.error)

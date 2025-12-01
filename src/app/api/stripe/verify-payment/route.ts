@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
-console.log('🔍 API verify-payment chargée !')
 
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -11,12 +10,10 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null
 
 export async function POST(request: NextRequest) {
-  console.log('🔍 Vérification de paiement demandée')
   
   try {
     const { sessionId } = await request.json()
 
-    console.log('📝 Session ID:', sessionId)
 
     if (!sessionId) {
       return NextResponse.json({
@@ -27,7 +24,6 @@ export async function POST(request: NextRequest) {
 
     // MODE DÉVELOPPEMENT : Détection et simulation
     if (sessionId.startsWith('cs_dev_') || sessionId.startsWith('cs_test_dev_') || sessionId.includes('mode=dev')) {
-      console.log('🎭 Mode développement détecté pour session:', sessionId)
       
       return NextResponse.json({
         success: true,

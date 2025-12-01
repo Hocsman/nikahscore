@@ -26,8 +26,6 @@ const QUESTIONS = [
 
 export async function GET() {
   try {
-    console.log('🚀 API Questions - Mode fallback activé')
-    console.log('📊 Retour de', QUESTIONS.length, 'questions')
     
     return NextResponse.json({ 
       questions: QUESTIONS,

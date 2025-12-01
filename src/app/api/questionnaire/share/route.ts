@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ Questionnaire partagé créé:', shareCode)
 
     return NextResponse.json({
       success: true,

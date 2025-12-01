@@ -68,7 +68,6 @@ export function useUserStats() {
       const couplesData = [...(creatorCouples.data || []), ...(partnerCouples.data || [])]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-      console.log('📊 Couples trouvés:', couplesData?.length || 0)
 
       // 2. Transformer les données pour l'historique
       const history: QuestionnaireHistory[] = (couplesData || []).map(couple => {
@@ -127,7 +126,6 @@ export function useUserStats() {
         hasActiveCouples
       }
 
-      console.log('📊 Stats calculées:', calculatedStats)
       setStats(calculatedStats)
 
     } catch (err: any) {

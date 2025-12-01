@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       )
     }
     
-    console.log('📧 Envoi du message de contact:', { name, email, subject })
     
     // 1. Envoi de l'email à l'équipe NikahScore
     const { data: adminEmailData, error: adminEmailError } = await resend.emails.send({
@@ -183,7 +182,6 @@ export async function POST(request: Request) {
       )
     }
     
-    console.log('✅ Email admin envoyé:', adminEmailData)
     
     // 2. Envoi de l'email de confirmation à l'utilisateur
     const { data: userEmailData, error: userEmailError } = await resend.emails.send({
@@ -338,7 +336,6 @@ export async function POST(request: Request) {
     if (userEmailError) {
       console.warn('⚠️ Erreur Resend (email utilisateur):', userEmailError)
     } else {
-      console.log('✅ Email confirmation utilisateur envoyé:', userEmailData)
     }
     
     return NextResponse.json({ 

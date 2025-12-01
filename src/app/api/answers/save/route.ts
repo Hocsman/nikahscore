@@ -10,7 +10,6 @@ const supabaseAdmin = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('💾 Réception données answers/save:', Object.keys(body));
 
     const { pairId, respondent, answers } = body;
 
@@ -23,7 +22,6 @@ export async function POST(request: NextRequest) {
 
     // Convertir A/B vers initiator/partner pour compatibilité
     const realRespondent = respondent === 'A' ? 'initiator' : 'partner';
-    console.log(`📝 Sauvegarde pour ${realRespondent} du couple ${pairId.substring(0, 8)}...`);
 
     // Vérifier si la table couples existe, sinon la créer
     try {
@@ -35,7 +33,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (!existingCouple) {
-        console.log('🆕 Création nouveau couple...');
         const { error: createError } = await supabaseAdmin
           .from('couples')
           .insert({
@@ -46,12 +43,10 @@ export async function POST(request: NextRequest) {
           });
 
         if (createError) {
-          console.log('⚠️  Couple existe peut-être déjà:', createError.message);
         }
       }
     } catch (coupleError: any) {
       if (coupleError.message?.includes('does not exist')) {
-        console.log('⚠️  Table couples n\'existe pas encore - simulation de sauvegarde');
         return NextResponse.json({ 
           success: true,
           saved: Array.isArray(answers) ? answers.length : 0,
@@ -80,7 +75,6 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (!question) {
-          console.log(`⚠️  Question ${answer.questionId} introuvable`);
           continue;
         }
 
@@ -100,7 +94,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log(`📊 Traitement de ${processedCount} réponses valides`);
 
     // Essayer de sauvegarder les réponses
     try {
@@ -113,7 +106,6 @@ export async function POST(request: NextRequest) {
           .eq('respondent', realRespondent);
 
         if (deleteError) {
-          console.log('⚠️  Erreur suppression anciennes réponses:', deleteError.message);
         }
 
         // Insérer les nouvelles réponses
@@ -130,10 +122,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      console.log(`✅ ${responsesToInsert.length} réponses sauvegardées avec succès`);
     } catch (responseError: any) {
       if (responseError.message?.includes('does not exist')) {
-        console.log('⚠️  Table responses n\'existe pas encore - simulation de sauvegarde');
         return NextResponse.json({ 
           success: true,
           saved: responsesToInsert.length,

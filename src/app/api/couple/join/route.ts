@@ -63,7 +63,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ Partenaire rejoint le couple:', couple_code)
 
     return NextResponse.json({
       success: true,

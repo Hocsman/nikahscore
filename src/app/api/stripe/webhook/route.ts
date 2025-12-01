@@ -142,7 +142,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabas
         }
       }])
 
-    console.log(`✅ Subscription activée pour l'utilisateur ${userId} - Plan: ${plan}`)
 
   } catch (error) {
     console.error('Erreur handleCheckoutCompleted:', error)
@@ -181,7 +180,6 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription, supa
         }])
     }
 
-    console.log(`📝 Subscription créée: ${subscription.id}`)
 
   } catch (error) {
     console.error('Erreur handleSubscriptionCreated:', error)
@@ -204,7 +202,6 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription, supa
     if (error) {
       console.error('Erreur mise à jour subscription:', error)
     } else {
-      console.log(`🔄 Subscription mise à jour: ${subscription.id}`)
     }
 
   } catch (error) {
@@ -246,7 +243,6 @@ async function handleSubscriptionCanceled(subscription: Stripe.Subscription, sup
         }])
     }
 
-    console.log(`❌ Subscription annulée: ${subscription.id}`)
 
   } catch (error) {
     console.error('Erreur handleSubscriptionCanceled:', error)
@@ -281,7 +277,6 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice, supabase: any) {
         }])
     }
 
-    console.log(`💳 Paiement réussi: ${invoice.id}`)
 
   } catch (error) {
     console.error('Erreur handlePaymentSucceeded:', error)
@@ -317,7 +312,6 @@ async function handlePaymentFailed(invoice: Stripe.Invoice, supabase: any) {
         }])
     }
 
-    console.log(`❌ Paiement échoué: ${invoice.id}`)
 
   } catch (error) {
     console.error('Erreur handlePaymentFailed:', error)

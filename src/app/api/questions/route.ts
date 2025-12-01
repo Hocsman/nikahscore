@@ -6,7 +6,6 @@ import { PERSONALITY_QUESTIONS } from '@/data/personality-questions'
 export async function GET() {
   try {
     // Essayer d'abord Supabase
-    console.log('🚀 API Questions - Tentative Supabase...')
     
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       const { createClient } = await import('@supabase/supabase-js')
@@ -21,21 +20,17 @@ export async function GET() {
         .order('order_index')
       
       if (!error && data && data.length > 0) {
-        console.log('✅ Supabase connecté:', data.length, 'questions')
         return NextResponse.json({ 
           questions: data,
           source: 'supabase',
           count: data.length 
         })
       } else {
-        console.log('⚠️ Supabase vide ou erreur:', error?.message)
       }
     } else {
-      console.log('⚠️ Variables Supabase manquantes')
     }
     
     // Fallback vers les questions en dur
-    console.log('📊 Fallback vers questions hardcodées')
     return NextResponse.json({ 
       questions: PERSONALITY_QUESTIONS,
       source: 'fallback-v2',

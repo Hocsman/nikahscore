@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (!resend) {
-      console.log('❌ Service email non configuré')
       return NextResponse.json(
         { error: 'Service email non configuré' },
         { status: 503 }
@@ -91,7 +90,6 @@ Comment ça fonctionne ?
 © 2025 NikahScore
     `
 
-    console.log('📧 Envoi email de partage à:', email)
 
     const result = await resend.emails.send({
       from: 'NikahScore <noreply@nikahscore.com>',
@@ -101,7 +99,6 @@ Comment ça fonctionne ?
       text: emailText,
     })
 
-    console.log('✅ Email envoyé avec succès:', result.data?.id)
 
     return NextResponse.json({
       success: true,

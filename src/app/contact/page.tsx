@@ -39,7 +39,6 @@ export default function ContactPage() {
       setIsSubmitted(true)
       setFormData({ name: '', email: '', subject: '', message: '' })
       
-      console.log('✅ Message envoyé avec succès:', data)
       
     } catch (error) {
       console.error('❌ Erreur lors de l\'envoi:', error)

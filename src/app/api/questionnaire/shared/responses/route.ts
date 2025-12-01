@@ -122,7 +122,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('✅ Réponses sauvegardées:', role, share_code)
 
     return NextResponse.json({
       success: true,

@@ -51,8 +51,6 @@ export function useUser(): UseUserReturn {
             .eq('id', authUser.id)
             .single()
 
-          console.log('🔍 Profile data:', profile)
-          console.log('❌ Profile error:', profileError)
 
           const extendedUser: ExtendedUser = {
             ...authUser,

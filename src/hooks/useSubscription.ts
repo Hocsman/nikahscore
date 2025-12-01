@@ -68,11 +68,9 @@ export function useSubscription() {
         const planName = userData?.subscription_plan || 'free'
         const planStatus = userData?.subscription_status || 'inactive'
 
-        console.log('📋 Plan utilisateur:', planName, '- Status:', planStatus)
 
         // Si pas de plan ou plan gratuit
         if (planName === 'free' || planStatus !== 'active') {
-          console.log('ℹ️ Utilisateur sur plan gratuit')
           setSubscription(null)
         } else {
           // Récupérer les détails du plan depuis subscription_plans
@@ -104,7 +102,6 @@ export function useSubscription() {
             plan: planData
           }
           
-          console.log('✅ Abonnement chargé:', planName, '-', planData.display_name)
           setSubscription(subscriptionData as Subscription)
         }
       } catch (err) {

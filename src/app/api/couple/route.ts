@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ Couple créé:', codeResult)
 
     return NextResponse.json({
       success: true,

@@ -102,7 +102,6 @@ export default function EnhancedResultsPage({
       const success = await generatePDF('pdf-report-content', { filename })
       
       if (success) {
-        console.log('✅ PDF généré avec succès')
         setToastMessage('✅ Rapport PDF téléchargé avec succès !')
         setToastType('success')
         setShowToast(true)
@@ -122,7 +121,6 @@ export default function EnhancedResultsPage({
     setError(null)
     
     try {
-      console.log('🔄 Génération du rapport pour:', params.pairId)
       
       const response = await fetch('/api/generate-report', {
         method: 'POST',
@@ -138,7 +136,6 @@ export default function EnhancedResultsPage({
 
       const data = await response.json()
       setResults(data)
-      console.log('✅ Rapport généré:', data)
       
     } catch (err) {
       console.error('❌ Erreur:', err)

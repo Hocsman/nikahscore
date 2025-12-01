@@ -57,7 +57,6 @@ export const useAnalytics = () => {
         body: JSON.stringify(eventData),
       })
 
-      console.log('📊 Event tracked:', eventType, properties)
 
     } catch (error) {
       console.error('❌ Analytics tracking error:', error)

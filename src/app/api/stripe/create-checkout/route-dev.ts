@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-console.log('🔥 API Stripe create-checkout chargée (MODE DÉVELOPPEMENT)')
 
 // Configuration des prix pour chaque plan
 const PLAN_PRICES = {
@@ -17,12 +16,10 @@ const PLAN_PRICES = {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('🚀 API POST appelée pour create-checkout (MODE DEV)')
   
   try {
     const { plan, userId, email, successUrl, cancelUrl } = await request.json()
 
-    console.log('📝 Données reçues:', { plan, userId, email })
 
     // Validation des données
     if (!plan || !userId || !email) {
@@ -41,7 +38,6 @@ export async function POST(request: NextRequest) {
 
     const planConfig = PLAN_PRICES[plan as keyof typeof PLAN_PRICES]
 
-    console.log('✅ Validation réussie pour plan:', planConfig.name)
 
     // EN MODE DÉVELOPPEMENT : Simulation d'une session Stripe
     const fakeSession = {
@@ -52,7 +48,6 @@ export async function POST(request: NextRequest) {
       status: 'open'
     }
 
-    console.log('🎭 Session Stripe simulée:', fakeSession.id)
 
     return NextResponse.json({
       success: true,

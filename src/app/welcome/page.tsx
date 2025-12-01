@@ -14,18 +14,15 @@ export default function WelcomePage() {
   const [userName, setUserName] = useState<string>('')
 
   useEffect(() => {
-    console.log('🔍 /welcome - État:', { user: !!user, loading, userName })
     
     // Récupérer le nom de l'utilisateur
     if (user) {
       const name = user.name || user.email?.split('@')[0] || 'Utilisateur'
       setUserName(name)
-      console.log('✅ /welcome - Utilisateur trouvé:', name)
     }
     
     // Rediriger vers /auth si pas connecté (SEULEMENT après le chargement)
     if (!loading && !user) {
-      console.log('⚠️ /welcome - Pas d\'utilisateur, redirection vers /auth')
       router.push('/auth?mode=register')
     }
   }, [user, loading, router])

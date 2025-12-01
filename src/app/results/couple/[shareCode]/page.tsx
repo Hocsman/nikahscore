@@ -264,7 +264,6 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
     const success = await generatePDF('couple-results-content', { filename })
 
     if (success) {
-      console.log('✅ PDF généré avec succès')
     } else {
       console.error('❌ Erreur lors de la génération du PDF')
     }

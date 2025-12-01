@@ -8,7 +8,6 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function GET() {
   try {
-    console.log('🔍 Tentative connexion Supabase...')
     console.log('URL:', supabaseUrl)
     console.log('Key exists:', !!supabaseKey)
     
@@ -25,7 +24,6 @@ export async function GET() {
       )
     }
 
-    console.log('✅ Questions récupérées:', questions?.length || 0)
     return NextResponse.json({ questions: questions || [] })
   } catch (error) {
     console.error('❌ Erreur API:', error)

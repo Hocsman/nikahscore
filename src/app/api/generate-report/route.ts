@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    console.log('🔄 Génération rapport pour couple:', pairId)
     
     // 1. Récupérer les informations du couple
     const { data: coupleData, error: coupleError } = await supabase
@@ -71,8 +70,6 @@ export async function POST(request: NextRequest) {
       }
     })
     
-    console.log('📊 Réponses User1:', Object.keys(user1Responses).length)
-    console.log('📊 Réponses User2:', Object.keys(user2Responses).length)
     
     // 4. Calculer la compatibilité avec le nouvel algorithme
     const compatibilityAnalysis = CompatibilityCalculator.calculateCompatibility(
@@ -80,7 +77,6 @@ export async function POST(request: NextRequest) {
       user2Responses
     )
     
-    console.log('✅ Score calculé:', compatibilityAnalysis.overall_score)
     
     // 5. Sauvegarder les résultats
     const resultData = {
@@ -140,7 +136,6 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    console.log('🎯 Rapport généré avec succès')
     
     return NextResponse.json(response, { status: 200 })
     

@@ -12,10 +12,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const share_code = searchParams.get('code')
 
-    console.log('🔍 GET shared questionnaire - Code:', share_code)
 
     if (!share_code) {
-      console.log('❌ Aucun code fourni')
       return NextResponse.json(
         { error: 'Code de partage requis' },
         { status: 400 }
@@ -23,17 +21,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer le questionnaire partagé
-    console.log('🔍 Recherche du questionnaire avec code:', share_code)
     const { data: shared, error } = await supabaseAdmin
       .from('shared_questionnaires')
       .select('*')
       .eq('share_code', share_code)
       .single()
 
-    console.log('📋 Résultat shared:', { shared, error })
 
     if (error || !shared) {
-      console.log('❌ Questionnaire introuvable:', error)
       return NextResponse.json(
         { error: 'Questionnaire partagé introuvable' },
         { status: 404 }
@@ -41,7 +36,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer toutes les questions (mapping compatible)
-    console.log('🔍 Chargement des questions...')
     const { data: questionsRaw, error: questionsError } = await supabaseAdmin
       .from('questions')
       .select('id, text, category')
@@ -56,13 +50,11 @@ export async function GET(request: NextRequest) {
         type: q.category || '',
       }))
     }
-    console.log('📋 Résultat questions:', { questionsCount: questions?.length, error: questionsError })
 
     if (questionsError) {
       console.error('❌ Error fetching questions:', questionsError)
       
       // Fallback: utiliser des questions statiques si la table n'existe pas
-      console.log('⚠️ Utilisation de questions statiques de fallback')
       const fallbackQuestions = [
         { id: '1', label: 'Partagez-vous les mêmes valeurs religieuses fondamentales ?', type: 'bool' },
         { id: '2', label: 'Êtes-vous d\'accord sur l\'importance de la prière quotidienne ?', type: 'bool' },
@@ -71,7 +63,6 @@ export async function GET(request: NextRequest) {
         { id: '5', label: 'Êtes-vous compatibles sur le plan de la communication ?', type: 'scale' }
       ]
       
-      console.log('✅ Questions de fallback préparées:', fallbackQuestions.length)
       
       // Calculer le statut basé sur la structure shared_questionnaires
       let status = 'waiting'
@@ -106,11 +97,6 @@ export async function GET(request: NextRequest) {
       status
     }
 
-    console.log('✅ Retour API réussi:', { 
-      questionsCount: questions?.length, 
-      status,
-      shareCode: share_code 
-    })
 
     return NextResponse.json({
       success: true,

@@ -20,15 +20,15 @@ import SharedQuestionnairesCard from './SharedQuestionnairesCard'
 import { AchievementsSummary } from '@/components/AchievementsSummary'
 import { AchievementsChecker } from '@/components/AchievementsChecker'
 import FeatureGate from '@/components/premium/FeatureGate'
-import { 
-  User, 
+import {
+  User,
   Users,
-  Heart, 
-  Trophy, 
-  TrendingUp, 
-  Calendar, 
-  Star, 
-  Target, 
+  Heart,
+  Trophy,
+  TrendingUp,
+  Calendar,
+  Star,
+  Target,
   Activity,
   Settings,
   Bell,
@@ -63,7 +63,7 @@ export default function UserDashboard() {
   const { getUserCoupleCode } = useCouple()
   const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
-  
+
   // Utiliser les stats réelles ou des valeurs par défaut pendant le chargement
   const stats = userStats || {
     profileCompletion: 40,
@@ -73,7 +73,7 @@ export default function UserDashboard() {
     lastActivity: 'Jamais',
     hasActiveCouples: false
   }
-  
+
   // Anciennes stats pour compatibilité UI (à supprimer progressivement)
   const legacyStats = {
     messagesCount: 0, // Fonctionnalité future
@@ -82,28 +82,22 @@ export default function UserDashboard() {
 
   const handleExportPDF = async () => {
     // Vérifier si l'utilisateur est Premium
-    if (!isPremium) {
+    if (!isPremium && !isConseil) {
       alert('⭐ Fonctionnalité Premium\n\nL\'export PDF est réservé aux membres Premium et Conseil.\n\nPassez Premium pour débloquer cette fonctionnalité !')
       return
     }
 
-    // Temporairement désactivé en attendant la résolution des problèmes Vercel
-    alert('🚧 Fonctionnalité en cours de développement\n\nL\'export PDF sera bientôt disponible. Nous travaillons à optimiser cette fonctionnalité pour une meilleure expérience.')
-    setIsGeneratingPDF(false)
-    return
-
-    /* CODE ORIGINAL - À réactiver plus tard
     if (!user) {
       alert('Vous devez être connecté pour exporter le PDF')
       return
     }
 
     setIsGeneratingPDF(true)
-    
+
     try {
       // Récupérer le couple_code de l'utilisateur
       const { couple_code, error: coupleError } = await getUserCoupleCode()
-      
+
       if (!couple_code) {
         alert('❌ Aucun couple trouvé\n\nVous devez créer ou rejoindre un couple pour générer un rapport PDF.')
         setIsGeneratingPDF(false)
@@ -122,7 +116,8 @@ export default function UserDashboard() {
       })
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la génération du PDF')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erreur lors de la génération du PDF')
       }
 
       // Télécharger le PDF
@@ -143,7 +138,6 @@ export default function UserDashboard() {
     } finally {
       setIsGeneratingPDF(false)
     }
-    */
   }
 
   const [notifications, setNotifications] = useState([
@@ -174,57 +168,58 @@ export default function UserDashboard() {
   ])
 
   const quickActions = [
-    { 
-      icon: Heart, 
-      label: 'Découvrir', 
-      href: '/discover', 
-      color: 'from-pink-500 to-rose-500',
-      description: 'Nouveaux profils compatibles'
-    },
-    { 
-      icon: MessageSquare, 
-      label: 'Messages', 
-      href: '/messages', 
-      color: 'from-blue-500 to-indigo-500',
-      description: '3 conversations en cours'
-    },
-    { 
-      icon: BarChart3, 
-      label: 'Résultats', 
-      href: '/results', 
+    // Pages temporairement désactivées (à créer plus tard)
+    // { 
+    //   icon: Heart, 
+    //   label: 'Découvrir', 
+    //   href: '/discover', 
+    //   color: 'from-pink-500 to-rose-500',
+    //   description: 'Nouveaux profils compatibles'
+    // },
+    // { 
+    //   icon: MessageSquare, 
+    //   label: 'Messages', 
+    //   href: '/messages', 
+    //   color: 'from-blue-500 to-indigo-500',
+    //   description: '3 conversations en cours'
+    // },
+    {
+      icon: BarChart3,
+      label: 'Résultats',
+      href: '/results',
       color: 'from-purple-500 to-violet-500',
       description: 'Voir votre analyse'
     },
-    { 
-      icon: Settings, 
-      label: 'Paramètres', 
-      href: '/settings', 
-      color: 'from-gray-500 to-slate-500',
-      description: 'Gérer votre compte'
-    }
+    // { 
+    //   icon: Settings, 
+    //   label: 'Paramètres', 
+    //   href: '/settings', 
+    //   color: 'from-gray-500 to-slate-500',
+    //   description: 'Gérer votre compte'
+    // }
   ]
 
   const achievements = [
-    { 
-      id: 1, 
-      title: 'Profil Complet', 
-      description: 'Félicitations ! Votre profil est maintenant complet', 
+    {
+      id: 1,
+      title: 'Profil Complet',
+      description: 'Félicitations ! Votre profil est maintenant complet',
       unlocked: true,
       icon: Trophy,
       color: 'text-yellow-600'
     },
-    { 
-      id: 2, 
-      title: 'Premier Match', 
-      description: 'Vous avez obtenu votre premier match !', 
+    {
+      id: 2,
+      title: 'Premier Match',
+      description: 'Vous avez obtenu votre premier match !',
       unlocked: true,
       icon: Heart,
       color: 'text-pink-600'
     },
-    { 
-      id: 3, 
-      title: 'Communicateur', 
-      description: 'Envoyez 10 messages', 
+    {
+      id: 3,
+      title: 'Communicateur',
+      description: 'Envoyez 10 messages',
       unlocked: false,
       progress: 60,
       icon: MessageSquare,
@@ -236,11 +231,11 @@ export default function UserDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50 p-4 md:p-6">
       {/* Vérificateur d'achievements en arrière-plan */}
       <AchievementsChecker />
-      
+
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Header avec salutation */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
@@ -251,13 +246,12 @@ export default function UserDashboard() {
                 Salam {user?.firstName || user?.name || user?.email?.split('@')[0] || 'Utilisateur'} 👋
               </h1>
               {!subscriptionLoading && (isPremium || isConseil) && (
-                <Badge className={`${
-                  isConseil
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700' 
-                    : isPremium 
+                <Badge className={`${isConseil
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700'
+                  : isPremium
                     ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
-                } text-white border-0 px-3 py-1 text-sm font-semibold shadow-md`}>
+                  } text-white border-0 px-3 py-1 text-sm font-semibold shadow-md`}>
                   {isConseil ? '👑 Conseil Premium' : isPremium ? '⭐ Premium' : '🆓 Gratuit'}
                 </Badge>
               )}
@@ -274,15 +268,15 @@ export default function UserDashboard() {
               <span className="text-sm text-gray-500">En ligne maintenant</span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
-            <FeatureGate 
+            <FeatureGate
               featureCode="pdf_export"
               customMessage="L'export PDF est limité à 10 par mois pour Premium, illimité pour Conseil"
             >
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleExportPDF}
                 disabled={isGeneratingPDF}
               >
@@ -290,7 +284,7 @@ export default function UserDashboard() {
                 {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
               </Button>
             </FeatureGate>
-            
+
             {isConseil && (
               <Link href="/coach-ai">
                 <Button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700">
@@ -299,7 +293,7 @@ export default function UserDashboard() {
                 </Button>
               </Link>
             )}
-            
+
             {!isPremium && !isConseil && (
               <Link href="/pricing">
                 <Button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600">
@@ -312,12 +306,12 @@ export default function UserDashboard() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* Colonne principale */}
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Stats principales */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -329,8 +323,8 @@ export default function UserDashboard() {
                     <div>
                       <p className="text-pink-100 text-sm">Score moyen</p>
                       <p className="text-2xl font-bold">
-                        {stats.averageCompatibilityScore !== null 
-                          ? `${stats.averageCompatibilityScore}%` 
+                        {stats.averageCompatibilityScore !== null
+                          ? `${stats.averageCompatibilityScore}%`
                           : 'N/A'}
                       </p>
                     </div>
@@ -378,16 +372,15 @@ export default function UserDashboard() {
 
             {/* Avantages Premium débloqués */}
             {isPremium && !subscriptionLoading && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <Card className={`border-2 ${
-                  isPremium 
-                    ? 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50' 
-                    : 'border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50'
-                }`}>
+                <Card className={`border-2 ${isPremium
+                  ? 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50'
+                  : 'border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50'
+                  }`}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       {isPremium ? (
@@ -453,10 +446,10 @@ export default function UserDashboard() {
                       )}
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-200">
-                      <Link href="/settings/subscription">
+                      <Link href="/profile">
                         <Button variant="outline" size="sm" className="w-full">
                           <Settings className="w-4 h-4 mr-2" />
-                          Gérer mon abonnement
+                          Gérer mon profil
                         </Button>
                       </Link>
                     </div>
@@ -466,7 +459,7 @@ export default function UserDashboard() {
             )}
 
             {/* Analyse de compatibilité complète avec onglets */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -490,11 +483,11 @@ export default function UserDashboard() {
                         Insights & Matchs
                       </TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="compatibility" className="mt-6">
                       <CompatibilityAnalysis />
                     </TabsContent>
-                    
+
                     <TabsContent value="insights" className="mt-6">
                       <MatchInsights />
                     </TabsContent>
@@ -504,19 +497,19 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Historique des questionnaires */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <QuestionnaireHistoryCard 
+              <QuestionnaireHistoryCard
                 questionnaires={questionnaires}
                 loading={statsLoading}
               />
             </motion.div>
 
             {/* Questionnaires partagés */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
@@ -525,7 +518,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Actions rapides */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -558,7 +551,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Progression et objectifs */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -578,19 +571,19 @@ export default function UserDashboard() {
                     </div>
                     <Progress value={stats.profileCompletion} className="h-2" />
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium">Score moyen</span>
                       <span className="text-sm text-gray-500">
-                        {stats.averageCompatibilityScore !== null 
-                          ? `${stats.averageCompatibilityScore}%` 
+                        {stats.averageCompatibilityScore !== null
+                          ? `${stats.averageCompatibilityScore}%`
                           : 'N/A'}
                       </span>
                     </div>
-                    <Progress 
-                      value={stats.averageCompatibilityScore || 0} 
-                      className="h-2" 
+                    <Progress
+                      value={stats.averageCompatibilityScore || 0}
+                      className="h-2"
                     />
                   </div>
 
@@ -612,7 +605,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Succès et badges */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -630,11 +623,10 @@ export default function UserDashboard() {
                       <motion.div
                         key={achievement.id}
                         whileHover={{ scale: 1.02 }}
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          achievement.unlocked 
-                            ? 'border-green-200 bg-green-50' 
-                            : 'border-gray-200 bg-gray-50'
-                        }`}
+                        className={`p-4 rounded-lg border-2 transition-all ${achievement.unlocked
+                          ? 'border-green-200 bg-green-50'
+                          : 'border-gray-200 bg-gray-50'
+                          }`}
                       >
                         <div className="flex items-center gap-3 mb-2">
                           <achievement.icon className={`w-6 h-6 ${achievement.color}`} />
@@ -665,9 +657,9 @@ export default function UserDashboard() {
 
           {/* Sidebar droite */}
           <div className="space-y-6">
-            
+
             {/* Notifications */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -690,11 +682,10 @@ export default function UserDashboard() {
                       key={notification.id}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className={`p-3 rounded-lg border ${
-                        notification.unread 
-                          ? 'border-blue-200 bg-blue-50' 
-                          : 'border-gray-200 bg-gray-50'
-                      }`}
+                      className={`p-3 rounded-lg border ${notification.unread
+                        ? 'border-blue-200 bg-blue-50'
+                        : 'border-gray-200 bg-gray-50'
+                        }`}
                     >
                       <div className="flex justify-between items-start mb-1">
                         <p className="font-semibold text-sm">{notification.title}</p>
@@ -710,7 +701,7 @@ export default function UserDashboard() {
                       )}
                     </motion.div>
                   ))}
-                  
+
                   <Button variant="ghost" className="w-full text-sm">
                     Voir toutes les notifications
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -720,7 +711,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Achievements */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25 }}
@@ -729,7 +720,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Activité récente */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
@@ -749,7 +740,7 @@ export default function UserDashboard() {
                       <p className="text-xs text-gray-500">Il y a {stats.lastActivity}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <div className="flex-1">
@@ -757,7 +748,7 @@ export default function UserDashboard() {
                       <p className="text-xs text-gray-500">Hier</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                     <div className="flex-1">
@@ -770,7 +761,7 @@ export default function UserDashboard() {
             </motion.div>
 
             {/* Conseils personnalisés */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
@@ -788,7 +779,7 @@ export default function UserDashboard() {
                       💡 Optimisez votre profil
                     </p>
                     <p className="text-sm text-gray-600">
-                      Les profils avec une photo de qualité reçoivent 40% plus de vues. 
+                      Les profils avec une photo de qualité reçoivent 40% plus de vues.
                       Pensez à ajouter une photo souriante !
                     </p>
                     <Button size="sm" className="bg-gradient-to-r from-pink-500 to-purple-500 text-white">
