@@ -116,6 +116,9 @@ export default function UserDashboard() {
       })
 
       if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('⏳ Service PDF temporairement indisponible. Veuillez réessayer dans quelques minutes.')
+        }
         const errorData = await response.json()
         throw new Error(errorData.error || 'Erreur lors de la génération du PDF')
       }
@@ -134,7 +137,8 @@ export default function UserDashboard() {
       alert('✅ PDF téléchargé avec succès !')
     } catch (error) {
       console.error('❌ Erreur export PDF:', error)
-      alert('❌ Erreur lors de la génération du PDF. Veuillez réessayer.')
+      const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la génération du PDF. Veuillez réessayer.'
+      alert(`❌ ${errorMessage}`)
     } finally {
       setIsGeneratingPDF(false)
     }
