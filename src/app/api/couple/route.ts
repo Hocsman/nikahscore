@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       success: true,
       couple_code: codeResult,
       couple_id: couple.id,
-      share_url: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire/couple/${codeResult}`
+      share_url: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire/shared/${codeResult}`
     })
 
   } catch (error) {

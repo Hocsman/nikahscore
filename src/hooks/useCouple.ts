@@ -124,7 +124,7 @@ export function useCouple() {
 
   // Soumettre les réponses d'un questionnaire couple
   const submitCoupleResponses = async (
-    couple_code: string, 
+    couple_code: string,
     responses: any
   ): Promise<{ success: boolean; both_completed?: boolean; error?: string }> => {
     if (!user) {
@@ -184,7 +184,7 @@ export function useCouple() {
 
   // Générer une URL de partage
   const getShareUrl = (couple_code: string): string => {
-    return `${window.location.origin}/questionnaire/couple/${couple_code}`
+    return `${window.location.origin}/questionnaire/shared/${couple_code}`
   }
 
   // Calculer le score de compatibilité (algorithme simple)
@@ -198,10 +198,10 @@ export function useCouple() {
     for (const questionId in responses1) {
       if (responses2[questionId] !== undefined) {
         totalQuestions++
-        
+
         const answer1 = responses1[questionId]
         const answer2 = responses2[questionId]
-        
+
         // Logique de comparaison selon le type de réponse
         if (typeof answer1 === 'string' && typeof answer2 === 'string') {
           if (answer1.toLowerCase() === answer2.toLowerCase()) {
@@ -239,9 +239,9 @@ export function useCouple() {
         return { couple_code: null, error: 'Aucun couple trouvé' }
       }
     } catch (err) {
-      return { 
-        couple_code: null, 
-        error: err instanceof Error ? err.message : 'Erreur inconnue' 
+      return {
+        couple_code: null,
+        error: err instanceof Error ? err.message : 'Erreur inconnue'
       }
     }
   }

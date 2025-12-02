@@ -55,7 +55,7 @@ export default function CoupleQuestionnaire() {
 
       if (data.success) {
         toast.success('Questionnaire couple créé avec succès!')
-        
+
         // Récupérer les détails complets du couple
         await fetchCoupleDetails(data.couple_code)
       } else {
@@ -128,7 +128,7 @@ export default function CoupleQuestionnaire() {
   }
 
   const copyShareUrl = (code: string) => {
-    const shareUrl = `${window.location.origin}/questionnaire/couple/${code}`
+    const shareUrl = `${window.location.origin}/questionnaire/shared/${code}`
     navigator.clipboard.writeText(shareUrl)
     toast.success('Lien de partage copié!')
   }
@@ -181,7 +181,7 @@ export default function CoupleQuestionnaire() {
             <Heart className="w-8 h-8 text-pink-500" />
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Créez un questionnaire partagé avec votre partenaire pour découvrir votre compatibilité 
+            Créez un questionnaire partagé avec votre partenaire pour découvrir votre compatibilité
             et renforcer votre relation
           </p>
         </div>
@@ -203,7 +203,7 @@ export default function CoupleQuestionnaire() {
                 <h3 className="font-semibold text-sm mb-1">Créez un code</h3>
                 <p className="text-xs text-gray-600">Générez un code unique de couple</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-2xl font-bold text-purple-600">2</span>
@@ -211,7 +211,7 @@ export default function CoupleQuestionnaire() {
                 <h3 className="font-semibold text-sm mb-1">Partagez le code</h3>
                 <p className="text-xs text-gray-600">Envoyez-le à votre partenaire</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-2xl font-bold text-blue-600">3</span>
@@ -219,7 +219,7 @@ export default function CoupleQuestionnaire() {
                 <h3 className="font-semibold text-sm mb-1">Répondez ensemble</h3>
                 <p className="text-xs text-gray-600">Chacun répond de son côté</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-2xl font-bold text-green-600">4</span>
@@ -245,7 +245,7 @@ export default function CoupleQuestionnaire() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button 
+                <Button
                   onClick={createCouple}
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
@@ -268,8 +268,8 @@ export default function CoupleQuestionnaire() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {!showJoinForm ? (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowJoinForm(true)}
                     className="w-full"
                   >
@@ -284,14 +284,14 @@ export default function CoupleQuestionnaire() {
                       maxLength={8}
                     />
                     <div className="flex space-x-2">
-                      <Button 
+                      <Button
                         onClick={joinCouple}
                         disabled={loading || !joinCode.trim()}
                         className="flex-1"
                       >
                         {loading ? 'Connexion...' : 'Rejoindre'}
                       </Button>
-                      <Button 
+                      <Button
                         variant="outline"
                         onClick={() => {
                           setShowJoinForm(false)
@@ -375,7 +375,7 @@ export default function CoupleQuestionnaire() {
                     </p>
                     <div className="flex space-x-2">
                       <Input
-                        value={`${window.location.origin}/questionnaire/couple/${coupleData.couple_code}`}
+                        value={`${window.location.origin}/questionnaire/shared/${coupleData.couple_code}`}
                         readOnly
                         className="text-sm"
                       />
@@ -390,7 +390,7 @@ export default function CoupleQuestionnaire() {
                 )}
 
                 {coupleData.partner_id && !coupleData.completed_at && (
-                  <Button 
+                  <Button
                     className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
                     onClick={() => router.push(`/questionnaire?couple_code=${coupleData.couple_code}`)}
                   >
@@ -399,7 +399,7 @@ export default function CoupleQuestionnaire() {
                 )}
 
                 {coupleData.completed_at && (
-                  <Button 
+                  <Button
                     className="w-full"
                     variant="outline"
                     onClick={() => router.push(`/results/couple/${coupleData.couple_code}`)}
