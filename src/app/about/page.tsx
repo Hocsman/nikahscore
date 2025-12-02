@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Heart, Users, Shield, Lightbulb, Award, Target, Calendar, ArrowRight } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 
@@ -166,6 +167,24 @@ export default function AboutPage() {
               </p>
             </motion.div>
           </div>
+
+          {/* Image Section - Wedding Rings */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-12 max-w-3xl mx-auto"
+          >
+            <div className="relative h-80 rounded-3xl overflow-hidden shadow-2xl">
+              <Image
+                src="/images/about/hands-rings.png"
+                alt="Mains d'un couple musulman se tenant avec des alliances, symbolisant l'engagement et l'union dans le mariage"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </motion.div>
         </div>
       </section>
 
