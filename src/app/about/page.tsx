@@ -91,6 +91,26 @@ export default function AboutPage() {
         </motion.div>
       </section>
 
+      {/* Hero Image */}
+      <section className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <Image
+              src="/images/about/couple-sunset.png"
+              alt="Couple musulman regardant ensemble vers l'avenir, symbolisant l'unité et l'espoir dans le mariage"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </motion.div>
+      </section>
+
       {/* Histoire Section */}
       <section className="container mx-auto px-4 py-16">
         <motion.div
