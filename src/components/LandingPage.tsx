@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, Users, MessageCircle, Zap, Star, ArrowRight, CheckCircle } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 
@@ -72,64 +73,94 @@ export default function LandingPage() {
           <div className="absolute bottom-40 left-1/3 w-24 h-24 bg-pink-200 rounded-full blur-xl" />
         </motion.div>
 
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
-              NikahScore
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Découvrez votre compatibilité matrimoniale grâce à notre évaluation approfondie de 100 questions axées sur la personnalité et les valeurs islamiques
-            </p>
-          </motion.div>
+        <div className="max-w-7xl mx-auto relative z-10 w-full">
+          {/* Grid Layout: 50/50 on desktop, stacked on mobile */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-          >
-            <Link
-              href="/questionnaire/shared"
-              className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+            {/* Left: Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : -50 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-center lg:text-left"
             >
-              Créer un Questionnaire Partagé
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/pricing"
-              className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
-            >
-              Tarifs
-            </Link>
-          </motion.div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+                NikahScore
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                Découvrez votre compatibilité matrimoniale grâce à notre évaluation approfondie de 100 questions axées sur la personnalité et les valeurs islamiques
+              </p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isVisible ? 1 : 0 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto"
-          >
-            <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100</div>
-              <div className="text-gray-600 dark:text-gray-400">Questions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">6</div>
-              <div className="text-gray-600 dark:text-gray-400">Dimensions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100%</div>
-              <div className="text-gray-600 dark:text-gray-400">Gratuit</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">5min</div>
-              <div className="text-gray-600 dark:text-gray-400">Résultats</div>
-            </div>
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12"
+              >
+                <Link
+                  href="/questionnaire/shared"
+                  className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+                >
+                  Créer un Questionnaire Partagé
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
+                >
+                  Tarifs
+                </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isVisible ? 1 : 0 }}
+                transition={{ duration: 1, delay: 0.6 }}
+                className="grid grid-cols-2 gap-8 max-w-md mx-auto lg:mx-0"
+              >
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">100</div>
+                  <div className="text-gray-600 dark:text-gray-400">Questions</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">5</div>
+                  <div className="text-gray-600 dark:text-gray-400">Dimensions</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">92%</div>
+                  <div className="text-gray-600 dark:text-gray-400">Précision</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">24/7</div>
+                  <div className="text-gray-600 dark:text-gray-400">Disponible</div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right: Hero Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : 50 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="relative hidden lg:block"
+            >
+              <div className="relative h-[500px] w-full rounded-3xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/images/hero-couple.png"
+                  alt="Couple musulman regardant ensemble vers l'avenir, symbolisant l'unité dans le mariage"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </div>
+
+              {/* Decorative gradient overlay */}
+              <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-gradient-to-br from-pink-400/30 to-purple-600/30 rounded-full blur-3xl -z-10" />
+              <div className="absolute -top-10 -left-10 w-64 h-64 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-full blur-3xl -z-10" />
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
