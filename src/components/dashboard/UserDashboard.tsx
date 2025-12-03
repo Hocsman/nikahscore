@@ -20,6 +20,8 @@ import SharedQuestionnairesCard from './SharedQuestionnairesCard'
 import { AchievementsSummary } from '@/components/AchievementsSummary'
 import { AchievementsChecker } from '@/components/AchievementsChecker'
 import FeatureGate from '@/components/premium/FeatureGate'
+import BudgetSessionModal from '@/components/dashboard/BudgetSessionModal'
+import TodoListModal from '@/components/dashboard/TodoListModal'
 import {
   User,
   Users,
@@ -63,6 +65,8 @@ export default function UserDashboard() {
   const { getUserCoupleCode } = useCouple()
   const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [showBudgetModal, setShowBudgetModal] = useState(false)
+  const [showTodoModal, setShowTodoModal] = useState(false)
 
   // Utiliser les stats réelles ou des valeurs par défaut pendant le chargement
   const stats = userStats || {
@@ -480,6 +484,72 @@ export default function UserDashboard() {
               </motion.div>
             )}
 
+            {/* Actions Rapides - Premium/Conseil uniquement */}
+            {(isPremium || isConseil) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-blue-600" />
+                      Actions Rapides
+                      <Badge className="ml-auto bg-purple-500 text-white">
+                        {isConseil ? 'Conseil' : 'Premium'}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Session Budget */}
+                      <button
+                        onClick={() => setShowBudgetModal(true)}
+                        className="text-left p-4 bg-white rounded-xl border-2 border-transparent hover:border-pink-300 hover:shadow-md transition-all group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <Calendar className="w-6 h-6 text-pink-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 mb-1">💰 Session Budget</p>
+                            <p className="text-sm text-gray-600 mb-2">
+                              Planifiez 2h cette semaine pour établir votre budget commun et définir vos priorités financières.
+                            </p>
+                            <span className="text-xs font-medium text-pink-600 group-hover:underline">
+                              Planifier maintenant →
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* Routine Commune */}
+                      <button
+                        onClick={() => setShowTodoModal(true)}
+                        className="text-left p-4 bg-white rounded-xl border-2 border-transparent hover:border-green-300 hover:shadow-md transition-all group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <CheckCircle className="w-6 h-6 text-green-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 mb-1">✅ Routine Commune</p>
+                            <p className="text-sm text-gray-600 mb-2">
+                              Identifiez 3 activités que vous aimeriez faire ensemble régulièrement.
+                            </p>
+                            <span className="text-xs font-medium text-green-600 group-hover:underline">
+                              Créer la liste →
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
             {/* Analyse de compatibilité complète avec onglets */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -759,7 +829,7 @@ export default function UserDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">Connexion</p>
-                      <p className="text-xs text-gray-500">Il y a {stats.lastActivity}</p>
+                      <p className="text-xs text-gray-500">{stats.lastActivity}</p>
                     </div>
                   </div>
 
@@ -814,6 +884,20 @@ export default function UserDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <BudgetSessionModal
+        open={showBudgetModal}
+        onOpenChange={setShowBudgetModal}
+        onSessionCreated={() => {
+          // Optionnellement, recharger les données ou afficher un message
+          console.log('Session créée avec succès')
+        }}
+      />
+      <TodoListModal
+        open={showTodoModal}
+        onOpenChange={setShowTodoModal}
+      />
     </div>
   )
 }
