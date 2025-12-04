@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Bell, Search, Moon, Sun, Menu, X } from 'lucide-react'
+import { Bell, Search, Moon, Sun, Menu, Download, Bot } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,16 +14,26 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubscription } from '@/hooks/useSubscription'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import FeatureGate from '@/components/premium/FeatureGate'
 
 interface DashboardHeaderProps {
     onMenuToggle?: () => void
     showMenuButton?: boolean
+    onExportPDF?: () => void
+    isGeneratingPDF?: boolean
 }
 
-export default function DashboardHeader({ onMenuToggle, showMenuButton = false }: DashboardHeaderProps) {
+export default function DashboardHeader({
+    onMenuToggle,
+    showMenuButton = false,
+    onExportPDF,
+    isGeneratingPDF = false
+}: DashboardHeaderProps) {
     const { user } = useAuth()
+    const { isPremium, isConseil } = useSubscription()
     const router = useRouter()
     const [isDark, setIsDark] = useState(false)
     const [notificationsCount] = useState(3) // TODO: Connect to real notifications
@@ -81,6 +91,38 @@ export default function DashboardHeader({ onMenuToggle, showMenuButton = false }
                             <Moon className="w-5 h-5 text-gray-600" />
                         )}
                     </Button>
+
+                    {/* Export PDF - Premium/Conseil */}
+                    {onExportPDF && (
+                        <FeatureGate
+                            featureCode="pdf_export"
+                            customMessage="L'export PDF est limité à 10 par mois pour Premium, illimité pour Conseil"
+                        >
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={onExportPDF}
+                                disabled={isGeneratingPDF}
+                                className="hidden md:flex"
+                            >
+                                <Download className="w-4 h-4 mr-2" />
+                                {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
+                            </Button>
+                        </FeatureGate>
+                    )}
+
+                    {/* Coach AI - Conseil only */}
+                    {isConseil && (
+                        <Link href="/coach-ai">
+                            <Button
+                                size="sm"
+                                className="hidden md:flex bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700"
+                            >
+                                <Bot className="w-4 h-4 mr-2" />
+                                Coach AI
+                            </Button>
+                        </Link>
+                    )}
 
                     {/* Notifications */}
                     <DropdownMenu>

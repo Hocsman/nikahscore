@@ -255,7 +255,7 @@ export default function UserDashboard() {
   ]
 
   return (
-    <DashboardLayout>
+    <DashboardLayout onExportPDF={handleExportPDF} isGeneratingPDF={isGeneratingPDF}>
       {/* Vérificateur d'achievements en arrière-plan */}
       <AchievementsChecker />
 

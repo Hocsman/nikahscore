@@ -6,9 +6,11 @@ import DashboardHeader from './DashboardHeader'
 
 interface DashboardLayoutProps {
     children: React.ReactNode
+    onExportPDF?: () => void
+    isGeneratingPDF?: boolean
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, onExportPDF, isGeneratingPDF }: DashboardLayoutProps) {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -59,6 +61,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <DashboardHeader
                     onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     showMenuButton={true}
+                    onExportPDF={onExportPDF}
+                    isGeneratingPDF={isGeneratingPDF}
                 />
 
                 <main className="flex-1 overflow-y-auto bg-gradient-to-br from-pink-50 via-purple-50 to-purple-50">
