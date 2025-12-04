@@ -5,7 +5,7 @@ import '../styles/mobile-optimizations.css'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from 'sonner'
 import { ClientProviders } from '@/components/ClientProviders'
-import { Navbar } from '@/components/NavbarSimple'
+import { ConditionalNavbar } from '@/components/ConditionalNavbar'
 import { Analytics } from '@vercel/analytics/react'
 import { StructuredData } from '@/components/StructuredData'
 
@@ -95,7 +95,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <ClientProviders>
           <div className="relative flex min-h-screen flex-col">
-            <Navbar />
+            <ConditionalNavbar />
             <main className="flex-1">
               {children}
             </main>
