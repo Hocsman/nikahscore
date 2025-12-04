@@ -18,6 +18,7 @@ import { useSubscription } from '@/hooks/useSubscription'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import FeatureGate from '@/components/premium/FeatureGate'
+import { useTheme } from 'next-themes'
 
 interface DashboardHeaderProps {
     onMenuToggle?: () => void
@@ -34,8 +35,8 @@ export default function DashboardHeader({
 }: DashboardHeaderProps) {
     const { user } = useAuth()
     const { isPremium, isConseil } = useSubscription()
+    const { theme, setTheme } = useTheme()
     const router = useRouter()
-    const [isDark, setIsDark] = useState(false)
     const [notificationsCount] = useState(3) // TODO: Connect to real notifications
 
     const handleSignOut = async () => {
@@ -82,10 +83,10 @@ export default function DashboardHeader({
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setIsDark(!isDark)}
+                        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         className="hidden md:flex"
                     >
-                        {isDark ? (
+                        {theme === 'dark' ? (
                             <Sun className="w-5 h-5 text-gray-600" />
                         ) : (
                             <Moon className="w-5 h-5 text-gray-600" />
