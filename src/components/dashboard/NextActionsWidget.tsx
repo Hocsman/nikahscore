@@ -108,11 +108,11 @@ export default function NextActionsWidget({
     const completedCount = localActions.filter(a => a.completed).length
 
     return (
-        <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <Card className="border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
             <CardHeader>
                 <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <CardTitle className="flex items-center gap-2 dark:text-gray-100">
+                        <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         Prochaines actions
                     </CardTitle>
                     {completedCount > 0 && (
@@ -125,11 +125,11 @@ export default function NextActionsWidget({
             <CardContent className="space-y-3">
                 {pendingActions.length === 0 ? (
                     <div className="text-center py-8">
-                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
-                        <p className="text-sm font-medium text-gray-900">
+                        <CheckCircle className="w-12 h-12 text-green-500 dark:text-green-400 mx-auto mb-3" />
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             Tout est à jour ! 🎉
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Vous avez complété toutes vos actions suggérées
                         </p>
                     </div>
@@ -147,8 +147,8 @@ export default function NextActionsWidget({
                                 className={`
                   flex items-start gap-3 p-3 rounded-lg border-2 transition-all
                   ${action.completed
-                                        ? 'bg-gray-50 border-gray-200 opacity-60'
-                                        : `${config.bg} border-transparent hover:border-blue-300`
+                                        ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60'
+                                        : `${config.bg} dark:bg-gray-700 border-transparent hover:border-blue-300 dark:hover:border-blue-600`
                                     }
                 `}
                             >
@@ -163,12 +163,12 @@ export default function NextActionsWidget({
                                         <div className="flex-1">
                                             <p className={`
                         text-sm font-medium
-                        ${action.completed ? 'line-through text-gray-500' : 'text-gray-900'}
+                        ${action.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}
                       `}>
                                                 {action.label}
                                             </p>
                                             {action.description && (
-                                                <p className="text-xs text-gray-600 mt-0.5">
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                                                     {action.description}
                                                 </p>
                                             )}

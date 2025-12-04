@@ -49,7 +49,7 @@ export default function DashboardHeader({
         : user?.email?.charAt(0).toUpperCase() || 'U'
 
     return (
-        <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+        <header className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between px-4 py-3 md:px-6">
 
                 {/* Left: Mobile Menu + Search */}
@@ -67,11 +67,11 @@ export default function DashboardHeader({
 
                     {/* Search Bar */}
                     <div className="relative hidden md:flex items-center max-w-md flex-1">
-                        <Search className="absolute left-3 w-4 h-4 text-gray-400" />
+                        <Search className="absolute left-3 w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <input
                             type="text"
                             placeholder="Rechercher... (Cmd+K)"
-                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                         />
                     </div>
                 </div>
@@ -87,9 +87,9 @@ export default function DashboardHeader({
                         className="hidden md:flex"
                     >
                         {theme === 'dark' ? (
-                            <Sun className="w-5 h-5 text-gray-600" />
+                            <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                         ) : (
-                            <Moon className="w-5 h-5 text-gray-600" />
+                            <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                         )}
                     </Button>
 
@@ -140,23 +140,23 @@ export default function DashboardHeader({
                                 )}
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-80">
-                            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                        <DropdownMenuContent align="end" className="w-80 dark:bg-gray-800 dark:border-gray-700">
+                            <DropdownMenuLabel className="dark:text-gray-200">Notifications</DropdownMenuLabel>
                             <DropdownMenuSeparator />
 
                             {/* Notification Items */}
                             <div className="max-h-96 overflow-y-auto">
-                                <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer">
+                                <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer dark:hover:bg-gray-700">
                                     <div className="flex items-start gap-3 w-full">
                                         <div className="w-2 h-2 bg-pink-500 rounded-full mt-1.5 flex-shrink-0"></div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-gray-900">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                                 Nouveau résultat disponible
                                             </p>
-                                            <p className="text-xs text-gray-500 mt-0.5">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                                 Votre score de compatibilité est prêt
                                             </p>
-                                            <p className="text-xs text-gray-400 mt-1">Il y a 2 heures</p>
+                                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Il y a 2 heures</p>
                                         </div>
                                     </div>
                                 </DropdownMenuItem>

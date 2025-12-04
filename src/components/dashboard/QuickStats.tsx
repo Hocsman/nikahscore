@@ -48,10 +48,10 @@ export default function QuickStats({ stats }: QuickStatsProps) {
     ]
 
     return (
-        <Card className="bg-white">
+        <Card className="bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                         <span className="text-gray-400">📊</span>
                         Statistiques
                     </h3>
@@ -63,13 +63,13 @@ export default function QuickStats({ stats }: QuickStatsProps) {
                         return (
                             <div
                                 key={stat.label}
-                                className="flex flex-col items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                                className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                             >
                                 <Icon className={`w-5 h-5 ${stat.color} mb-1`} />
-                                <p className="text-2xl font-bold text-gray-900">
+                                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                                     {stat.value}
                                 </p>
-                                <p className="text-xs text-gray-500 text-center">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                                     {stat.label}
                                 </p>
                             </div>

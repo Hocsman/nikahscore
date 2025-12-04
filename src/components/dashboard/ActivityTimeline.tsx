@@ -142,10 +142,10 @@ export default function ActivityTimeline({
     }
 
     return (
-        <Card className="bg-white">
+        <Card className="bg-white dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-600" />
+                <CardTitle className="text-base flex items-center gap-2 dark:text-gray-100">
+                    <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     Activité récente
                 </CardTitle>
             </CardHeader>
@@ -160,7 +160,7 @@ export default function ActivityTimeline({
                             <div key={activity.id} className="relative">
                                 {/* Timeline line */}
                                 {!isLast && (
-                                    <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gray-200" />
+                                    <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700" />
                                 )}
 
                                 <div className="flex gap-3">
@@ -173,16 +173,16 @@ export default function ActivityTimeline({
                                     <div className="flex-1 min-w-0 pb-1">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-gray-900">
+                                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                                     {activity.title}
                                                 </p>
                                                 {activity.description && (
-                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                                         {activity.description}
                                                     </p>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-gray-400 whitespace-nowrap">
+                                            <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
                                                 {formatTimestamp(activity.timestamp)}
                                             </span>
                                         </div>
