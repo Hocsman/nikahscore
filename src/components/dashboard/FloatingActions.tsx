@@ -71,7 +71,7 @@ export default function FloatingActions() {
     const getActionPosition = (index: number, total: number) => {
         // Spread from -90deg to -180deg (top-left quarter circle)
         const angle = -90 - (90 / (total + 1)) * (index + 1)
-        const radius = 80
+        const radius = 110 // Increased from 80 for better spacing
         return {
             x: Math.cos((angle * Math.PI) / 180) * radius,
             y: Math.sin((angle * Math.PI) / 180) * radius,
