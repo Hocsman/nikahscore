@@ -134,23 +134,25 @@ export default function NextActionsWidget({
                         </p>
                     </div>
                 ) : (
-                    pendingActions.map((action) => {
+                    pendingActions.slice(0, 5).map((action) => {
                         const config = getPriorityConfig(action.priority)
                         const PriorityIcon = config.icon
 
                         return (
                             <motion.div
                                 key={action.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                whileHover={{ scale: 1.02, x: 4 }}
+                                transition={{ type: "spring", stiffness: 300 }}
                                 className={`
-                  flex items-start gap-3 p-3 rounded-lg border-2 transition-all
+                  flex items-start gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer
                   ${action.completed
                                         ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60'
                                         : `${config.bg} dark:bg-gray-700 border-transparent hover:border-blue-300 dark:hover:border-blue-600`
                                     }
                 `}
+                                onClick={() => handleToggle(action.id)}
                             >
                                 <Checkbox
                                     checked={action.completed}
