@@ -7,9 +7,12 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import ShortcutsModal from './ShortcutsModal'
 import { useCouple } from '@/hooks/useCouple'
 import { useUserStats } from '@/hooks/useUserStats'
 import Link from 'next/link'
@@ -66,6 +69,8 @@ interface DashboardStats {
 export default function UserDashboard() {
   const { user } = useAuth()
   const { isPremium, isConseil, plan, planName, loading: subscriptionLoading } = useSubscription()
+  const { isShortcutsModalOpen, setIsShortcutsModalOpen } = useKeyboardShortcuts()
+  const router = useRouter()
   const { getUserCoupleCode } = useCouple()
   const { stats: userStats, questionnaires, loading: statsLoading } = useUserStats()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
@@ -822,6 +827,10 @@ export default function UserDashboard() {
       <TodoListModal
         open={showTodoModal}
         onOpenChange={setShowTodoModal}
+      />
+      <ShortcutsModal
+        open={isShortcutsModalOpen}
+        onOpenChange={setIsShortcutsModalOpen}
       />
     </DashboardLayout>
   )
