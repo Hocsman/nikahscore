@@ -8,6 +8,8 @@ import { ClientProviders } from '@/components/ClientProviders'
 import { ConditionalNavbar } from '@/components/ConditionalNavbar'
 import { Analytics } from '@vercel/analytics/react'
 import { StructuredData } from '@/components/StructuredData'
+import { GoogleTagManager } from '@next/third-parties/google'
+import Script from 'next/script'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -92,6 +94,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
+      <head>
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <Script
+            id="clarity-script"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+                })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+              `,
+            }}
+          />
+        )}
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <ClientProviders>
           <div className="relative flex min-h-screen flex-col">
@@ -105,6 +124,9 @@ export default function RootLayout({
         </ClientProviders>
         <StructuredData />
         <Analytics />
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
+        )}
       </body>
     </html>
   )
