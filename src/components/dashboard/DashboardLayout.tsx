@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import DashboardSidebar from './DashboardSidebar'
 import DashboardHeader from './DashboardHeader'
+import FloatingActions from './FloatingActions'
 
 interface DashboardLayoutProps {
     children: React.ReactNode
@@ -70,6 +71,9 @@ export default function DashboardLayout({ children, onExportPDF, isGeneratingPDF
                         {children}
                     </div>
                 </main>
+
+                {/* Floating Action Button */}
+                <FloatingActions />
             </div>
         </div>
     )
