@@ -115,6 +115,44 @@ export function useSubscription() {
     fetchSubscription()
   }, [user, userLoading])
 
+  // Fonctions utilitaires - déclarées avant checkFeatureAccess pour pouvoir les utiliser
+  const isPremiumPlan = subscription?.plan?.name === 'premium'
+  const isConseilPlan = subscription?.plan?.name === 'conseil'
+  const isFreePlan = !subscription || subscription?.plan?.name === 'free'
+  const isActivePlan = subscription?.status === 'active'
+
+  // Liste des features par plan
+  const premiumFeatures = [
+    'unlimited_questionnaires',
+    'advanced_questions',
+    'detailed_analysis',
+    'ai_recommendations',
+    'compatibility_trends',
+    'pdf_export',
+    'share_results',
+    'custom_branding',
+    'priority_support',
+    'results_charts',
+    'results_detailed_analysis',
+    'results_comparison',
+    'results_recommendations',
+    'questionnaire_shareable',
+    'couple_results_comparison',
+    'all_achievements',
+    'leaderboard',
+    'couple_mode',
+    'couple_insights',
+    'compatibility_tracking',
+    'budget_sessions',
+    'shared_todos'
+  ]
+
+  const conseilFeatures = [
+    ...premiumFeatures,
+    'ai_coach',
+    'dedicated_support'
+  ]
+
   // Vérifier l'accès à une feature
   const checkFeatureAccess = useCallback(async (featureCode: string): Promise<FeatureAccess> => {
     if (!user) {
@@ -126,6 +164,39 @@ export function useSubscription() {
       }
     }
 
+    // Vérification locale basée sur le plan (prioritaire et plus fiable)
+    if (isConseilPlan && isActivePlan) {
+      // Plan Conseil a accès à tout
+      return {
+        has_access: true,
+        limit_value: null,
+        current_usage: 0,
+        remaining: null
+      }
+    }
+
+    if (isPremiumPlan && isActivePlan && premiumFeatures.includes(featureCode)) {
+      // Plan Premium a accès aux features premium
+      return {
+        has_access: true,
+        limit_value: null,
+        current_usage: 0,
+        remaining: null
+      }
+    }
+
+    // Features gratuites de base
+    const freeFeatures = ['basic_questionnaire', 'basic_results', 'basic_achievements', 'email_support']
+    if (freeFeatures.includes(featureCode)) {
+      return {
+        has_access: true,
+        limit_value: null,
+        current_usage: 0,
+        remaining: null
+      }
+    }
+
+    // Essayer la RPC Supabase en fallback
     try {
       const supabase = createClient()
       const { data, error: rpcError } = await supabase
@@ -155,13 +226,8 @@ export function useSubscription() {
         remaining: null
       }
     }
-  }, [user])
+  }, [user, isConseilPlan, isPremiumPlan, isActivePlan])
 
-  // Fonctions utilitaires
-  const isPremium = subscription?.plan?.name === 'premium'
-  const isConseil = subscription?.plan?.name === 'conseil'
-  const isFree = !subscription || subscription?.plan?.name === 'free'
-  const isActive = subscription?.status === 'active'
   const planName = subscription?.plan?.display_name || 'Gratuit'
   const planCode = subscription?.plan?.name || 'free'
 
@@ -169,10 +235,10 @@ export function useSubscription() {
     subscription,
     loading,
     error,
-    isPremium,
-    isConseil,
-    isFree,
-    isActive,
+    isPremium: isPremiumPlan,
+    isConseil: isConseilPlan,
+    isFree: isFreePlan,
+    isActive: isActivePlan,
     planName,
     planCode,
     checkFeatureAccess,
