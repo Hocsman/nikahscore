@@ -41,7 +41,9 @@ const FEATURE_NAMES: Record<FeatureCode, string> = {
   results_recommendations: 'Recommandations Premium',
   questionnaire_shareable: 'Questionnaire partageable',
   couple_results_comparison: 'Comparaison résultats couple',
-  ai_coach: 'Coach AI Matrimonial'
+  ai_coach: 'Coach AI Matrimonial',
+  budget_sessions: 'Sessions Budget',
+  shared_todos: 'To-Do Partagée'
 }
 
 const PLAN_INFO = {
@@ -104,7 +106,7 @@ export default function UpgradePrompt({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
@@ -113,85 +115,85 @@ export default function UpgradePrompt({
       <div className="relative z-10 animate-in zoom-in-95 duration-200">
         <div className="mx-auto max-w-lg w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden m-4">
           {/* Content starts here */}
-              {/* Header avec gradient */}
-              <div className={`bg-gradient-to-r ${planInfo.color} p-6 text-white relative`}>
-                <button
-                  onClick={onClose}
-                  className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-                
-                <div className="flex items-center gap-3 mb-2">
-                  {planInfo.icon}
-                  <h2 className="text-2xl font-bold">
-                    Passez en {planInfo.name}
-                  </h2>
-                </div>
-                
-                <p className="text-white/90">
-                  {customMessage || reason || `Pour accéder à ${featureName.toLowerCase()}`}
-                </p>
+          {/* Header avec gradient */}
+          <div className={`bg-gradient-to-r ${planInfo.color} p-6 text-white relative`}>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-2">
+              {planInfo.icon}
+              <h2 className="text-2xl font-bold">
+                Passez en {planInfo.name}
+              </h2>
+            </div>
+
+            <p className="text-white/90">
+              {customMessage || reason || `Pour accéder à ${featureName.toLowerCase()}`}
+            </p>
+          </div>
+
+          {/* Contenu */}
+          <div className="p-6">
+            {/* Prix */}
+            <div className="text-center mb-6">
+              <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                {planInfo.price}
               </div>
-
-              {/* Contenu */}
-              <div className="p-6">
-                {/* Prix */}
-                <div className="text-center mb-6">
-                  <div className="text-4xl font-bold text-gray-900 dark:text-white">
-                    {planInfo.price}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {planInfo.period}
-                  </div>
-                  <div className="mt-2">
-                    <span className="inline-block bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium">
-                      ✨ Économisez 33% avec le plan annuel
-                    </span>
-                  </div>
-                </div>
-
-                {/* Fonctionnalités */}
-                <div className="space-y-3 mb-6">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Ce que vous obtenez :
-                  </h4>
-                  {planInfo.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Call to Action */}
-                <div className="space-y-3">
-                  <Link
-                    href="/pricing"
-                    onClick={onClose}
-                    className={`w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r ${planInfo.color} text-white font-semibold rounded-xl hover:shadow-lg transition-all`}
-                  >
-                    Découvrir les offres
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  
-                  <button
-                    onClick={onClose}
-                    className="w-full px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
-                  >
-                    Peut-être plus tard
-                  </button>
-                </div>
-
-                {/* Garantie */}
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    🛡️ <strong>Garantie satisfait ou remboursé</strong> 30 jours
-                  </p>
-                </div>
+              <div className="text-gray-600 dark:text-gray-400">
+                {planInfo.period}
               </div>
+              <div className="mt-2">
+                <span className="inline-block bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium">
+                  ✨ Économisez 33% avec le plan annuel
+                </span>
+              </div>
+            </div>
+
+            {/* Fonctionnalités */}
+            <div className="space-y-3 mb-6">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                Ce que vous obtenez :
+              </h4>
+              {planInfo.features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {feature}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Call to Action */}
+            <div className="space-y-3">
+              <Link
+                href="/pricing"
+                onClick={onClose}
+                className={`w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r ${planInfo.color} text-white font-semibold rounded-xl hover:shadow-lg transition-all`}
+              >
+                Découvrir les offres
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+
+              <button
+                onClick={onClose}
+                className="w-full px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+              >
+                Peut-être plus tard
+              </button>
+            </div>
+
+            {/* Garantie */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                🛡️ <strong>Garantie satisfait ou remboursé</strong> 30 jours
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
