@@ -42,8 +42,8 @@ export default function ActionsPage() {
 
                     <TabsContent value="budget" className="space-y-4 mt-6">
                         <FeatureGate
-                            requiredPlan="premium"
-                            fallbackContent={
+                            featureCode="budget_sessions"
+                            fallback={
                                 <Card className="border-purple-200 dark:border-purple-800">
                                     <CardContent className="pt-6">
                                         <div className="text-center py-8">
@@ -86,8 +86,8 @@ export default function ActionsPage() {
 
                     <TabsContent value="todos" className="space-y-4 mt-6">
                         <FeatureGate
-                            requiredPlan="premium"
-                            fallbackContent={
+                            featureCode="shared_todos"
+                            fallback={
                                 <Card className="border-blue-200 dark:border-blue-800">
                                     <CardContent className="pt-6">
                                         <div className="text-center py-8">

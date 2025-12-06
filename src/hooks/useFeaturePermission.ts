@@ -41,6 +41,8 @@ export type FeatureCode =
   | 'couple_mode'
   | 'couple_insights'
   | 'compatibility_tracking'
+  | 'budget_sessions'
+  | 'shared_todos'
 
 export function useFeaturePermission(featureCode: FeatureCode): FeaturePermission {
   const { checkFeatureAccess, loading: subLoading } = useSubscription()
@@ -69,11 +71,11 @@ export function useFeaturePermission(featureCode: FeatureCode): FeaturePermissio
         } else {
           // Déterminer quel plan est requis
           const requiredPlan = getRequiredPlanForFeature(featureCode)
-          
+
           setPermission({
             allowed: false,
             blocked: true,
-            reason: access.limit_value !== null 
+            reason: access.limit_value !== null
               ? `Limite de ${access.limit_value} atteinte. Passez à ${requiredPlan} pour continuer.`
               : `Cette fonctionnalité nécessite le plan ${requiredPlan}.`,
             requiredPlan,
@@ -120,7 +122,9 @@ function getRequiredPlanForFeature(featureCode: FeatureCode): string {
     'pdf_export',
     'all_achievements',
     'couple_insights',
-    'priority_support'
+    'priority_support',
+    'budget_sessions',
+    'shared_todos'
   ]
 
   if (conseilFeatures.includes(featureCode)) {
