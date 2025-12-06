@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,13 +28,7 @@ export default function TodoListModal({ open, onOpenChange }: TodoListModalProps
     const [newTodo, setNewTodo] = useState('')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        if (open && user) {
-            loadTodos()
-        }
-    }, [open, user])
-
-    const loadTodos = async () => {
+    const loadTodos = useCallback(async () => {
         if (!user) return
 
         try {
@@ -50,7 +44,13 @@ export default function TodoListModal({ open, onOpenChange }: TodoListModalProps
         } catch (error) {
             console.error('Error loading todos:', error)
         }
-    }
+    }, [user])
+
+    useEffect(() => {
+        if (open && user) {
+            loadTodos()
+        }
+    }, [open, user, loadTodos])
 
     const handleAddTodo = async (e: React.FormEvent) => {
         e.preventDefault()

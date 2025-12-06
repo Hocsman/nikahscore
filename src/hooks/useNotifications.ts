@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -23,7 +23,7 @@ export function useNotifications() {
   const supabase = createClient()
 
   // Charger les notifications
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     if (!user?.id) return
 
     try {
@@ -43,7 +43,7 @@ export function useNotifications() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id, supabase])
 
   // Marquer une notification comme lue
   const markAsRead = async (notificationId: string) => {
@@ -155,7 +155,7 @@ export function useNotifications() {
   }
 
   // Envoyer une notification push
-  const sendPushNotification = (title: string, message: string, icon?: string) => {
+  const sendPushNotification = useCallback((title: string, message: string, icon?: string) => {
     if (Notification.permission === 'granted') {
       new Notification(title, {
         body: message,
@@ -164,7 +164,7 @@ export function useNotifications() {
         tag: 'nikahscore-notification'
       })
     }
-  }
+  }, [])
 
   // Écouter les nouvelles notifications en temps réel
   useEffect(() => {
@@ -197,7 +197,7 @@ export function useNotifications() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [user?.id])
+  }, [user?.id, loadNotifications, supabase, sendPushNotification])
 
   return {
     notifications,

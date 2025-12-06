@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,24 +36,7 @@ export default function CoachAIPage() {
   const [loadingConversations, setLoadingConversations] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Charger les conversations
-  useEffect(() => {
-    if (!user) return
-    loadConversations()
-  }, [user])
-
-  // Charger les messages de la conversation courante
-  useEffect(() => {
-    if (!currentConversation) return
-    loadMessages(currentConversation)
-  }, [currentConversation])
-
-  // Auto-scroll vers le bas
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -75,9 +58,15 @@ export default function CoachAIPage() {
     } finally {
       setLoadingConversations(false)
     }
-  }
+  }, [user, currentConversation])
 
-  const loadMessages = async (conversationId: string) => {
+  // Charger les conversations
+  useEffect(() => {
+    if (!user) return
+    loadConversations()
+  }, [user, loadConversations])
+
+  const loadMessages = useCallback(async (conversationId: string) => {
     try {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -92,7 +81,18 @@ export default function CoachAIPage() {
       console.error('Error loading messages:', error)
       toast.error('Erreur lors du chargement des messages')
     }
-  }
+  }, [])
+
+  // Charger les messages de la conversation courante
+  useEffect(() => {
+    if (!currentConversation) return
+    loadMessages(currentConversation)
+  }, [currentConversation, loadMessages])
+
+  // Auto-scroll vers le bas
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const createNewConversation = async () => {
     try {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -46,19 +46,7 @@ export default function ResultsPage({ params }: { params: Promise<{ pairId: stri
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
-    params.then(p => {
-      setPairId(p.pairId)
-    })
-  }, [params])
-
-  useEffect(() => {
-    if (pairId) {
-      loadResults()
-    }
-  }, [pairId])
-  
-  const loadResults = async () => {
+  const loadResults = useCallback(async () => {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       if (authError || !user) {
@@ -84,7 +72,19 @@ export default function ResultsPage({ params }: { params: Promise<{ pairId: stri
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [pairId, router, supabase])
+
+  useEffect(() => {
+    params.then(p => {
+      setPairId(p.pairId)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (pairId) {
+      loadResults()
+    }
+  }, [pairId, loadResults])
 
   // Mock data temporaire si pas de résultats chargés
   const displayResults = results || {
