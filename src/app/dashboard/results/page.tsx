@@ -1,11 +1,16 @@
+'use client'
+
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import ActivityTimeline from '@/components/dashboard/ActivityTimeline'
 import QuestionnaireHistoryCard from '@/components/dashboard/QuestionnaireHistoryCard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BarChart3, Download, TrendingUp } from 'lucide-react'
+import { useUserStats } from '@/hooks/useUserStats'
 
 export default function ResultsPage() {
+    const { questionnaires, loading } = useUserStats()
+
     return (
         <DashboardLayout>
             <div className="space-y-6">
@@ -57,7 +62,10 @@ export default function ResultsPage() {
                         <BarChart3 className="w-5 h-5" />
                         Historique des questionnaires
                     </h2>
-                    <QuestionnaireHistoryCard />
+                    <QuestionnaireHistoryCard
+                        questionnaires={questionnaires}
+                        loading={loading}
+                    />
                 </div>
 
                 {/* Activity Timeline */}
