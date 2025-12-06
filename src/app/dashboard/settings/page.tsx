@@ -64,7 +64,7 @@ export default function SettingsPage() {
                                     <Label htmlFor="name">Nom complet</Label>
                                     <Input
                                         id="name"
-                                        defaultValue={user?.user_metadata?.full_name || ''}
+                                        defaultValue={user?.name || ''}
                                         placeholder="Votre nom"
                                     />
                                 </div>
