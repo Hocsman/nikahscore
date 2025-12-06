@@ -29,7 +29,7 @@ export default function PremiumPage() {
         },
         {
             name: 'Premium',
-            price: '6.67€',
+            price: '9,99€',
             period: '/mois',
             features: [
                 { name: 'Questionnaires illimités', included: true },
@@ -45,7 +45,7 @@ export default function PremiumPage() {
         },
         {
             name: 'Conseil',
-            price: '41.67€',
+            price: '49,99€',
             period: '/mois',
             features: [
                 { name: 'Tout Premium', included: true },
@@ -91,7 +91,7 @@ export default function PremiumPage() {
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-gray-600 dark:text-gray-400">Prix</span>
                                 <span className="text-lg font-semibold dark:text-gray-200">
-                                    {isConseil ? '41.67€/mois' : '6.67€/mois'}
+                                    {isConseil ? '49,99€/mois' : '9,99€/mois'}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">
