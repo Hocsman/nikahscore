@@ -121,38 +121,6 @@ export function useSubscription() {
   const isFreePlan = !subscription || subscription?.plan?.name === 'free'
   const isActivePlan = subscription?.status === 'active'
 
-  // Liste des features par plan
-  const premiumFeatures = [
-    'unlimited_questionnaires',
-    'advanced_questions',
-    'detailed_analysis',
-    'ai_recommendations',
-    'compatibility_trends',
-    'pdf_export',
-    'share_results',
-    'custom_branding',
-    'priority_support',
-    'results_charts',
-    'results_detailed_analysis',
-    'results_comparison',
-    'results_recommendations',
-    'questionnaire_shareable',
-    'couple_results_comparison',
-    'all_achievements',
-    'leaderboard',
-    'couple_mode',
-    'couple_insights',
-    'compatibility_tracking',
-    'budget_sessions',
-    'shared_todos'
-  ]
-
-  const conseilFeatures = [
-    ...premiumFeatures,
-    'ai_coach',
-    'dedicated_support'
-  ]
-
   // Vérifier l'accès à une feature
   const checkFeatureAccess = useCallback(async (featureCode: string): Promise<FeatureAccess> => {
     if (!user) {
@@ -174,6 +142,33 @@ export function useSubscription() {
         remaining: null
       }
     }
+
+    // Liste des features premium
+    const premiumFeatures = [
+      'unlimited_questionnaires',
+      'advanced_questions',
+      'detailed_analysis',
+      'ai_recommendations',
+      'compatibility_trends',
+      'pdf_export',
+      'share_results',
+      'custom_branding',
+      'priority_support',
+      'results_charts',
+      'results_detailed_analysis',
+      'results_export',
+      'results_comparison',
+      'results_recommendations',
+      'questionnaire_shareable',
+      'couple_results_comparison',
+      'all_achievements',
+      'leaderboard',
+      'couple_mode',
+      'couple_insights',
+      'compatibility_tracking',
+      'budget_sessions',
+      'shared_todos'
+    ]
 
     if (isPremiumPlan && isActivePlan && premiumFeatures.includes(featureCode)) {
       // Plan Premium a accès aux features premium

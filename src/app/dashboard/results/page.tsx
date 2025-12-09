@@ -27,6 +27,7 @@ import {
 import { useUserStats } from '@/hooks/useUserStats'
 import { useSubscription } from '@/hooks/useSubscription'
 import FeatureGate from '@/components/premium/FeatureGate'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 export default function ResultsPage() {
@@ -339,9 +340,9 @@ export default function ResultsPage() {
                                             <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md mx-auto">
                                                 Accédez aux graphiques radar avancés et aux visualisations détaillées avec un abonnement Premium.
                                             </p>
-                                            <Button className="bg-gradient-to-r from-purple-500 to-pink-600">
+                                            <StripeCheckout plan="premium" className="bg-gradient-to-r from-purple-500 to-pink-600">
                                                 Passer Premium
-                                            </Button>
+                                            </StripeCheckout>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -366,9 +367,9 @@ export default function ResultsPage() {
                                             <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md mx-auto">
                                                 Obtenez une analyse approfondie par catégorie et des recommandations personnalisées.
                                             </p>
-                                            <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
+                                            <StripeCheckout plan="premium" className="bg-gradient-to-r from-indigo-500 to-purple-600">
                                                 Passer Premium
-                                            </Button>
+                                            </StripeCheckout>
                                         </div>
                                     </CardContent>
                                 </Card>

@@ -18,6 +18,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useSubscription } from '@/hooks/useSubscription'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 
 interface MenuItem {
     icon: any
@@ -180,30 +181,28 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
             {/* Premium Badge / CTA */}
             <div className="p-3 border-t border-gray-100 dark:border-gray-700">
                 {!isPremium && !isConseil ? (
-                    <Link href="/pricing">
-                        <motion.div
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className={`
-                bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 cursor-pointer
-                ${isCollapsed ? 'flex justify-center' : ''}
-              `}
-                        >
-                            {isCollapsed ? (
-                                <Zap className="w-5 h-5" />
-                            ) : (
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                        <Zap className="w-4 h-4" />
-                                        <span className="font-semibold text-sm">Passer Premium</span>
-                                    </div>
-                                    <p className="text-xs text-white/80">
-                                        Débloquez toutes les fonctionnalités
-                                    </p>
+                    <StripeCheckout 
+                        plan="premium" 
+                        variant="ghost"
+                        className={`
+                            w-full p-0 h-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700
+                            ${isCollapsed ? 'flex justify-center p-3' : 'p-3'}
+                        `}
+                    >
+                        {isCollapsed ? (
+                            <Zap className="w-5 h-5" />
+                        ) : (
+                            <div className="space-y-1 w-full text-left">
+                                <div className="flex items-center gap-2">
+                                    <Zap className="w-4 h-4" />
+                                    <span className="font-semibold text-sm">Passer Premium</span>
                                 </div>
-                            )}
-                        </motion.div>
-                    </Link>
+                                <p className="text-xs text-white/80">
+                                    Débloquez toutes les fonctionnalités
+                                </p>
+                            </div>
+                        )}
+                    </StripeCheckout>
                 ) : (
                     <div className={`
             bg-gradient-to-r ${isConseil ? 'from-orange-500 to-orange-600' : 'from-purple-500 to-purple-600'} 

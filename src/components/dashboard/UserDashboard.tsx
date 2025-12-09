@@ -17,6 +17,7 @@ import TodoListModal from '@/components/dashboard/TodoListModal'
 import { AchievementsChecker } from '@/components/AchievementsChecker'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 import {
   BarChart3,
   Users,
@@ -217,9 +218,9 @@ export default function UserDashboard() {
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Débloquez toutes les fonctionnalités pour votre couple.
                     </p>
-                    <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600" asChild>
-                      <Link href="/pricing">Passer Premium</Link>
-                    </Button>
+                    <StripeCheckout plan="premium" className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
+                      Passer Premium
+                    </StripeCheckout>
                   </div>
                 )}
 

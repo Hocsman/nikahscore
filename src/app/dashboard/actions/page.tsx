@@ -4,11 +4,12 @@ import { useState } from 'react'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import BudgetSessionModal from '@/components/dashboard/BudgetSessionModal'
 import TodoListModal from '@/components/dashboard/TodoListModal'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Calendar, CheckSquare, Plus } from 'lucide-react'
 import FeatureGate from '@/components/premium/FeatureGate'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 
 export default function ActionsPage() {
     const [showBudgetModal, setShowBudgetModal] = useState(false)
@@ -54,9 +55,9 @@ export default function ActionsPage() {
                                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                                                 Passez Premium pour planifier des sessions budget avec votre partenaire
                                             </p>
-                                            <Button className="bg-gradient-to-r from-purple-500 to-pink-600">
+                                            <StripeCheckout plan="premium" className="bg-gradient-to-r from-purple-500 to-pink-600">
                                                 Passer Premium
-                                            </Button>
+                                            </StripeCheckout>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -98,9 +99,9 @@ export default function ActionsPage() {
                                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                                                 Passez Premium pour créer une to-do liste partagée avec votre partenaire
                                             </p>
-                                            <Button className="bg-gradient-to-r from-blue-500 to-purple-600">
+                                            <StripeCheckout plan="premium" className="bg-gradient-to-r from-blue-500 to-purple-600">
                                                 Passer Premium
-                                            </Button>
+                                            </StripeCheckout>
                                         </div>
                                     </CardContent>
                                 </Card>

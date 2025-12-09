@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Crown, Check, X, ArrowRight, Bot, Download, Calendar, CheckSquare } from 'lucide-react'
-import Link from 'next/link'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 
 export default function PremiumPage() {
     const { isPremium, isConseil, plan, planName } = useSubscription()
@@ -14,6 +14,7 @@ export default function PremiumPage() {
     const plans = [
         {
             name: 'Gratuit',
+            planId: 'gratuit' as const,
             price: '0€',
             period: '',
             features: [
@@ -29,6 +30,7 @@ export default function PremiumPage() {
         },
         {
             name: 'Premium',
+            planId: 'premium' as const,
             price: '9,99€',
             period: '/mois',
             features: [
@@ -41,10 +43,12 @@ export default function PremiumPage() {
                 { name: 'Coach AI', included: false },
             ],
             current: isPremium && !isConseil,
-            popular: true
+            popular: true,
+            canUpgrade: !isPremium && !isConseil, // Only free users can upgrade to Premium
         },
         {
             name: 'Conseil',
+            planId: 'conseil' as const,
             price: '49,99€',
             period: '/mois',
             features: [
@@ -57,6 +61,7 @@ export default function PremiumPage() {
                 { name: 'Communauté privée', included: true },
             ],
             current: isConseil,
+            canUpgrade: !isConseil, // Free and Premium users can upgrade to Conseil
         },
     ]
 
@@ -165,13 +170,14 @@ export default function PremiumPage() {
                                         ))}
                                     </ul>
 
-                                    {!planItem.current && planItem.name !== 'Gratuit' && (
-                                        <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-600" asChild>
-                                            <Link href="/pricing">
-                                                Passer à {planItem.name}
-                                                <ArrowRight className="w-4 h-4 ml-2" />
-                                            </Link>
-                                        </Button>
+                                    {!planItem.current && planItem.planId !== 'gratuit' && planItem.canUpgrade && (
+                                        <StripeCheckout 
+                                            plan={planItem.planId as 'premium' | 'conseil'} 
+                                            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+                                        >
+                                            Passer à {planItem.name}
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </StripeCheckout>
                                     )}
                                 </CardContent>
                             </Card>

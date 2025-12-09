@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useAnalytics } from '@/lib/analytics'
-import Link from 'next/link'
+import StripeCheckout from '@/components/stripe/StripeCheckout'
 import { 
   Crown, 
   Lock, 
@@ -176,16 +176,14 @@ export default function PremiumBlock({
 
             {/* Actions */}
             <div className="flex flex-col space-y-3">
-              <Link href="/pricing">
-                <Button 
-                  className={`w-full h-12 text-white font-semibold bg-gradient-to-r ${planInfo.color} hover:opacity-90 transition-opacity`}
-                  onClick={handleUpgradeClick}
-                >
-                  <Crown className="w-5 h-5 mr-2" />
-                  Passer au plan {planInfo.name}
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
+              <StripeCheckout 
+                plan={requiredPlan === 'conseil' ? 'conseil' : 'premium'}
+                className={`w-full h-12 text-white font-semibold bg-gradient-to-r ${planInfo.color} hover:opacity-90 transition-opacity`}
+              >
+                <Crown className="w-5 h-5 mr-2" />
+                Passer au plan {planInfo.name}
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </StripeCheckout>
               
               <Button 
                 variant="outline" 
