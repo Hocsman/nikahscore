@@ -106,7 +106,26 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabas
     // Récupérer les détails de la subscription
     const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
 
-    // Mettre à jour la subscription utilisateur
+    // IMPORTANT: Mettre à jour le profil utilisateur pour activer le plan
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        subscription_plan: plan,
+        subscription_status: 'active',
+        subscription_start: new Date().toISOString(),
+        subscription_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+        stripe_customer_id: session.customer,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId)
+
+    if (profileError) {
+      console.error('Erreur mise à jour profil:', profileError)
+    } else {
+      console.log(`✅ Plan ${plan} activé pour utilisateur ${userId}`)
+    }
+
+    // Mettre à jour aussi la table user_subscriptions pour l'historique
     const { error } = await supabase
       .from('user_subscriptions')
       .upsert([{
@@ -212,6 +231,32 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription, supa
 // Traiter l'annulation de subscription
 async function handleSubscriptionCanceled(subscription: Stripe.Subscription, supabase: any) {
   try {
+    // Récupérer l'utilisateur lié à cette subscription
+    const { data: userSub } = await supabase
+      .from('user_subscriptions')
+      .select('user_id')
+      .eq('stripe_subscription_id', subscription.id)
+      .single()
+
+    // Mettre à jour le profil utilisateur pour désactiver le plan
+    if (userSub?.user_id) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_plan: 'free',
+          subscription_status: 'cancelled',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userSub.user_id)
+
+      if (profileError) {
+        console.error('Erreur mise à jour profil après annulation:', profileError)
+      } else {
+        console.log(`✅ Plan annulé pour utilisateur ${userSub.user_id}`)
+      }
+    }
+
+    // Mettre à jour user_subscriptions
     const { error } = await supabase
       .from('user_subscriptions')
       .update({
@@ -221,13 +266,11 @@ async function handleSubscriptionCanceled(subscription: Stripe.Subscription, sup
       })
       .eq('stripe_subscription_id', subscription.id)
 
-    // Logger pour analytics
-    const { data: userSub } = await supabase
-      .from('user_subscriptions')
-      .select('user_id')
-      .eq('stripe_subscription_id', subscription.id)
-      .single()
+    if (error) {
+      console.error('Erreur mise à jour subscription:', error)
+    }
 
+    // Logger pour analytics
     if (userSub?.user_id) {
       await supabase
         .from('analytics_events')
