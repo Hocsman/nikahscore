@@ -22,52 +22,33 @@ import {
     XCircle,
     Lightbulb,
     PieChart,
-    Activity
+    Activity,
+    FileQuestion
 } from 'lucide-react'
 import { useUserStats } from '@/hooks/useUserStats'
 import { useSubscription } from '@/hooks/useSubscription'
+import { useCompatibilityResults } from '@/hooks/useCompatibilityResults'
 import FeatureGate from '@/components/premium/FeatureGate'
 import StripeCheckout from '@/components/stripe/StripeCheckout'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import Link from 'next/link'
 
 export default function ResultsPage() {
-    const { questionnaires, loading } = useUserStats()
+    const { questionnaires, loading: statsLoading } = useUserStats()
     const { isPremium, isConseil } = useSubscription()
+    const { results, hasResults, loading: resultsLoading } = useCompatibilityResults()
+    const [isExportingPDF, setIsExportingPDF] = useState(false)
 
-    // Données de démonstration / simulées basées sur les vrais résultats
-    const mockScores = {
-        overall_score: 78,
-        axis_scores: {
-            'Intentions': 85,
-            'Valeurs': 92,
-            'Rôles': 68,
-            'Enfants': 88,
-            'Finance': 75,
-            'Style': 72,
-            'Communication': 82,
-            'Personnalité': 79,
-            'Logistique': 65
-        },
-        strengths: [
-            'Valeurs spirituelles très alignées',
-            'Vision similaire de la famille',
-            'Objectifs financiers compatibles',
-            'Communication ouverte et respectueuse'
-        ],
-        frictions: [
-            'Différences sur l\'approche éducative',
-            'Attentes différentes sur les rôles au foyer',
-            'Points logistiques à clarifier'
-        ],
-        recommendations: [
-            'Dialoguez davantage sur vos attentes concernant l\'éducation des enfants',
-            'Explorez ensemble les moyens d\'harmoniser vos différences de mode de vie',
-            'Prenez le temps de mieux vous connaître avant de prendre une décision finale',
-            'Considérez une discussion avec un conseiller matrimonial islamique'
-        ]
+    const loading = statsLoading || resultsLoading
+
+    // Utiliser les vrais résultats ou des valeurs par défaut
+    const displayResults = results || {
+        overall_score: 0,
+        axis_scores: {},
+        strengths: [],
+        frictions: [],
+        recommendations: []
     }
-
-    const displayResults = mockScores
 
     const getScoreColor = (score: number) => {
         if (score >= 80) return 'text-green-600'
@@ -102,6 +83,92 @@ export default function ResultsPage() {
 
     const scoreInfo = getScoreLabel(displayResults.overall_score)
 
+    // Fonction d'export PDF
+    const handleExportPDF = async () => {
+        if (!results?.couple_code) return
+        
+        setIsExportingPDF(true)
+        try {
+            const response = await fetch('/api/pdf/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    coupleCode: results.couple_code,
+                    includeDetails: isPremium || isConseil
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la génération du PDF')
+            }
+
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `nikahscore-resultats-${results.couple_code}.pdf`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error('Erreur export PDF:', error)
+            alert('Erreur lors de l\'export PDF. Veuillez réessayer.')
+        } finally {
+            setIsExportingPDF(false)
+        }
+    }
+
+    // Afficher un message si pas de résultats
+    if (!loading && !hasResults) {
+        return (
+            <DashboardLayout>
+                <div className="space-y-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                            Mes Résultats
+                        </h1>
+                        <p className="text-gray-600 dark:text-gray-400 mt-1">
+                            Analyse complète de votre compatibilité
+                        </p>
+                    </div>
+
+                    <Card className="border-dashed">
+                        <CardContent className="py-16">
+                            <div className="text-center">
+                                <FileQuestion className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                                    Aucun résultat disponible
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                                    Pour voir vos résultats de compatibilité, vous devez d'abord compléter un questionnaire avec votre partenaire.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                    <Link href="/questionnaire">
+                                        <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
+                                            Commencer un questionnaire
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard/couple">
+                                        <Button variant="outline">
+                                            Inviter mon partenaire
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Historique des questionnaires même sans résultats */}
+                    <QuestionnaireHistoryCard
+                        questionnaires={questionnaires}
+                        loading={statsLoading}
+                    />
+                </div>
+            </DashboardLayout>
+        )
+    }
+
     return (
         <DashboardLayout>
             <div className="space-y-6">
@@ -124,9 +191,14 @@ export default function ResultsPage() {
                             </Button>
                         }
                     >
-                        <Button variant="outline" className="gap-2">
+                        <Button 
+                            variant="outline" 
+                            className="gap-2"
+                            onClick={handleExportPDF}
+                            disabled={isExportingPDF || !hasResults}
+                        >
                             <Download className="w-4 h-4" />
-                            Exporter PDF
+                            {isExportingPDF ? 'Génération...' : 'Exporter PDF'}
                         </Button>
                     </FeatureGate>
                 </div>
