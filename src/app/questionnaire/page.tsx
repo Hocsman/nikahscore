@@ -588,8 +588,8 @@ export default function QuestionnairePage() {
         </motion.div>
 
         {/* Barre de progression avancée */}
-        <motion.div 
-          className="mb-8"
+        <motion.div
+          className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md -mx-4 px-4 py-3 mb-5"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}

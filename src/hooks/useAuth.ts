@@ -95,6 +95,11 @@ export function useAuth() {
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    // Nettoyer les données utilisateur du localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('nikahscore-responses')
+      localStorage.removeItem('nikahscore-paginated-responses')
+    }
   }
 
   return {
