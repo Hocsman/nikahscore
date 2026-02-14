@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
     const supabaseAdmin = createAdminClient()
-    const { share_code, email, responses, role } = await request.json()
+    const { share_code, responses, role } = await request.json()
+    const email = user.email
 
     if (!share_code || !responses || !role) {
       return NextResponse.json(

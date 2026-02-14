@@ -5,21 +5,21 @@ export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/couple/check
- * Vérifie si un utilisateur a créé ou rejoint un couple
+ * Vérifie si l'utilisateur connecté a créé ou rejoint un couple
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const user_id = searchParams.get('user_id')
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-    if (!user_id) {
+    if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: 'user_id requis' },
-        { status: 400 }
+        { success: false, error: 'Non authentifié' },
+        { status: 401 }
       )
     }
 
-    const supabase = await createClient()
+    const user_id = user.id
 
     // Vérifier si l'utilisateur est créateur ou partenaire d'un couple - Deux requêtes séparées
     const [creatorResult, partnerResult] = await Promise.all([
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     if (creatorResult.error && creatorResult.error.code !== 'PGRST116') {
       console.error('❌ Erreur Supabase check couple (creator):', creatorResult.error)
       return NextResponse.json(
-        { success: false, error: creatorResult.error.message },
+        { success: false, error: 'Erreur lors de la vérification du couple' },
         { status: 500 }
       )
     }
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     if (partnerResult.error && partnerResult.error.code !== 'PGRST116') {
       console.error('❌ Erreur Supabase check couple (partner):', partnerResult.error)
       return NextResponse.json(
-        { success: false, error: partnerResult.error.message },
+        { success: false, error: 'Erreur lors de la vérification du couple' },
         { status: 500 }
       )
     }
@@ -79,8 +79,8 @@ export async function GET(request: NextRequest) {
     console.error('❌ Erreur check couple:', error)
     return NextResponse.json(
       { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Erreur serveur' 
+        success: false,
+        error: 'Erreur serveur' 
       },
       { status: 500 }
     )

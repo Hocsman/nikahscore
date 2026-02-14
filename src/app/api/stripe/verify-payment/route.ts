@@ -5,9 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { session: authSession } } = await supabase.auth.getSession()
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
 
-    if (!authSession) {
+    if (authError || !authUser) {
       return NextResponse.json({
         success: false,
         error: 'Non authentifié'
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier que le paiement correspond à l'utilisateur connecté
-    if (userId !== authSession.user.id) {
+    if (userId !== authUser.id) {
       return NextResponse.json({
         success: false,
         error: 'Paiement non associé à cet utilisateur'

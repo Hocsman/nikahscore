@@ -50,8 +50,9 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         )
       }
+      console.error('Erreur inscription Supabase:', error.message)
       return NextResponse.json(
-        { error: error.message, signUpError: error },
+        { error: 'Erreur lors de la création du compte' },
         { status: 400 }
       )
     }
@@ -84,24 +85,9 @@ export async function POST(request: NextRequest) {
           })
 
         if (userError) {
-          // Log complet pour debugging
-          const errorDetails = {
-            message: userError.message,
-            code: userError.code,
-            hint: userError.hint,
-            details: userError.details,
-            data_attempted: {
-              id: data.user.id,
-              name: `${firstName} ${lastName || ''}`.trim(),
-              email: email,
-            }
-          }
-
+          console.error('Erreur sauvegarde profil:', userError.message, userError.code)
           return NextResponse.json(
-            {
-              error: 'Database error saving new user',
-              ...errorDetails
-            },
+            { error: 'Erreur lors de la création du profil' },
             { status: 400 }
           )
         }

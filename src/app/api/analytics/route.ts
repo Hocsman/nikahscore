@@ -52,10 +52,26 @@ export async function POST(request: NextRequest) {
 // Endpoint pour récupérer les métriques (dashboard admin)
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+    }
+
+    // Vérifier le rôle admin
+    const { data: adminRole } = await supabase
+      .from('admin_roles')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (!adminRole) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
     const startDate = searchParams.get('start_date') || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    
-    const supabase = await createClient()
 
     try {
       // Essayer d'abord avec la fonction sécurisée

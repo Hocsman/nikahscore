@@ -9,9 +9,9 @@ export async function POST(request: NextRequest) {
   try {
     // Vérifier l'authentification
     const supabase = await createClient()
-    const { data: { session: authSession } } = await supabase.auth.getSession()
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
 
-    if (!authSession) {
+    if (authError || !authUser) {
       return NextResponse.json(
         { error: 'Non authentifié' },
         { status: 401 }
@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     }
 
     const { plan, billing = 'monthly' } = await request.json()
-    const userId = authSession.user.id
-    const email = authSession.user.email
+    const userId = authUser.id
+    const email = authUser.email
 
     // Validation des données
     if (!plan || !VALID_PLANS.includes(plan) || !VALID_BILLINGS.includes(billing)) {
@@ -102,10 +102,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Erreur création session Stripe:', error)
     return NextResponse.json(
-      { 
-        error: 'Erreur création session de paiement',
-        details: error instanceof Error ? error.message : 'Erreur inconnue'
-      },
+      { error: 'Erreur création session de paiement' },
       { status: 500 }
     )
   }

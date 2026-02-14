@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { CompatibilityCalculator, type CompatibilityAnalysis } from '@/lib/compatibility-algorithm'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAuth = await createClient()
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
     const supabase = createAdminClient()
     const { pairId } = await request.json()
     
@@ -139,10 +150,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Erreur génération rapport:', error)
     
     return NextResponse.json(
-      { 
-        error: 'Erreur interne lors de la génération du rapport',
-        details: error instanceof Error ? error.message : 'Erreur inconnue'
-      },
+      { error: 'Erreur interne lors de la génération du rapport' },
       { status: 500 }
     )
   }
@@ -151,6 +159,16 @@ export async function POST(request: NextRequest) {
 // API pour récupérer un rapport existant
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAuth = await createClient()
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
     const supabase = createAdminClient()
     const url = new URL(request.url)
     const pairId = url.searchParams.get('pairId')

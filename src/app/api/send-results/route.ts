@@ -91,10 +91,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Message d\'erreur:', error instanceof Error ? error.message : 'Erreur inconnue')
     
     return NextResponse.json(
-      { 
-        error: 'Erreur lors de l\'envoi de l\'email',
-        details: error instanceof Error ? error.message : 'Erreur inconnue'
-      },
+      { error: 'Erreur lors de l\'envoi de l\'email' },
       { status: 500 }
     )
   }

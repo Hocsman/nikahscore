@@ -5,16 +5,16 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-    if (!session) {
+    if (authError || !user) {
       return NextResponse.json(
         { error: 'Non authentifié' },
         { status: 401 }
       )
     }
 
-    const user_id = session.user.id
+    const user_id = user.id
     const supabaseAdmin = createAdminClient()
 
     // Générer un code couple unique
@@ -70,8 +70,8 @@ export async function POST(_request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    const user_id = session?.user.id || null
+    const { data: { user } } = await supabase.auth.getUser()
+    const user_id = user?.id || null
 
     const supabaseAdmin = createAdminClient()
     const { searchParams } = new URL(request.url)

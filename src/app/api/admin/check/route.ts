@@ -11,10 +11,10 @@ export async function GET() {
   try {
     const supabase = await createClient()
     
-    // Récupérer la session utilisateur
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-    
-    if (sessionError || !session) {
+    // Récupérer l'utilisateur authentifié (validation JWT côté serveur)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
       return NextResponse.json({ isAdmin: false })
     }
 
@@ -22,7 +22,7 @@ export async function GET() {
     const { data: adminRole, error: adminError } = await supabase
       .from('admin_roles')
       .select('id')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .maybeSingle()
 
     if (adminError) {
@@ -35,8 +35,8 @@ export async function GET() {
     return NextResponse.json({
       isAdmin,
       user: {
-        id: session.user.id,
-        email: session.user.email
+        id: user.id,
+        email: user.email
       }
     })
 

@@ -346,10 +346,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Erreur serveur contact form:', error)
     return NextResponse.json(
-      { 
-        error: 'Erreur serveur. Veuillez réessayer plus tard.',
-        details: process.env.NODE_ENV === 'development' ? String(error) : undefined
-      },
+      { error: 'Erreur serveur. Veuillez réessayer plus tard.' },
       { status: 500 }
     )
   }

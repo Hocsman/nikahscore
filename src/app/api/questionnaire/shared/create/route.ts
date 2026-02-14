@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 
 // Créer un nouveau questionnaire partagé
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
     const supabaseAdmin = createAdminClient()
 
     let resend: Resend | null = null
@@ -12,7 +23,8 @@ export async function POST(request: NextRequest) {
       resend = new Resend(process.env.RESEND_API_KEY)
     }
 
-    const { creator_email } = await request.json()
+    // Utiliser l'email de l'utilisateur authentifié
+    const creator_email = user.email
 
     // Générer un code de partage unique via Supabase
     const { data: codeResult } = await supabaseAdmin
@@ -44,7 +56,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('❌ Error creating shared questionnaire:', error)
       return NextResponse.json(
-        { error: 'Erreur lors de la création du questionnaire partagé', details: error.message },
+        { error: 'Erreur lors de la création du questionnaire partagé' },
         { status: 500 }
       )
     }
@@ -118,10 +130,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Error creating shared questionnaire:', error)
     return NextResponse.json(
-      { 
-        error: 'Erreur serveur', 
-        details: error instanceof Error ? error.message : 'Erreur inconnue' 
-      },
+      { error: 'Erreur serveur' },
       { status: 500 }
     )
   }
