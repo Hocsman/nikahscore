@@ -84,7 +84,7 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-center lg:text-left"
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
                 NikahScore
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
@@ -99,14 +99,14 @@ export default function LandingPage() {
               >
                 <Link
                   href="/questionnaire/shared"
-                  className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+                  className="group bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 flex items-center justify-center"
                 >
                   Créer un Questionnaire Partagé
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   href="/pricing"
-                  className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300"
+                  className="border-2 border-pink-500 text-pink-600 dark:text-pink-400 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-pink-50 dark:hover:bg-pink-900/40 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
                 >
                   Tarifs
                 </Link>
@@ -144,7 +144,7 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="relative hidden lg:block"
             >
-              <div className="relative h-[500px] w-full rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative h-[500px] w-full rounded-3xl overflow-hidden shadow-xl">
                 <Image
                   src="/images/hero-couple.png"
                   alt="Couple musulman regardant ensemble vers l'avenir, symbolisant l'unité dans le mariage"
@@ -190,7 +190,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 text-center group"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center group"
               >
                 <div className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <div className="text-pink-600 dark:text-pink-400">
@@ -231,7 +231,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="flex items-center mb-4">
                   <div className="flex text-yellow-400">
@@ -266,7 +266,7 @@ export default function LandingPage() {
           </p>
           <Link
             href="/questionnaire/shared"
-            className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
           >
             Créer un Questionnaire Partagé
             <ArrowRight className="ml-2 w-5 h-5" />
