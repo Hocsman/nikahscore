@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient()
     const { couple_code, user_id, responses } = await request.json()
 
     if (!couple_code || !user_id || !responses) {
@@ -117,6 +113,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient()
     const { searchParams } = new URL(request.url)
     const couple_code = searchParams.get('code')
 

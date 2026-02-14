@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { CompatibilityCalculator, type CompatibilityAnalysis } from '@/lib/compatibility-algorithm'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createAdminClient()
     const { pairId } = await request.json()
     
     if (!pairId) {
@@ -155,6 +151,7 @@ export async function POST(request: NextRequest) {
 // API pour récupérer un rapport existant
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createAdminClient()
     const url = new URL(request.url)
     const pairId = url.searchParams.get('pairId')
     

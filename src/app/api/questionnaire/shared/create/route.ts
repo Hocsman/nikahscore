@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
-// Initialisation de Resend pour l'envoi d'email
-let resend: Resend | null = null
-if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
-  resend = new Resend(process.env.RESEND_API_KEY)
-}
 
 // Créer un nouveau questionnaire partagé
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient()
+
+    let resend: Resend | null = null
+    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
+      resend = new Resend(process.env.RESEND_API_KEY)
+    }
+
     const { creator_email } = await request.json()
 
     // Générer un code de partage unique via Supabase

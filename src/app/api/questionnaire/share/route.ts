@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
+  const supabaseAdmin = createAdminClient()
   try {
     const { responses, user_id } = await request.json()
 
@@ -61,6 +57,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient()
     const { searchParams } = new URL(request.url)
     const share_code = searchParams.get('code')
 

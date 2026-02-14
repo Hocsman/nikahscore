@@ -3,10 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 import PartnerCompletedNotification from '@/emails/PartnerCompletedNotification'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const supabase = await createClient()
     const { shareCode } = await request.json()
 

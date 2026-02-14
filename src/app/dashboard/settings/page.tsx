@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import { useAuth } from '@/hooks/useAuth'
@@ -61,14 +61,7 @@ export default function SettingsPage() {
     const [isExporting, setIsExporting] = useState(false)
 
     // Charger les données du profil
-    useEffect(() => {
-        if (user) {
-            setName(user.name || user.firstName || '')
-            loadNotificationSettings()
-        }
-    }, [user])
-
-    const loadNotificationSettings = async () => {
+    const loadNotificationSettings = useCallback(async () => {
         if (!user) return
 
         try {
@@ -87,7 +80,14 @@ export default function SettingsPage() {
         } catch (error) {
             console.error('Erreur chargement notifications:', error)
         }
-    }
+    }, [user, supabase])
+
+    useEffect(() => {
+        if (user) {
+            setName(user.name || user.firstName || '')
+            loadNotificationSettings()
+        }
+    }, [user, loadNotificationSettings])
 
     // Sauvegarder le profil
     const handleSaveProfile = async () => {

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 // Stockage temporaire des codes (en production, utiliser Redis ou base de données)
 const verificationCodes = new Map<string, { code: string, expires: number, action: string }>()
 
@@ -13,6 +11,7 @@ function generateVerificationCode(): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const { email, action } = await request.json()
 
     if (!email || !action) {

@@ -205,17 +205,22 @@ export default function QuestionnairePage() {
       total_questions: questions.length
     })
     
+    // Capturer les valeurs avant le setTimeout pour éviter les accès stale
+    const questionIndex = currentQuestion
+    const questionId = currentQ.id
+
     // Animation délai pour voir la sélection
     setTimeout(() => {
-      const questionId = questions[currentQuestion].id
+      if (!questions[questionIndex]) return
+
       const newResponses = { ...responses, [questionId]: response }
-      
+
       setResponses(newResponses)
       localStorage.setItem('nikahscore-responses', JSON.stringify(newResponses))
 
-      if (currentQuestion < questions.length - 1) {
+      if (questionIndex < questions.length - 1) {
         setDirection(1)
-        setCurrentQuestion(currentQuestion + 1)
+        setCurrentQuestion(questionIndex + 1)
         setSelectedAnswer(null)
         setIsSubmitting(false)
       } else {
@@ -224,13 +229,12 @@ export default function QuestionnairePage() {
           total_questions: questions.length,
           completion_time: Date.now() - (performance.timeOrigin || 0)
         })
-        
+
         setShowConfetti(true)
-        setTimeout(async () => {
+        setTimeout(() => {
           setIsCompleted(true)
           setIsSubmitting(false)
-          // Vérifier les achievements de questionnaire
-          await checkAchievements()
+          checkAchievements()
         }, 1500)
       }
     }, 600)

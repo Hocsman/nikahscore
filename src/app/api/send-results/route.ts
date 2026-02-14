@@ -1,14 +1,6 @@
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Initialisation conditionnelle de Resend
-let resend: Resend | null = null
-
-if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
-  resend = new Resend(process.env.RESEND_API_KEY)
-} else {
-}
-
 interface EmailRequest {
   email: string
   name?: string
@@ -30,12 +22,18 @@ interface EmailRequest {
 export async function POST(request: NextRequest) {
   try {
     const data: EmailRequest = await request.json()
-    
+
     if (!data.email || !data.globalScore) {
       return NextResponse.json(
         { error: 'Email et résultats requis' },
         { status: 400 }
       )
+    }
+
+    // Initialisation conditionnelle de Resend
+    let resend: Resend | null = null
+    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
+      resend = new Resend(process.env.RESEND_API_KEY)
     }
 
     // Vérifier si Resend est configuré

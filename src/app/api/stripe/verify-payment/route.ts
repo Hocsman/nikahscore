@@ -2,18 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
-
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-07-30.basil'
-    })
-  : null
-
 export async function POST(request: NextRequest) {
-  
+
   try {
     const { sessionId } = await request.json()
-
 
     if (!sessionId) {
       return NextResponse.json({
@@ -22,25 +14,13 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // MODE DÉVELOPPEMENT : Détection et simulation
-    if (sessionId.startsWith('cs_dev_') || sessionId.startsWith('cs_test_dev_') || sessionId.includes('mode=dev')) {
-      
-      return NextResponse.json({
-        success: true,
-        verified: true,
-        devMode: true,
-        payment: {
-          id: sessionId,
-          status: 'paid',
-          amount: 999,
-          currency: 'eur',
-          plan: 'premium'
-        },
-        message: 'Paiement simulé validé'
-      })
-    }
+    // Vérification avec Stripe
+    const stripe = process.env.STRIPE_SECRET_KEY
+      ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion
+        })
+      : null
 
-    // MODE PRODUCTION : Vérification avec Stripe
     if (!stripe) {
       return NextResponse.json({
         success: false,

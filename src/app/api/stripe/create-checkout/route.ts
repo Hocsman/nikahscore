@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-// Initialiser Stripe avec la clé secrète
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil'
-})
-
-// Configuration des Price IDs depuis les variables d'environnement
-const PRICE_IDS = {
-  'premium-monthly': process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID!,
-  'premium-annual': process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID!,
-  'conseil-monthly': process.env.STRIPE_CONSEIL_MONTHLY_PRICE_ID!,
-  'conseil-annual': process.env.STRIPE_CONSEIL_ANNUAL_PRICE_ID!,
-}
-
 export async function POST(request: NextRequest) {
   try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion
+    })
+
+    const PRICE_IDS: Record<string, string | undefined> = {
+      'premium-monthly': process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID,
+      'premium-annual': process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID,
+      'conseil-monthly': process.env.STRIPE_CONSEIL_MONTHLY_PRICE_ID,
+      'conseil-annual': process.env.STRIPE_CONSEIL_ANNUAL_PRICE_ID,
+    }
+
     const { plan, billing = 'monthly', userId, email } = await request.json()
 
     // Validation des données

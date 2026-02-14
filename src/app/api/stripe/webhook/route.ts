@@ -3,16 +3,16 @@ import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-07-30.basil'
-    })
-  : null
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-
 export async function POST(request: NextRequest) {
   try {
+    const stripe = process.env.STRIPE_SECRET_KEY
+      ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion
+        })
+      : null
+
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
     // Vérifier que Stripe est configuré
     if (!stripe || !webhookSecret) {
       return NextResponse.json(
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Traiter les différents types d'événements
     switch (event.type) {
       case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session, supabase)
+        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session, supabase, stripe)
         break
 
       case 'customer.subscription.created':
@@ -88,12 +88,8 @@ export async function POST(request: NextRequest) {
 }
 
 // Traiter la completion du checkout
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabase: any) {
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabase: any, stripe: Stripe) {
   try {
-    if (!stripe) {
-      console.error('Stripe non configuré pour handleCheckoutCompleted')
-      return
-    }
 
     const userId = session.metadata?.userId
     const plan = session.metadata?.plan
