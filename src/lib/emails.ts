@@ -97,7 +97,7 @@ function getInviteTemplate(data: EmailData): EmailTemplate {
     <p>Qu'Allah vous guide dans votre choix matrimonial.</p>
     
     <div class="footer">
-      <p>© 2025 NikahScore - Tous droits réservés</p>
+      <p>© ${new Date().getFullYear()} NikahScore - Tous droits réservés</p>
       <p>Si vous ne souhaitez plus recevoir ces emails, vous pouvez vous désabonner.</p>
     </div>
   </div>
@@ -174,7 +174,7 @@ function getResultsReadyTemplate(data: EmailData): EmailTemplate {
     <p>Qu'Allah bénisse votre union si telle est Sa volonté.</p>
     
     <div class="footer">
-      <p>© 2025 NikahScore - Tous droits réservés</p>
+      <p>© ${new Date().getFullYear()} NikahScore - Tous droits réservés</p>
       <p>Besoin d'aide ? Contactez-nous à support@nikahscore.com</p>
     </div>
   </div>
@@ -246,7 +246,7 @@ function getReminderTemplate(data: EmailData): EmailTemplate {
     <p>Barakallahu fikoum.</p>
     
     <div class="footer">
-      <p>© 2025 NikahScore - Tous droits réservés</p>
+      <p>© ${new Date().getFullYear()} NikahScore - Tous droits réservés</p>
       <p>Pour vous désabonner de ces rappels, cliquez ici</p>
     </div>
   </div>

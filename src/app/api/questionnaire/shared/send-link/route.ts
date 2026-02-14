@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
         <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center;">
           <p style="color: #6b7280; font-size: 14px; margin: 0;">
-            © 2025 NikahScore - Plateforme de compatibilité matrimoniale islamique
+            © ${new Date().getFullYear()} NikahScore - Plateforme de compatibilité matrimoniale islamique
           </p>
           <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
             Lien de questionnaire : <a href="${shareUrl}" style="color: #6366f1;">${shareUrl}</a>
@@ -87,7 +87,7 @@ Comment ça fonctionne ?
 2. Partagez le code ${shareCode} avec votre partenaire  
 3. Recevez votre analyse de compatibilité une fois terminé
 
-© 2025 NikahScore
+© ${new Date().getFullYear()} NikahScore
     `
 
 

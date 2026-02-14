@@ -124,7 +124,7 @@ export default function PartnerCompletedNotification({
               Plateforme de compatibilité matrimoniale selon les valeurs islamiques
             </Text>
             <Text style={footerText}>
-              © 2025 NikahScore. Tous droits réservés.
+              © {new Date().getFullYear()} NikahScore. Tous droits réservés.
             </Text>
           </Section>
         </Container>

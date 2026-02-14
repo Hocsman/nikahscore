@@ -341,7 +341,7 @@ export default function LandingPage() {
           <div className="border-t border-gray-800 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <p className="text-gray-400 text-center md:text-left">
-                © 2025 NikahScore. Tous droits réservés. | Fait avec ❤️ pour la Oummah
+                © {new Date().getFullYear()} NikahScore. Tous droits réservés. | Fait avec ❤️ pour la Oummah
               </p>
               <div className="flex space-x-6 text-sm">
                 <Link href="/privacy" className="text-gray-400 hover:text-pink-400 transition-colors">

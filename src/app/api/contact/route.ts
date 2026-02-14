@@ -165,7 +165,7 @@ export async function POST(request: Request) {
               💡 <strong>Astuce:</strong> Cliquez sur "Répondre" dans votre client email pour répondre directement à ${email}
             </p>
             <p style="margin: 10px 0 0 0; font-size: 12px;">
-              © 2025 NikahScore - Plateforme de Rencontre Halal
+              © ${new Date().getFullYear()} NikahScore - Plateforme de Rencontre Halal
             </p>
           </div>
         </body>
@@ -322,7 +322,7 @@ export async function POST(request: Request) {
               <a href="https://nikahscore.com/contact" class="link">Contact</a>
             </p>
             <p style="margin: 15px 0 0 0; font-size: 12px; color: #9CA3AF;">
-              © 2025 NikahScore. Tous droits réservés.<br>
+              © ${new Date().getFullYear()} NikahScore. Tous droits réservés.<br>
               Vous recevez cet email suite à votre demande de contact sur nikahscore.com
             </p>
           </div>

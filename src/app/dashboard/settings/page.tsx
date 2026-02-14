@@ -21,6 +21,7 @@ import {
 import { User, Bell, Palette, Database, Sun, Moon, Loader2, Check, AlertTriangle, Trash2, Download } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface NotificationSettings {
     email_notifications: boolean
@@ -111,7 +112,7 @@ export default function SettingsPage() {
             setTimeout(() => setProfileSaved(false), 3000)
         } catch (error) {
             console.error('Erreur sauvegarde profil:', error)
-            alert('Erreur lors de la sauvegarde du profil')
+            toast.error('Erreur lors de la sauvegarde du profil')
         } finally {
             setIsSavingProfile(false)
         }
@@ -138,7 +139,7 @@ export default function SettingsPage() {
             setTimeout(() => setNotificationsSaved(false), 3000)
         } catch (error) {
             console.error('Erreur sauvegarde notifications:', error)
-            alert('Erreur lors de la sauvegarde des préférences')
+            toast.error('Erreur lors de la sauvegarde des préférences')
         } finally {
             setIsSavingNotifications(false)
         }
@@ -179,7 +180,7 @@ export default function SettingsPage() {
             window.URL.revokeObjectURL(url)
         } catch (error) {
             console.error('Erreur export données:', error)
-            alert('Erreur lors de l\'export des données')
+            toast.error('Erreur lors de l\'export des données')
         } finally {
             setIsExporting(false)
         }
@@ -207,7 +208,7 @@ export default function SettingsPage() {
             router.push('/?deleted=true')
         } catch (error) {
             console.error('Erreur suppression compte:', error)
-            alert('Erreur lors de la suppression du compte. Veuillez contacter le support.')
+            toast.error('Erreur lors de la suppression du compte. Veuillez contacter le support.')
         } finally {
             setIsDeleting(false)
             setShowDeleteDialog(false)

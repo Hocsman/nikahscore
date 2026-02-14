@@ -258,7 +258,7 @@ export function PDFReportView({ results }: PDFReportViewProps) {
           approfondies et l'Istikhara.
         </p>
         <p className="mt-4 text-xs text-gray-500">
-          © 2025 NikahScore - Tous droits réservés
+          © {new Date().getFullYear()} NikahScore - Tous droits réservés
         </p>
       </div>
     </div>

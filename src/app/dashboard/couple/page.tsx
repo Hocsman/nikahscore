@@ -38,10 +38,10 @@ export default function CouplePage() {
                                 <div className="flex-1 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 font-mono">
                                     https://nikahscore.com/couple/invite/ABC123
                                 </div>
-                                <Button variant="outline" size="icon">
+                                <Button variant="outline" size="icon" aria-label="Copier le lien d'invitation">
                                     <Copy className="w-4 h-4" />
                                 </Button>
-                                <Button variant="outline" size="icon">
+                                <Button variant="outline" size="icon" aria-label="Partager le lien d'invitation">
                                     <Share2 className="w-4 h-4" />
                                 </Button>
                             </div>
