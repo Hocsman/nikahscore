@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
           });
 
         if (createError) {
+          console.error('Erreur création couple:', createError.message)
         }
       }
     } catch (coupleError: any) {
@@ -111,6 +112,7 @@ export async function POST(request: NextRequest) {
           .eq('respondent', realRespondent);
 
         if (deleteError) {
+          console.error('Erreur suppression anciennes réponses:', deleteError.message)
         }
 
         // Insérer les nouvelles réponses
