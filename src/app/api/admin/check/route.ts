@@ -18,19 +18,25 @@ export async function GET() {
       return NextResponse.json({ isAdmin: false })
     }
 
-    const user = session.user
+    // Vérifier le rôle admin via la table admin_roles (RLS: propre ligne uniquement)
+    const { data: adminRole, error: adminError } = await supabase
+      .from('admin_roles')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
 
-    // Vérifier le rôle admin via user_metadata ou email
-    const isAdmin = 
-      user.user_metadata?.role === 'admin' || 
-      user.email === 'admin@nikahscore.fr' ||
-      user.email === 'hocsman@gmail.com' // Email admin du propriétaire
+    if (adminError) {
+      console.error('Erreur vérification admin_roles:', adminError)
+      return NextResponse.json({ isAdmin: false })
+    }
 
-    return NextResponse.json({ 
+    const isAdmin = !!adminRole
+
+    return NextResponse.json({
       isAdmin,
       user: {
-        id: user.id,
-        email: user.email
+        id: session.user.id,
+        email: session.user.email
       }
     })
 

@@ -11,11 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
+import { useAdmin } from '@/hooks/useAdmin'
 import { Heart, Users, BarChart3, LogOut, User } from 'lucide-react'
 import { NotificationBell } from '@/components/NotificationBell'
 
 export function Navbar() {
   const { user, signOut } = useAuth()
+  const { isAdmin } = useAdmin()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -68,7 +70,7 @@ export function Navbar() {
               <span>Questionnaire Couple</span>
             </Link>
 
-            {user && (
+            {isAdmin && (
               <Link 
                 href="/admin/analytics" 
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${

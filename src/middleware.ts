@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
 
 export async function middleware(req: NextRequest) {
   const response = NextResponse.next()
@@ -38,11 +37,14 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/auth', req.url))
     }
 
-    // Vérifier le rôle admin
-    const isAdmin = session.user.user_metadata?.role === 'admin' || 
-                   session.user.email === 'admin@nikahscore.fr' // Email admin par défaut
+    // Vérifier le rôle admin via la table admin_roles (RLS: propre ligne uniquement)
+    const { data: adminRole } = await supabase
+      .from('admin_roles')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
 
-    if (!isAdmin) {
+    if (!adminRole) {
       return NextResponse.redirect(new URL('/', req.url))
     }
   }
