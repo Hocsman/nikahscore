@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 
@@ -30,13 +29,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    // Créer l'utilisateur avec Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
+    // Créer l'utilisateur avec Supabase Auth (via admin client)
+    const { data, error } = await supabaseAdmin.auth.signUp({
       email,
       password,
       options: {
