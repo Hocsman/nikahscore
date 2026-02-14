@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from './useAuth'
 
+// Cache module-level partagé entre tous les composants
+// Évite les fetches répétés à chaque render de la Navbar
+let adminCache: { userId: string; isAdmin: boolean; expiresAt: number } | null = null
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
 export function useAdmin() {
   const { user, loading: authLoading } = useAuth()
   const [isAdmin, setIsAdmin] = useState(false)
@@ -14,12 +19,26 @@ export function useAdmin() {
         return
       }
 
+      // Utiliser le cache si valide pour le même user
+      if (adminCache && adminCache.userId === user.id && Date.now() < adminCache.expiresAt) {
+        setIsAdmin(adminCache.isAdmin)
+        setLoading(false)
+        return
+      }
+
       try {
-        // Vérifier via l'API si l'utilisateur est admin
         const response = await fetch('/api/admin/check')
         const data = await response.json()
-        
-        setIsAdmin(data.isAdmin || false)
+        const result = data.isAdmin || false
+
+        // Mettre en cache
+        adminCache = {
+          userId: user.id,
+          isAdmin: result,
+          expiresAt: Date.now() + CACHE_TTL
+        }
+
+        setIsAdmin(result)
       } catch (error) {
         console.error('Erreur vérification admin:', error)
         setIsAdmin(false)
