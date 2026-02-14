@@ -266,6 +266,7 @@ export default function SettingsPage() {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Votre nom"
+                                        autoComplete="name"
                                     />
                                 </div>
 
@@ -277,6 +278,7 @@ export default function SettingsPage() {
                                         defaultValue={user?.email || ''}
                                         disabled
                                         className="bg-gray-50 dark:bg-gray-800"
+                                        autoComplete="email"
                                     />
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
                                         L'email ne peut pas être modifié

@@ -205,6 +205,7 @@ export default function AuthPage() {
                         className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         required={!isLogin}
                         disabled={loading}
+                        autoComplete="given-name"
                       />
                     </div>
                   </div>
@@ -224,6 +225,7 @@ export default function AuthPage() {
                         onChange={handleInputChange}
                         className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         disabled={loading}
+                        autoComplete="family-name"
                       />
                     </div>
                   </div>
@@ -246,6 +248,8 @@ export default function AuthPage() {
                     className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                     required
                     disabled={loading}
+                    autoComplete="email"
+                    inputMode="email"
                   />
                 </div>
               </div>
@@ -266,6 +270,7 @@ export default function AuthPage() {
                     className="pl-12 pr-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
                     required
                     disabled={loading}
+                    autoComplete={isLogin ? 'current-password' : 'new-password'}
                   />
                   <button
                     type="button"
@@ -325,6 +330,7 @@ export default function AuthPage() {
                       className={`pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 ${formData.confirmPassword && formData.confirmPassword !== formData.password ? 'border-red-400 focus-visible:ring-red-500/30 focus-visible:border-red-500' : ''}`}
                       required={!isLogin}
                       disabled={loading}
+                      autoComplete="new-password"
                     />
                     {formData.confirmPassword && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">

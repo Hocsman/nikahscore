@@ -206,6 +206,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        autoComplete="name"
                         className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                         placeholder="Votre nom complet"
                       />
@@ -221,6 +222,8 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        autoComplete="email"
+                        inputMode="email"
                         className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                         placeholder="votre@email.com"
                       />
