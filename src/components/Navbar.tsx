@@ -47,23 +47,23 @@ export function Navbar() {
 
           {/* Navigation Links */}
           <div className="flex items-center space-x-4">
-            <Link 
-              href="/questionnaire" 
+            <Link
+              href="/questionnaire"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/questionnaire') 
-                  ? 'bg-pink-100 text-pink-700' 
-                  : 'text-gray-600 hover:text-pink-600 hover:bg-pink-50'
+                isActive('/questionnaire')
+                  ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/20'
               }`}
             >
               Questionnaire
             </Link>
 
-            <Link 
-              href="/couple" 
+            <Link
+              href="/couple"
               className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/couple') 
-                  ? 'bg-purple-100 text-purple-700' 
-                  : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                isActive('/couple')
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
               }`}
             >
               <Users className="w-4 h-4" />
@@ -71,12 +71,12 @@ export function Navbar() {
             </Link>
 
             {isAdmin && (
-              <Link 
-                href="/admin/analytics" 
+              <Link
+                href="/admin/analytics"
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/admin/analytics') 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                  isActive('/admin/analytics')
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
                 }`}
               >
                 <BarChart3 className="w-4 h-4" />

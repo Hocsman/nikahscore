@@ -143,7 +143,7 @@ export default function PricingPage() {
               onClick={() => setIsAnnual(false)}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${!isAnnual
                   ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-300'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               Mensuel
@@ -152,7 +152,7 @@ export default function PricingPage() {
               onClick={() => setIsAnnual(true)}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${isAnnual
                   ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-300'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               Annuel
@@ -174,8 +174,8 @@ export default function PricingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 transform scale-105' : ''
-                }`}
+              className={`relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden ${plan.popular ? 'ring-2 ring-pink-500 dark:ring-pink-400 shadow-2xl scale-105 z-10' : 'shadow-md hover:shadow-lg'
+                } transition-all duration-300`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center py-2 text-sm font-semibold">
@@ -238,14 +238,14 @@ export default function PricingPage() {
                   <StripeCheckout
                     plan={plan.planId as 'premium' | 'conseil'}
                     isAnnual={isAnnual}
-                    className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold hover:opacity-90 transition-opacity h-12`}
+                    className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold hover:shadow-lg transition-all duration-300 active:scale-95 h-12`}
                   >
                     {plan.cta}
                   </StripeCheckout>
                 ) : (
                   <Link
                     href={plan.href || '/questionnaire'}
-                    className={`block w-full bg-gradient-to-r ${plan.color} text-white text-center py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity`}
+                    className={`block w-full bg-gradient-to-r ${plan.color} text-white text-center py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 active:scale-95`}
                   >
                     {plan.cta}
                   </Link>
@@ -313,13 +313,13 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/questionnaire"
-              className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-lg"
+              className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 active:scale-95"
             >
               Commencer Gratuitement
             </Link>
             <Link
               href="/contact"
-              className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-pink-600 transition-colors"
+              className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-pink-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
             >
               Nous Contacter
             </Link>
