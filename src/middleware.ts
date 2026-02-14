@@ -28,11 +28,6 @@ export async function middleware(req: NextRequest) {
   
   // Vérifier l'authentification pour les routes admin
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    // Pour le développement, permettre l'accès temporairement
-    if (process.env.NODE_ENV === 'development') {
-      return NextResponse.next()
-    }
-    
     if (!session) {
       return NextResponse.redirect(new URL('/auth', req.url))
     }
