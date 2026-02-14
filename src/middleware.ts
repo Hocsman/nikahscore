@@ -49,13 +49,13 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Routes qui nécessitent une authentification utilisateur
-  const protectedRoutes = ['/results', '/questionnaire']
-  const isProtectedRoute = protectedRoutes.some(route => 
-    req.nextUrl.pathname.startsWith(route)
-  )
+  // Routes /results protégées par authentification
+  if (req.nextUrl.pathname.startsWith('/results') && !session) {
+    return NextResponse.redirect(new URL('/auth', req.url))
+  }
 
-  if (isProtectedRoute && !session) {
+  // /questionnaire exact uniquement (les sous-routes shared/invite sont publiques)
+  if (req.nextUrl.pathname === '/questionnaire' && !session) {
     return NextResponse.redirect(new URL('/auth', req.url))
   }
 
@@ -63,5 +63,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: ['/admin/:path*', '/results/:path*', '/questionnaire']
 }
