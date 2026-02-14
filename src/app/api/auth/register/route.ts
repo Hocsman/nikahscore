@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://nikahscore-platform.vercel.app/questionnaire" 
+                <a href="https://nikahscore.com/questionnaire" 
                    style="background: #8B5CF6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block;">
                   ✨ Commencer mon questionnaire
                 </a>

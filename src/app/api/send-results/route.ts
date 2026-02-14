@@ -357,10 +357,10 @@ function generateEmailTemplate(data: EmailRequest): string {
       </p>
 
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://nikahscore-platform.vercel.app/questionnaire" class="cta-button">
+        <a href="https://nikahscore.com/questionnaire" class="cta-button">
           Refaire le test
         </a>
-        <a href="https://nikahscore-platform.vercel.app" class="cta-button">
+        <a href="https://nikahscore.com" class="cta-button">
           Visiter le site
         </a>
       </div>
