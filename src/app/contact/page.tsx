@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Mail, MessageCircle, Phone, MapPin, Send } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -41,13 +42,8 @@ export default function ContactPage() {
       
       
     } catch (error) {
-      console.error('❌ Erreur lors de l\'envoi:', error)
-      
-      // Afficher un message d'erreur à l'utilisateur
-      alert(
-        '❌ Une erreur est survenue lors de l\'envoi de votre message.\n\n' +
-        'Veuillez réessayer ou nous contacter directement à support@nikahscore.com'
-      )
+      console.error('Erreur lors de l\'envoi:', error)
+      toast.error('Une erreur est survenue lors de l\'envoi. Veuillez réessayer ou nous contacter à support@nikahscore.com')
     } finally {
       setIsSubmitting(false)
     }

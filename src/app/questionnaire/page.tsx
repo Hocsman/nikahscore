@@ -223,6 +223,7 @@ export default function QuestionnairePage() {
         setCurrentQuestion(questionIndex + 1)
         setSelectedAnswer(null)
         setIsSubmitting(false)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         // Questionnaire terminé
         trackEvent('questionnaire_completed', {
@@ -245,6 +246,7 @@ export default function QuestionnairePage() {
       setDirection(-1)
       setCurrentQuestion(currentQuestion - 1)
       setSelectedAnswer(null)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 

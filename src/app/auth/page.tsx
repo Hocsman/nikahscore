@@ -270,12 +270,38 @@ export default function AuthPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded transition-colors"
+                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                     disabled={loading}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {/* Indicateur de force du mot de passe (inscription) */}
+                {!isLogin && formData.password.length > 0 && (
+                  <div className="mt-2">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4].map((level) => {
+                        const strength = formData.password.length >= 12 && /[A-Z]/.test(formData.password) && /[0-9]/.test(formData.password) ? 4
+                          : formData.password.length >= 8 && (/[A-Z]/.test(formData.password) || /[0-9]/.test(formData.password)) ? 3
+                          : formData.password.length >= 6 ? 2 : 1
+                        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500']
+                        return (
+                          <div
+                            key={level}
+                            className={`h-1.5 flex-1 rounded-full transition-colors ${level <= strength ? colors[strength - 1] : 'bg-gray-200 dark:bg-gray-600'}`}
+                          />
+                        )
+                      })}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {formData.password.length < 6 ? 'Trop court (min. 6 caractères)' :
+                       formData.password.length < 8 ? 'Acceptable' :
+                       formData.password.length >= 12 && /[A-Z]/.test(formData.password) && /[0-9]/.test(formData.password) ? 'Excellent' :
+                       'Bon'}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Confirmation mot de passe (inscription seulement) */}
@@ -296,11 +322,23 @@ export default function AuthPage() {
                       placeholder="••••••••"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                      className={`pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 ${formData.confirmPassword && formData.confirmPassword !== formData.password ? 'border-red-400 focus-visible:ring-red-500/30 focus-visible:border-red-500' : ''}`}
                       required={!isLogin}
                       disabled={loading}
                     />
+                    {formData.confirmPassword && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {formData.confirmPassword === formData.password ? (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <AlertCircle className="w-5 h-5 text-red-400" />
+                        )}
+                      </div>
+                    )}
                   </div>
+                  {formData.confirmPassword && formData.confirmPassword !== formData.password && (
+                    <p className="text-xs text-red-500 mt-1">Les mots de passe ne correspondent pas</p>
+                  )}
                 </motion.div>
               )}
 
