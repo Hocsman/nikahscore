@@ -121,8 +121,7 @@ export default function AdminAnalyticsPage() {
   }
 
   const exportData = () => {
-    console.log('Export des données analytics...')
-    // Implémentation de l'export
+    // Export analytics - fonctionnalité à venir
   }
 
   if (loading || isLoading) {

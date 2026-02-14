@@ -100,7 +100,6 @@ export default function PaginatedQuestionnaire({
         timestamp: new Date().toISOString()
       }
       localStorage.setItem('nikahscore-paginated-responses', JSON.stringify(saveData))
-      console.log('💾 Sauvegarde automatique:', Object.keys(responses).length, 'réponses')
     }
   }, [responses, currentPage, autoSaveEnabled])
 
@@ -112,7 +111,6 @@ export default function PaginatedQuestionnaire({
         const data = JSON.parse(saved)
         setResponses(prev => ({ ...prev, ...data.responses }))
         setCurrentPage(data.currentPage || 0)
-        console.log('📂 Sauvegarde restaurée:', Object.keys(data.responses).length, 'réponses')
       } catch (e) {
         console.error('❌ Erreur chargement sauvegarde:', e)
       }

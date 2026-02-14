@@ -36,8 +36,7 @@ export default function FloatingActions() {
             icon: Calendar,
             label: 'Session budget',
             onClick: () => {
-                // TODO: Open budget modal
-                console.log('Open budget modal')
+                // Budget modal - fonctionnalité à venir
                 setIsOpen(false)
             },
             requiresPremium: true,

@@ -249,7 +249,7 @@ export default function UserDashboard() {
         <BudgetSessionModal
           open={showBudgetModal}
           onOpenChange={setShowBudgetModal}
-          onSessionCreated={() => console.log('Session créée')}
+          onSessionCreated={() => {}}
         />
         <TodoListModal
           open={showTodoModal}

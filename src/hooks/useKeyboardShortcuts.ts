@@ -19,8 +19,7 @@ export function useKeyboardShortcuts() {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault()
                 setSearchOpen(true)
-                // TODO: Implement search modal
-                console.log('Open search')
+                // Search modal is handled by SearchModal component
             }
 
             // ? : Show shortcuts help
