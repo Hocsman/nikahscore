@@ -7,11 +7,17 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  // Initialiser OpenAI dans la fonction pour éviter l'erreur au build
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: 'Coach AI non configuré' },
+        { status: 500 }
+      )
+    }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

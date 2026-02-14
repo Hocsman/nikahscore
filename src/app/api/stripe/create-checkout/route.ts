@@ -1,9 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { createClient } from '@/lib/supabase/server'
+
+const VALID_PLANS = ['premium', 'conseil'] as const
+const VALID_BILLINGS = ['monthly', 'annual'] as const
 
 export async function POST(request: NextRequest) {
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    // Vérifier l'authentification
+    const supabase = await createClient()
+    const { data: { session: authSession } } = await supabase.auth.getSession()
+
+    if (!authSession) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: 'Stripe non configuré' },
+        { status: 500 }
+      )
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion
     })
 
@@ -14,12 +36,14 @@ export async function POST(request: NextRequest) {
       'conseil-annual': process.env.STRIPE_CONSEIL_ANNUAL_PRICE_ID,
     }
 
-    const { plan, billing = 'monthly', userId, email } = await request.json()
+    const { plan, billing = 'monthly' } = await request.json()
+    const userId = authSession.user.id
+    const email = authSession.user.email
 
     // Validation des données
-    if (!plan || !userId || !email) {
+    if (!plan || !VALID_PLANS.includes(plan) || !VALID_BILLINGS.includes(billing)) {
       return NextResponse.json(
-        { error: 'Données manquantes: plan, userId et email requis' },
+        { error: 'Plan ou billing invalide' },
         { status: 400 }
       )
     }
