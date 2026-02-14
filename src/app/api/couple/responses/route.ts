@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabaseAdmin = createAdminClient()
-    const { couple_code, user_id, responses } = await request.json()
+    const supabase = await createClient()
+    const { data: { session } } = await supabase.auth.getSession()
 
-    if (!couple_code || !user_id || !responses) {
+    if (!session) {
       return NextResponse.json(
-        { error: 'Couple code, user ID, and responses are required' },
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
+    const user_id = session.user.id
+    const supabaseAdmin = createAdminClient()
+    const { couple_code, responses } = await request.json()
+
+    if (!couple_code || !responses) {
+      return NextResponse.json(
+        { error: 'Couple code and responses are required' },
         { status: 400 }
       )
     }

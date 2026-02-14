@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session) {
+      return NextResponse.json({
+        error: 'Non authentifié'
+      }, { status: 401 });
+    }
+
     const supabaseAdmin = createAdminClient()
     const body = await request.json();
 
@@ -10,8 +20,8 @@ export async function POST(request: NextRequest) {
 
     // Validation des données
     if (!pairId || !respondent || !answers) {
-      return NextResponse.json({ 
-        error: 'Données manquantes: pairId, respondent et answers requis' 
+      return NextResponse.json({
+        error: 'Données manquantes: pairId, respondent et answers requis'
       }, { status: 400 });
     }
 

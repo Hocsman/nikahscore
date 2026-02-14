@@ -3,8 +3,17 @@ import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-
   try {
+    const supabase = await createClient()
+    const { data: { session: authSession } } = await supabase.auth.getSession()
+
+    if (!authSession) {
+      return NextResponse.json({
+        success: false,
+        error: 'Non authentifié'
+      }, { status: 401 })
+    }
+
     const { sessionId } = await request.json()
 
     if (!sessionId) {
@@ -48,7 +57,13 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const supabase = await createClient()
+    // Vérifier que le paiement correspond à l'utilisateur connecté
+    if (userId !== authSession.user.id) {
+      return NextResponse.json({
+        success: false,
+        error: 'Paiement non associé à cet utilisateur'
+      }, { status: 403 })
+    }
 
     // Mettre à jour le plan de l'utilisateur
     const { error: updateError } = await supabase

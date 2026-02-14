@@ -1,17 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const supabaseAdmin = createAdminClient()
-    const { user_id } = await request.json()
+    const supabase = await createClient()
+    const { data: { session } } = await supabase.auth.getSession()
 
-    if (!user_id) {
+    if (!session) {
       return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
+        { error: 'Non authentifié' },
+        { status: 401 }
       )
     }
+
+    const user_id = session.user.id
+    const supabaseAdmin = createAdminClient()
 
     // Générer un code couple unique
     const { data: codeResult } = await supabaseAdmin
@@ -65,10 +69,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user_id = session?.user.id || null
+
     const supabaseAdmin = createAdminClient()
     const { searchParams } = new URL(request.url)
     const couple_code = searchParams.get('code')
-    const user_id = searchParams.get('user_id')
 
     if (!couple_code) {
       return NextResponse.json(
