@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Heart, Users, CheckCircle, Trophy, Clock, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Heart, Users, CheckCircle, Trophy, Clock, ArrowLeft, ArrowRight, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Question {
@@ -26,46 +27,75 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [responses, setResponses] = useState<{ [key: string]: boolean | number }>({})
-  const [email, setEmail] = useState('')
   const [userRole, setUserRole] = useState<'creator' | 'participant' | null>(null)
   const [loading, setLoading] = useState(true)
+  const [notAuthenticated, setNotAuthenticated] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [alreadyAnswered, setAlreadyAnswered] = useState(false)
   const [bothCompleted, setBothCompleted] = useState(false)
   const [compatibilityScore, setCompatibilityScore] = useState<number | null>(null)
   const [resolvedParams, setResolvedParams] = useState<{ code: string } | null>(null)
+  const [expired, setExpired] = useState(false)
 
   useEffect(() => {
-    const resolveParams = async () => {
-      const resolved = await params
-      setResolvedParams(resolved)
-    }
-    resolveParams()
+    params.then(p => setResolvedParams(p))
   }, [params])
 
   const loadSharedQuestionnaire = useCallback(async () => {
     if (!resolvedParams?.code) return
 
     try {
-      const response = await fetch(`/api/questionnaire/shared?code=${resolvedParams.code}`)
+      // Vérifier l'authentification
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
 
+      if (!user) {
+        setNotAuthenticated(true)
+        setLoading(false)
+        return
+      }
+
+      // Charger le questionnaire partagé via l'API
+      const response = await fetch(`/api/questionnaire/shared?code=${resolvedParams.code}`)
       const data = await response.json()
 
-      if (data.success) {
-        setQuestions(data.questions)
-
-        const shared = data.shared
-        if (shared?.creator_completed_at || shared?.partner_completed_at) {
-          setIsCompleted(true)
-          setBothCompleted(!!shared.creator_completed_at && !!shared.partner_completed_at)
-
-          if (shared.compatibility_score) {
-            setCompatibilityScore(shared.compatibility_score)
-          }
+      if (!data.success) {
+        if (data.expired) {
+          setExpired(true)
+        } else {
+          toast.error(data.error || 'Questionnaire non trouvé')
+          router.push('/questionnaire/shared')
         }
-      } else {
-        console.error('❌ Erreur API:', data.error)
-        toast.error('Questionnaire non trouvé')
-        router.push('/questionnaire/shared')
+        return
+      }
+
+      setQuestions(data.questions)
+      const shared = data.shared
+
+      // Auto-détection du rôle via creator_id
+      const isCreator = user.id === shared.creator_id
+      const role = isCreator ? 'creator' : 'participant'
+      setUserRole(role)
+
+      // Vérifier si l'utilisateur a déjà répondu
+      const userAlreadyAnswered = isCreator
+        ? !!shared.creator_completed_at
+        : !!shared.partner_completed_at
+
+      // Vérifier l'état de complétion global
+      const bothDone = !!shared.creator_completed_at && !!shared.partner_completed_at
+
+      if (userAlreadyAnswered) {
+        setAlreadyAnswered(true)
+        setIsCompleted(true)
+      }
+
+      if (bothDone) {
+        setBothCompleted(true)
+        setIsCompleted(true)
+        if (shared.compatibility_score) {
+          setCompatibilityScore(shared.compatibility_score)
+        }
       }
     } catch (error) {
       console.error('Error loading shared questionnaire:', error)
@@ -95,9 +125,9 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     }
   }
 
-  const submitResponses = async (finalResponses: any) => {
-    if (!userRole || !email.trim()) {
-      toast.error('Email requis pour sauvegarder')
+  const submitResponses = async (finalResponses: { [key: string]: boolean | number }) => {
+    if (!userRole) {
+      toast.error('Impossible de déterminer votre rôle')
       return
     }
 
@@ -107,7 +137,6 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           share_code: resolvedParams?.code,
-          email: email,
           responses: finalResponses,
           role: userRole
         })
@@ -117,13 +146,14 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
 
       if (data.success) {
         setIsCompleted(true)
+        setAlreadyAnswered(true)
         setBothCompleted(data.both_completed)
 
         if (data.compatibility_score) {
           setCompatibilityScore(data.compatibility_score)
         }
 
-        toast.success('Réponses sauvegardées avec succès!')
+        toast.success('Réponses sauvegardées avec succès !')
       } else {
         toast.error(data.error)
       }
@@ -133,36 +163,46 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     }
   }
 
+  // --- LOADING ---
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
         <div className="text-center space-y-4">
           <Heart className="w-12 h-12 mx-auto text-pink-500 animate-pulse" />
-          <p className="text-gray-600">Chargement du questionnaire partagé...</p>
+          <p className="text-gray-600 dark:text-gray-400">Chargement du questionnaire partagé...</p>
         </div>
       </div>
     )
   }
 
-  if (bothCompleted && compatibilityScore !== null) {
+  // --- NOT AUTHENTICATED ---
+  if (notAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 px-4">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 py-8 px-4">
+        <div className="max-w-md mx-auto">
           <Card>
             <CardHeader className="text-center">
-              <Trophy className="w-16 h-16 mx-auto text-yellow-500 mb-4" />
-              <CardTitle className="text-2xl text-green-700">Score de Compatibilité</CardTitle>
+              <LogIn className="w-12 h-12 mx-auto text-purple-500 mb-4" />
+              <CardTitle>Connexion requise</CardTitle>
+              <CardDescription>
+                Connectez-vous pour répondre au questionnaire partagé
+              </CardDescription>
             </CardHeader>
-            <CardContent className="text-center space-y-6">
-              <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
-                {compatibilityScore}%
-              </div>
-              <p className="text-sm md:text-base text-gray-600">
-                {compatibilityScore >= 80 ? "Excellente compatibilité !" :
-                  compatibilityScore >= 60 ? "Bonne compatibilité" :
-                    compatibilityScore >= 40 ? "Compatibilité modérée" :
-                      "Différences importantes à explorer"}
-              </p>
+            <CardContent className="space-y-4">
+              <Button
+                onClick={() => router.push(`/auth?mode=login&redirect=/questionnaire/shared/${resolvedParams?.code}`)}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Se connecter
+              </Button>
+              <Button
+                onClick={() => router.push(`/auth?mode=register&redirect=/questionnaire/shared/${resolvedParams?.code}`)}
+                variant="outline"
+                className="w-full"
+              >
+                Créer un compte
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -170,16 +210,78 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     )
   }
 
+  // --- EXPIRED ---
+  if (expired) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 py-8 px-4">
+        <div className="max-w-md mx-auto">
+          <Card>
+            <CardHeader className="text-center">
+              <Clock className="w-12 h-12 mx-auto text-orange-500 mb-4" />
+              <CardTitle>Questionnaire expiré</CardTitle>
+              <CardDescription>
+                Ce questionnaire a dépassé sa durée de validité de 30 jours.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                onClick={() => router.push('/questionnaire/shared')}
+                className="w-full"
+                variant="outline"
+              >
+                Créer un nouveau questionnaire
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  // --- BOTH COMPLETED WITH SCORE ---
+  if (bothCompleted && compatibilityScore !== null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 py-8 px-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <Card>
+            <CardHeader className="text-center">
+              <Trophy className="w-16 h-16 mx-auto text-yellow-500 mb-4" />
+              <CardTitle className="text-2xl text-green-700 dark:text-green-400">Score de Compatibilité</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-6">
+              <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+                {compatibilityScore}%
+              </div>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+                {compatibilityScore >= 80 ? "Excellente compatibilité !" :
+                  compatibilityScore >= 60 ? "Bonne compatibilité" :
+                    compatibilityScore >= 40 ? "Compatibilité modérée" :
+                      "Différences importantes à explorer"}
+              </p>
+              <Button
+                onClick={() => router.push('/questionnaire/shared')}
+                variant="outline"
+              >
+                Créer un Nouveau Questionnaire
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  // --- ALREADY ANSWERED (waiting for partner) ---
   if (isCompleted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 py-8 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <Card>
             <CardHeader className="text-center">
               <CheckCircle className="w-16 h-16 mx-auto text-green-500 mb-4" />
-              <CardTitle className="text-2xl text-green-700">Questionnaire Terminé !</CardTitle>
+              <CardTitle className="text-2xl text-green-700 dark:text-green-400">Questionnaire Terminé !</CardTitle>
               <CardDescription>
-                Merci d'avoir répondu au questionnaire partagé
+                Merci d&apos;avoir répondu au questionnaire partagé
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -189,29 +291,13 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                 </Badge>
               </div>
 
-              {bothCompleted && compatibilityScore !== null ? (
-                <div className="text-center space-y-4">
-                  <Trophy className="w-12 h-12 mx-auto text-yellow-500" />
-                  <h3 className="text-xl font-semibold">Score de Compatibilité</h3>
-                  <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
-                    {compatibilityScore}%
-                  </div>
-                  <p className="text-sm md:text-base text-gray-600">
-                    {compatibilityScore >= 80 ? "Excellente compatibilité !" :
-                      compatibilityScore >= 60 ? "Bonne compatibilité" :
-                        compatibilityScore >= 40 ? "Compatibilité modérée" :
-                          "Différences importantes à explorer"}
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center space-y-4">
-                  <Clock className="w-12 h-12 mx-auto text-blue-500" />
-                  <h3 className="text-xl font-semibold">En attente de votre partenaire</h3>
-                  <p className="text-gray-600">
-                    Le score de compatibilité sera calculé une fois que votre partenaire aura terminé le questionnaire.
-                  </p>
-                </div>
-              )}
+              <div className="text-center space-y-4">
+                <Clock className="w-12 h-12 mx-auto text-blue-500" />
+                <h3 className="text-xl font-semibold dark:text-gray-100">En attente de votre partenaire</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Le score de compatibilité sera calculé une fois que votre partenaire aura terminé le questionnaire.
+                </p>
+              </div>
 
               <div className="text-center">
                 <Button
@@ -228,69 +314,26 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     )
   }
 
-  if (!email) {
+  // --- NO QUESTIONS LOADED ---
+  if (!questions || questions.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 px-4">
-        <div className="max-w-md mx-auto">
-          <Card>
-            <CardHeader className="text-center">
-              <Users className="w-12 h-12 mx-auto text-blue-500 mb-4" />
-              <CardTitle>Questionnaire Partagé</CardTitle>
-              <CardDescription>
-                Code: <Badge variant="outline">{resolvedParams?.code}</Badge>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Votre Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="votre@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <Button
-                onClick={() => {
-                  if (email.trim()) {
-                    setUserRole('participant')
-                  }
-                }}
-                disabled={!email.trim()}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
-              >
-                Commencer le Questionnaire
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if ((!questions || questions.length === 0) && !loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Chargement des questions...</p>
+          <p className="text-gray-600 dark:text-gray-400">Aucune question disponible.</p>
         </div>
       </div>
     )
   }
 
-  if (userRole && email && questions && questions.length > 0 && currentQuestion < questions.length) {
+  // --- QUESTIONNAIRE IN PROGRESS ---
+  if (userRole && questions.length > 0 && currentQuestion < questions.length) {
     const currentQ = questions[currentQuestion]
 
     if (!currentQ) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-600">Erreur de chargement de la question...</p>
+            <p className="text-gray-600 dark:text-gray-400">Erreur de chargement de la question...</p>
           </div>
         </div>
       )
@@ -299,14 +342,14 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     const progress = ((currentQuestion + 1) / questions.length) * 100
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 py-8 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
             <Badge variant="outline" className="mb-2">
-              Code: {resolvedParams?.code} • {userRole === 'creator' ? 'Créateur' : 'Partenaire'}
+              Code: {resolvedParams?.code} &bull; {userRole === 'creator' ? 'Créateur' : 'Partenaire'}
             </Badge>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Question {currentQuestion + 1} sur {questions?.length || 0}
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              Question {currentQuestion + 1} sur {questions.length}
             </h1>
             <Progress value={progress} className="w-full" />
           </div>
@@ -324,14 +367,14 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                     <Button
                       variant="outline"
                       onClick={() => handleResponse(true)}
-                      className="h-12 text-green-600 border-green-200 hover:bg-green-50"
+                      className="h-12 text-green-600 border-green-200 hover:bg-green-50 dark:hover:bg-green-950/30"
                     >
                       Oui
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => handleResponse(false)}
-                      className="h-12 text-red-600 border-red-200 hover:bg-red-50"
+                      className="h-12 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950/30"
                     >
                       Non
                     </Button>
@@ -343,12 +386,12 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                         key={value}
                         variant="outline"
                         onClick={() => handleResponse(value)}
-                        className="h-12 hover:bg-blue-50 text-xs sm:text-sm"
+                        className="h-12 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-xs sm:text-sm"
                       >
                         {value}
                       </Button>
                     ))}
-                    <div className="col-span-5 flex justify-between text-xs text-gray-500 mt-1">
+                    <div className="col-span-3 sm:col-span-5 flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                       <span>Pas du tout</span>
                       <span>Extrêmement</span>
                     </div>
@@ -380,21 +423,5 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="text-center">
-          <Badge variant="outline" className="mb-4">
-            Code: {resolvedParams?.code}
-          </Badge>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Interface Questionnaire Partagé
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Le système est maintenant fonctionnel !
-          </p>
-        </div>
-      </div>
-    </div>
-  )
+  return null
 }

@@ -31,6 +31,21 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Vérifier l'expiration (30 jours)
+    const createdAt = new Date(shared.created_at)
+    const expiresAt = new Date(createdAt.getTime() + 30 * 24 * 60 * 60 * 1000)
+    if (expiresAt < new Date()) {
+      await supabaseAdmin
+        .from('shared_questionnaires')
+        .update({ status: 'expired' })
+        .eq('share_code', share_code)
+
+      return NextResponse.json(
+        { error: 'Ce questionnaire a expiré (validité : 30 jours)', expired: true },
+        { status: 410 }
+      )
+    }
+
     // Récupérer toutes les questions (mapping compatible)
     const { data: questionsRaw, error: questionsError } = await supabaseAdmin
       .from('questions')

@@ -497,8 +497,10 @@ export default function SharedQuestionnairePage() {
                 <Copy className="h-4 w-4 mr-2" />
                 Copier le Lien
               </Button>
-              <Button 
-                onClick={() => window.open(shareUrl || '', '_blank')}
+              <Button
+                onClick={() => {
+                  if (shareCode) router.push(`/questionnaire/shared/${shareCode}`)
+                }}
                 className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
               >
                 <ArrowRight className="h-4 w-4 mr-2" />
