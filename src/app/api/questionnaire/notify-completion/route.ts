@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 import PartnerCompletedNotification from '@/emails/PartnerCompletedNotification'
 
 export async function POST(request: NextRequest) {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    const supabase = await createClient()
+    const supabaseAdmin = createAdminClient()
     const { shareCode } = await request.json()
 
     if (!shareCode) {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Récupérer les données du questionnaire partagé
-    const { data: sharedData, error: sharedError } = await supabase
+    const { data: sharedData, error: sharedError } = await supabaseAdmin
       .from('shared_questionnaires')
       .select('*')
       .eq('share_code', shareCode)
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Vérifier que le partenaire a bien complété
-    if (!sharedData.partner_questionnaire_id) {
+    if (!sharedData.partner_completed_at) {
       return NextResponse.json(
         { error: 'Le partenaire n\'a pas encore complété le questionnaire' },
         { status: 400 }
@@ -46,23 +46,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 4. Récupérer les informations du créateur
-    const { data: creatorData, error: creatorError } = await supabase
-      .from('profiles')
-      .select('email, name')
-      .eq('id', sharedData.creator_id)
-      .single()
-
-    if (creatorError || !creatorData) {
+    // 4. Utiliser creator_email directement depuis shared_questionnaires
+    const creatorEmail = sharedData.creator_email
+    if (!creatorEmail) {
       return NextResponse.json(
-        { error: 'Créateur introuvable' },
+        { error: 'Email du créateur introuvable' },
         { status: 404 }
       )
     }
 
     // 5. Préparer les données pour l'email
-    const creatorName = creatorData.name || creatorData.email.split('@')[0]
-    const partnerName = sharedData.partner_name || 'Votre partenaire'
+    const creatorName = creatorEmail.split('@')[0]
+    const partnerName = sharedData.partner_email?.split('@')[0] || 'Votre partenaire'
     const completionDate = new Date().toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
@@ -72,7 +67,7 @@ export async function POST(request: NextRequest) {
     // 6. Envoyer l'email
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'NikahScore <noreply@nikahscore.com>',
-      to: creatorData.email,
+      to: creatorEmail,
       subject: `${partnerName} a complété le questionnaire NikahScore ! 💕`,
       react: PartnerCompletedNotification({
         creatorName,
@@ -91,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Marquer la notification comme envoyée
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('shared_questionnaires')
       .update({
         notification_sent: true,
@@ -101,11 +96,10 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error('Erreur mise à jour notification:', updateError)
-      // Ne pas retourner d'erreur car l'email est déjà envoyé
     }
 
     // 8. Logger l'événement
-    await supabase.from('analytics_events').insert({
+    await supabaseAdmin.from('analytics_events').insert({
       event_type: 'partner_completed_notification_sent',
       user_id: sharedData.creator_id,
       metadata: {

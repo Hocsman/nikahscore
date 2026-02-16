@@ -15,12 +15,13 @@ interface InvitePageProps {
 interface SharedQuestionnaire {
   id: string
   share_code: string
-  creator_id: string
-  partner_name: string | null
-  status: 'pending' | 'completed' | 'expired'
-  expires_at: string
-  creator_questionnaire_id: string | null
-  partner_questionnaire_id: string | null
+  creator_id: string | null
+  creator_email: string | null
+  partner_email: string | null
+  partner_completed_at: string | null
+  compatibility_score: number | null
+  status: string
+  created_at: string
 }
 
 export default function InvitePage({ params }: InvitePageProps) {
@@ -41,7 +42,7 @@ export default function InvitePage({ params }: InvitePageProps) {
     const loadSharedQuestionnaire = async () => {
       try {
         const supabase = createClient()
-        
+
         // Vérifier l'utilisateur connecté
         const { data: { user } } = await supabase.auth.getUser()
         setUserId(user?.id || null)
@@ -58,8 +59,10 @@ export default function InvitePage({ params }: InvitePageProps) {
           return
         }
 
-        // Vérifier si expiré
-        if (new Date(data.expires_at) < new Date()) {
+        // Vérifier si expiré (30 jours depuis la création)
+        const createdAt = new Date(data.created_at)
+        const expiresAt = new Date(createdAt.getTime() + 30 * 24 * 60 * 60 * 1000)
+        if (expiresAt < new Date()) {
           setError('Ce lien a expiré (validité : 30 jours)')
           await supabase
             .from('shared_questionnaires')
@@ -102,7 +105,7 @@ export default function InvitePage({ params }: InvitePageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
         <div className="animate-spin h-12 w-12 border-4 border-purple-600 border-t-transparent rounded-full"></div>
       </div>
     )
@@ -110,7 +113,7 @@ export default function InvitePage({ params }: InvitePageProps) {
 
   if (error || !sharedData) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-600">
@@ -119,15 +122,15 @@ export default function InvitePage({ params }: InvitePageProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+            <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-300">
               {error}
             </div>
-            <Button 
+            <Button
               onClick={() => router.push('/')}
               className="w-full mt-4"
               variant="outline"
             >
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Button>
           </CardContent>
         </Card>
@@ -135,47 +138,45 @@ export default function InvitePage({ params }: InvitePageProps) {
     )
   }
 
-  const isCompleted = sharedData.status === 'completed'
-  const partnerAlreadyAnswered = !!sharedData.partner_questionnaire_id
+  const isCompleted = sharedData.status === 'completed' || !!sharedData.compatibility_score
+  const partnerAlreadyAnswered = !!sharedData.partner_completed_at
+
+  // Calculer les jours restants depuis created_at + 30 jours
+  const createdAt = new Date(sharedData.created_at)
+  const expiresAt = new Date(createdAt.getTime() + 30 * 24 * 60 * 60 * 1000)
   const expiresIn = Math.ceil(
-    (new Date(sharedData.expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (expiresAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* En-tête */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-              <Heart className="h-8 w-8 text-purple-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-4">
+              <Heart className="h-8 w-8 text-purple-600 dark:text-purple-400" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               Questionnaire de Compatibilité
             </h1>
-            <p className="text-gray-600">
-              {sharedData.partner_name ? (
-                <>
-                  <span className="font-semibold">{sharedData.partner_name}</span> vous invite à répondre
-                </>
-              ) : (
-                'Vous avez été invité(e) à répondre au questionnaire'
-              )}
+            <p className="text-gray-600 dark:text-gray-400">
+              Vous avez été invité(e) à répondre au questionnaire
             </p>
           </div>
 
           {/* Statut */}
           {isCompleted ? (
-            <div className="flex items-center gap-3 p-4 border-green-200 bg-green-50 border rounded-lg">
-              <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
-              <p className="text-green-800 text-sm">
+            <div className="flex items-center gap-3 p-4 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 border rounded-lg">
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0" />
+              <p className="text-green-800 dark:text-green-300 text-sm">
                 Les deux partenaires ont répondu ! Vous pouvez consulter vos résultats.
               </p>
             </div>
           ) : partnerAlreadyAnswered ? (
-            <div className="flex items-center gap-3 p-4 border-orange-200 bg-orange-50 border rounded-lg">
-              <Clock className="h-5 w-5 text-orange-600 shrink-0" />
-              <p className="text-orange-800 text-sm">
+            <div className="flex items-center gap-3 p-4 border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 border rounded-lg">
+              <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400 shrink-0" />
+              <p className="text-orange-800 dark:text-orange-300 text-sm">
                 Vous avez déjà répondu. En attente de la réponse du créateur.
               </p>
             </div>
@@ -185,7 +186,7 @@ export default function InvitePage({ params }: InvitePageProps) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-purple-600" />
+                <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 Questionnaire Partagé
               </CardTitle>
               <CardDescription>
@@ -194,7 +195,7 @@ export default function InvitePage({ params }: InvitePageProps) {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Info validité */}
-              <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                 <Clock className="h-4 w-4" />
                 <span>
                   Lien valide encore <strong>{expiresIn} jours</strong>
@@ -202,9 +203,9 @@ export default function InvitePage({ params }: InvitePageProps) {
               </div>
 
               {/* Description */}
-              <div className="space-y-3 text-sm text-gray-700">
-                <p className="font-semibold text-purple-700">
-                  📋 Ce qui vous attend :
+              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <p className="font-semibold text-purple-700 dark:text-purple-400">
+                  Ce qui vous attend :
                 </p>
                 <ul className="space-y-2 ml-4 list-disc">
                   <li>50 questions sur vos valeurs, objectifs et attentes</li>
@@ -218,7 +219,7 @@ export default function InvitePage({ params }: InvitePageProps) {
               {/* Call to action */}
               {!partnerAlreadyAnswered ? (
                 <>
-                  <Button 
+                  <Button
                     onClick={handleStartQuestionnaire}
                     className="w-full bg-purple-600 hover:bg-purple-700 h-12 text-lg"
                     size="lg"
@@ -226,15 +227,15 @@ export default function InvitePage({ params }: InvitePageProps) {
                     <Heart className="h-5 w-5 mr-2" />
                     Commencer le Questionnaire
                   </Button>
-                  
+
                   {!userId && (
-                    <p className="text-xs text-center text-gray-500">
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                       Un compte gratuit sera créé pour sauvegarder vos réponses
                     </p>
                   )}
                 </>
               ) : isCompleted ? (
-                <Button 
+                <Button
                   onClick={() => router.push(`/results/couple/${code}`)}
                   className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg"
                   size="lg"
@@ -243,35 +244,35 @@ export default function InvitePage({ params }: InvitePageProps) {
                   Voir nos Résultats
                 </Button>
               ) : (
-                <div className="flex items-center gap-3 p-4 border bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3 p-4 border bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <Clock className="h-5 w-5 shrink-0" />
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
                     Vous avez déjà répondu. Vous recevrez une notification quand votre partenaire aura terminé.
                   </p>
                 </div>
               )}
 
               {/* Garanties */}
-              <div className="pt-4 border-t">
-                <p className="text-xs text-gray-500 text-center">
-                  🔒 Vos réponses sont confidentielles et seront uniquement partagées avec votre partenaire
+              <div className="pt-4 border-t dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  Vos réponses sont confidentielles et seront uniquement partagées avec votre partenaire
                 </p>
               </div>
             </CardContent>
           </Card>
 
           {/* Info supplémentaires */}
-          <Card className="bg-purple-50 border-purple-200">
+          <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800">
             <CardContent className="pt-6">
-              <h3 className="font-semibold text-purple-900 mb-3">
-                💡 Conseils pour répondre
+              <h3 className="font-semibold text-purple-900 dark:text-purple-300 mb-3">
+                Conseils pour répondre
               </h3>
-              <ul className="space-y-2 text-sm text-purple-800">
-                <li>✓ Répondez honnêtement, sans vous juger</li>
-                <li>✓ Prenez votre temps, il n'y a pas de limite</li>
-                <li>✓ Ne cherchez pas la "bonne" réponse</li>
-                <li>✓ Exprimez ce que vous ressentez vraiment</li>
-                <li>✓ Les différences ne sont pas forcément des problèmes</li>
+              <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-300">
+                <li>Répondez honnêtement, sans vous juger</li>
+                <li>Prenez votre temps, il n&apos;y a pas de limite</li>
+                <li>Ne cherchez pas la &quot;bonne&quot; réponse</li>
+                <li>Exprimez ce que vous ressentez vraiment</li>
+                <li>Les différences ne sont pas forcément des problèmes</li>
               </ul>
             </CardContent>
           </Card>

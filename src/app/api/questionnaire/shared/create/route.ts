@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
       .insert([
         {
           share_code: shareCode,
+          creator_id: user.id,
           creator_email: creator_email,
           created_at: new Date().toISOString()
         }
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest) {
 
         emailSent = true
       } catch (emailError) {
+        console.error('❌ Error sending share email:', emailError)
       }
     } else {
     }
