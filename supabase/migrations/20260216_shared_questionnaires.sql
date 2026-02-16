@@ -52,6 +52,7 @@ CREATE POLICY "Authenticated users can update shared questionnaires"
     USING (true);
 
 -- Fonction generate_share_code()
+DROP FUNCTION IF EXISTS generate_share_code();
 CREATE OR REPLACE FUNCTION generate_share_code()
 RETURNS TEXT AS $$
 DECLARE

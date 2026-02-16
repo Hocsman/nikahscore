@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     if (role === 'participant' && updated.partner_completed_at && !updated.notification_sent) {
       try {
         // Appeler l'API de notification en arrière-plan (ne pas attendre)
-        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://nikahscore.com'}/api/questionnaire/notify-completion`, {
+        fetch(`${new URL(request.url).origin}/api/questionnaire/notify-completion`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ shareCode: share_code }),

@@ -53,12 +53,13 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
       if (data.success) {
         setQuestions(data.questions)
 
-        if (data.creator_responses || data.participant_responses) {
+        const shared = data.shared
+        if (shared?.creator_completed_at || shared?.partner_completed_at) {
           setIsCompleted(true)
-          setBothCompleted(data.both_completed)
+          setBothCompleted(!!shared.creator_completed_at && !!shared.partner_completed_at)
 
-          if (data.compatibility_score) {
-            setCompatibilityScore(data.compatibility_score)
+          if (shared.compatibility_score) {
+            setCompatibilityScore(shared.compatibility_score)
           }
         }
       } else {
