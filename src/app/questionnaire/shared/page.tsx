@@ -16,7 +16,6 @@ export default function SharedQuestionnairePage() {
   const router = useRouter()
   
   // States pour le questionnaire partagé
-  const [email, setEmail] = useState('')
   const [shareCode, setShareCode] = useState<string | null>(null)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -35,17 +34,12 @@ export default function SharedQuestionnairePage() {
   const [registerSuccess, setRegisterSuccess] = useState(false)
 
   const createSharedQuestionnaire = async () => {
-    if (!email.trim()) {
-      toast.error('Veuillez entrer votre email')
-      return
-    }
-
     setLoading(true)
     try {
       const response = await fetch('/api/questionnaire/shared/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creator_email: email })
+        body: JSON.stringify({})
       })
       
       const data = await response.json()
@@ -414,27 +408,13 @@ export default function SharedQuestionnairePage() {
               Créer un Questionnaire Partagé
             </CardTitle>
             <CardDescription>
-              Entrez votre email pour commencer le processus de création
+              Un lien unique sera généré pour vous et votre partenaire
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Votre email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            <Button 
+            <Button
               onClick={createSharedQuestionnaire}
-              disabled={loading || !email.trim()}
+              disabled={loading}
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
             >
               {loading ? (
@@ -456,9 +436,9 @@ export default function SharedQuestionnairePage() {
                 Comment ça marche ?
               </h3>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Créez votre questionnaire partagé avec votre email</li>
-                <li>• Partagez le lien généré avec votre partenaire</li>
-                <li>• Répondez tous les deux aux 100 questions</li>
+                <li>1. Cliquez sur le bouton pour créer votre questionnaire</li>
+                <li>2. Répondez aux questions puis partagez le lien</li>
+                <li>3. Votre partenaire répond de son côté</li>
                 <li>• Découvrez votre score de compatibilité!</li>
               </ul>
             </div>

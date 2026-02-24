@@ -26,11 +26,13 @@ import {
 export default function AuthPage() {
   // Récupérer le mode depuis l'URL côté client
   const [mode, setMode] = useState<string | null>(null)
-  
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
+
   useEffect(() => {
-    // Récupérer le mode depuis l'URL une fois le composant monté côté client
+    // Récupérer le mode et le redirect depuis l'URL une fois le composant monté côté client
     const urlParams = new URLSearchParams(window.location.search)
     setMode(urlParams.get('mode'))
+    setRedirectUrl(urlParams.get('redirect'))
   }, [])
   
   const [isLogin, setIsLogin] = useState(true)
@@ -59,12 +61,12 @@ export default function AuthPage() {
     }
   }, [mode])
 
-  // Rediriger vers /welcome si déjà connecté
+  // Rediriger si déjà connecté
   useEffect(() => {
     if (!loading && user) {
-      router.push('/welcome')
+      router.push(redirectUrl || '/welcome')
     }
-  }, [user, loading, router])
+  }, [user, loading, router, redirectUrl])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -133,8 +135,8 @@ export default function AuthPage() {
         // Attendre que la session soit bien établie
         await new Promise(resolve => setTimeout(resolve, 500))
         
-        // Rediriger vers la page d'accueil
-        router.push('/welcome')
+        // Rediriger vers la page demandée ou /welcome par défaut
+        router.push(redirectUrl || '/welcome')
       }
 
     } catch (err: any) {

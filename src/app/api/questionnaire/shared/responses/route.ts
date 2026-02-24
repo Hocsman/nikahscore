@@ -54,12 +54,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Déterminer les champs à mettre à jour selon le rôle
+    // Vérifier le rôle côté serveur (ne pas faire confiance au client)
+    const isCreator = user.id === shared.creator_id
+    const verifiedRole = isCreator ? 'creator' : 'participant'
+
+    if (verifiedRole !== role) {
+      console.warn(`Role mismatch: client sent "${role}", server verified "${verifiedRole}" for user ${user.id}`)
+    }
+
+    // Déterminer les champs à mettre à jour selon le rôle vérifié
     let updateData: any = {
       updated_at: new Date().toISOString()
     }
 
-    if (role === 'creator') {
+    if (verifiedRole === 'creator') {
       // Vérifier que ce n'est pas déjà complété
       if (shared.creator_completed_at) {
         return NextResponse.json(
@@ -72,7 +80,7 @@ export async function POST(request: NextRequest) {
       updateData.creator_responses = responses
       updateData.creator_completed_at = new Date().toISOString()
       
-    } else if (role === 'participant') {
+    } else if (verifiedRole === 'participant') {
       // Vérifier que ce n'est pas déjà complété
       if (shared.partner_completed_at) {
         return NextResponse.json(
@@ -84,11 +92,6 @@ export async function POST(request: NextRequest) {
       updateData.partner_email = email
       updateData.partner_responses = responses
       updateData.partner_completed_at = new Date().toISOString()
-    } else {
-      return NextResponse.json(
-        { error: 'Rôle invalide' },
-        { status: 400 }
-      )
     }
 
     // Mettre à jour le questionnaire partagé
@@ -129,7 +132,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 🆕 ENVOYER EMAIL DE NOTIFICATION si le partenaire vient de compléter
-    if (role === 'participant' && updated.partner_completed_at && !updated.notification_sent) {
+    if (verifiedRole === 'participant' && updated.partner_completed_at && !updated.notification_sent) {
       try {
         // Appeler l'API de notification en arrière-plan (ne pas attendre)
         fetch(`${new URL(request.url).origin}/api/questionnaire/notify-completion`, {
