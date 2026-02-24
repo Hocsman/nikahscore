@@ -233,7 +233,7 @@ export default function UserDashboard() {
             </Card>
 
             {/* Settings Link */}
-            <Link href="/dashboard/settings">
+            <Link href="/dashboard/settings" className="block mt-4">
               <Card className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <CardContent className="p-4 flex items-center gap-3">
                   <Settings className="w-5 h-5 text-gray-500" />
