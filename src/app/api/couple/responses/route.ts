@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { CompatibilityCalculator } from '@/lib/compatibility-algorithm'
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,24 +95,68 @@ export async function POST(request: NextRequest) {
 
     const bothCompleted = allResponses && allResponses.length === 2
 
+    let compatibilityScore = null
+    let compatibilityResult = null
+
     if (bothCompleted) {
-      // Marquer le questionnaire couple comme terminé
+      // Récupérer les réponses complètes des deux partenaires
+      const { data: fullResponses } = await supabaseAdmin
+        .from('responses')
+        .select('user_id, answers')
+        .eq('couple_id', couple.id)
+        .eq('is_completed', true)
+
+      if (fullResponses && fullResponses.length === 2) {
+        const creatorResp = fullResponses.find(r => r.user_id === couple.creator_id)
+        const partnerResp = fullResponses.find(r => r.user_id !== couple.creator_id)
+
+        if (creatorResp?.answers && partnerResp?.answers) {
+          // Calculer la compatibilité avec l'algorithme complet
+          compatibilityResult = CompatibilityCalculator.calculateCompatibility(
+            creatorResp.answers,
+            partnerResp.answers
+          )
+          compatibilityScore = Math.round(compatibilityResult.overall_score)
+        }
+      }
+
+      // Marquer le questionnaire couple comme terminé avec le score
       await supabaseAdmin
         .from('couples')
         .update({
           completed_at: new Date().toISOString(),
           status: 'completed',
           creator_completed: true,
-          partner_completed: true
+          partner_completed: true,
+          compatibility_score: compatibilityScore
         })
         .eq('couple_code', couple_code)
-    }
 
+      // Sauvegarder les résultats détaillés dans compatibility_results
+      if (compatibilityResult) {
+        await supabaseAdmin
+          .from('compatibility_results')
+          .insert({
+            couple_id: couple.id,
+            overall_score: compatibilityScore,
+            spirituality_score: Math.round((compatibilityResult.dimension_scores['Spiritualité']?.score || 0) * 100),
+            family_score: Math.round((compatibilityResult.dimension_scores['Famille']?.score || 0) * 100),
+            communication_score: Math.round((compatibilityResult.dimension_scores['Communication']?.score || 0) * 100),
+            values_score: Math.round((compatibilityResult.dimension_scores['Personnalité']?.score || 0) * 100),
+            finance_score: Math.round((compatibilityResult.dimension_scores['Finances']?.score || 0) * 100),
+            intimacy_score: Math.round((compatibilityResult.dimension_scores['Vie conjugale']?.score || 0) * 100),
+            strengths: compatibilityResult.detailed_analysis.strengths,
+            improvements: compatibilityResult.detailed_analysis.areas_to_discuss,
+            recommendations: compatibilityResult.detailed_analysis.recommendations
+          })
+      }
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Responses saved successfully',
-      both_completed: bothCompleted
+      both_completed: bothCompleted,
+      compatibility_score: compatibilityScore
     })
 
   } catch (error) {

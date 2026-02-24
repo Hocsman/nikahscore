@@ -44,60 +44,45 @@ function generateInsightsFromScores(axisScores: AxisScores): {
     lowLabel: string
     recommendation: string
   }> = {
-    'Intentions': {
-      highLabel: 'Objectifs matrimoniaux parfaitement alignés',
-      lowLabel: 'Attentes différentes sur le mariage',
-      recommendation: 'Discutez ouvertement de vos intentions à long terme'
+    'Spiritualité': {
+      highLabel: 'Pratique religieuse et valeurs spirituelles alignées',
+      lowLabel: 'Différences dans la pratique religieuse',
+      recommendation: 'Respectez le rythme spirituel de chacun et échangez sur vos attentes'
     },
-    'Valeurs': {
-      highLabel: 'Valeurs spirituelles et morales très compatibles',
-      lowLabel: 'Divergences sur les valeurs fondamentales',
-      recommendation: 'Explorez vos différences de valeurs avec bienveillance'
-    },
-    'Rôles': {
-      highLabel: 'Vision commune des rôles au sein du foyer',
-      lowLabel: 'Attentes différentes sur les rôles conjugaux',
-      recommendation: 'Clarifiez vos attentes mutuelles sur les responsabilités'
-    },
-    'Enfants': {
-      highLabel: 'Vision similaire de l\'éducation et de la famille',
-      lowLabel: 'Divergences sur l\'approche éducative',
-      recommendation: 'Dialoguez sur vos attentes concernant les enfants'
-    },
-    'Finance': {
-      highLabel: 'Objectifs financiers compatibles',
-      lowLabel: 'Approches différentes de la gestion financière',
-      recommendation: 'Établissez un plan financier commun'
-    },
-    'Style': {
-      highLabel: 'Modes de vie harmonieux',
-      lowLabel: 'Différences de style de vie à harmoniser',
-      recommendation: 'Trouvez des compromis sur votre quotidien'
+    'Personnalité': {
+      highLabel: 'Personnalités complémentaires',
+      lowLabel: 'Traits de personnalité à concilier',
+      recommendation: 'Apprenez à apprécier vos différences de caractère'
     },
     'Communication': {
       highLabel: 'Communication ouverte et respectueuse',
       lowLabel: 'Styles de communication à améliorer',
       recommendation: 'Travaillez sur votre communication de couple'
     },
-    'Personnalité': {
-      highLabel: 'Personnalités complémentaires',
-      lowLabel: 'Traits de personnalité à concilier',
-      recommendation: 'Apprenez à apprécier vos différences'
-    },
-    'Logistique': {
-      highLabel: 'Organisation pratique compatible',
-      lowLabel: 'Points logistiques à clarifier',
-      recommendation: 'Planifiez ensemble les aspects pratiques'
-    },
-    'Religion': {
-      highLabel: 'Pratique religieuse alignée',
-      lowLabel: 'Niveaux de pratique différents',
-      recommendation: 'Respectez le rythme spirituel de chacun'
-    },
     'Famille': {
-      highLabel: 'Vision familiale partagée',
+      highLabel: 'Vision familiale et éducative partagée',
       lowLabel: 'Attentes familiales à discuter',
-      recommendation: 'Discutez de la place de vos familles respectives'
+      recommendation: 'Discutez de vos projets familiaux et de la place de vos familles'
+    },
+    'Finances': {
+      highLabel: 'Vision financière commune et compatible',
+      lowLabel: 'Approches différentes de la gestion financière',
+      recommendation: 'Établissez un plan financier commun conforme à vos valeurs'
+    },
+    'Vie conjugale': {
+      highLabel: 'Vision des rôles conjugaux partagée',
+      lowLabel: 'Visions différentes de la vie conjugale',
+      recommendation: 'Clarifiez vos attentes sur les rôles et responsabilités dans le couple'
+    },
+    'Style de vie': {
+      highLabel: 'Modes de vie harmonieux',
+      lowLabel: 'Différences de style de vie à harmoniser',
+      recommendation: 'Trouvez des compromis sur votre quotidien'
+    },
+    'Ambitions': {
+      highLabel: 'Objectifs de vie et projets alignés',
+      lowLabel: 'Priorités et projets de vie différents',
+      recommendation: 'Discutez ouvertement de vos ambitions et projets à long terme'
     }
   }
 
@@ -199,36 +184,42 @@ export function useCompatibilityResults() {
       let transformedResults: CompatibilityResults[] = []
 
       if (allCouples.length > 0) {
-        const coupleCodes = allCouples.map(c => c.couple_code)
+        const coupleIds = allCouples.map(c => c.id)
 
         const { data: compatibilityData, error: compatError } = await supabase
           .from('compatibility_results')
           .select('*')
-          .in('couple_code', coupleCodes)
-          .order('generated_at', { ascending: false })
+          .in('couple_id', coupleIds)
 
         if (compatError) {
           console.error('Erreur récupération résultats:', compatError)
         }
 
         transformedResults = allCouples.map(couple => {
-          const compatResult = compatibilityData?.find(r => r.couple_code === couple.couple_code)
+          const compatResult = compatibilityData?.find(r => r.couple_id === couple.id)
 
           let axisScores: AxisScores = {}
 
-          if (compatResult?.dimension_scores) {
-            Object.entries(compatResult.dimension_scores).forEach(([dim, data]: [string, any]) => {
-              axisScores[dim] = Math.round(data.score * 100)
-            })
-          } else if (couple.compatibility_score) {
+          if (compatResult) {
+            // Utiliser les scores par dimension depuis compatibility_results
+            if (compatResult.spirituality_score != null) axisScores['Spiritualité'] = compatResult.spirituality_score
+            if (compatResult.family_score != null) axisScores['Famille'] = compatResult.family_score
+            if (compatResult.communication_score != null) axisScores['Communication'] = compatResult.communication_score
+            if (compatResult.values_score != null) axisScores['Personnalité'] = compatResult.values_score
+            if (compatResult.finance_score != null) axisScores['Finances'] = compatResult.finance_score
+            if (compatResult.intimacy_score != null) axisScores['Vie conjugale'] = compatResult.intimacy_score
+          }
+
+          // Fallback si pas de résultats détaillés mais un score global
+          if (Object.keys(axisScores).length === 0 && couple.compatibility_score) {
             const baseScore = couple.compatibility_score
             axisScores = {
-              'Valeurs': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
-              'Intentions': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3),
+              'Spiritualité': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
               'Communication': Math.min(100, baseScore + Math.floor(Math.random() * 12) - 6),
               'Famille': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
-              'Finance': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 8),
-              'Personnalité': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5)
+              'Finances': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 8),
+              'Personnalité': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
+              'Vie conjugale': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3)
             }
           }
 
@@ -239,13 +230,10 @@ export function useCompatibilityResults() {
             couple_code: couple.couple_code,
             overall_score: compatResult?.overall_score || couple.compatibility_score || 0,
             axis_scores: axisScores,
-            dimension_scores: compatResult?.dimension_scores,
-            strengths: compatResult?.detailed_analysis?.strengths || insights.strengths,
-            frictions: compatResult?.detailed_analysis?.concerns || insights.frictions,
-            recommendations: insights.recommendations,
-            dealbreaker_conflicts: compatResult?.dealbreaker_conflicts || 0,
-            compatibility_level: compatResult?.compatibility_level,
-            created_at: compatResult?.generated_at || couple.created_at
+            strengths: (compatResult?.strengths as string[]) || insights.strengths,
+            frictions: (compatResult?.improvements as string[]) || insights.frictions,
+            recommendations: (compatResult?.recommendations as string[]) || insights.recommendations,
+            created_at: couple.completed_at || couple.created_at
           }
         })
       }
