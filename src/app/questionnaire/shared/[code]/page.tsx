@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Heart, Users, CheckCircle, Trophy, Clock, ArrowLeft, ArrowRight, LogIn } from 'lucide-react'
+import { Heart, CheckCircle, Trophy, Clock, ArrowLeft, ArrowRight, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Question {
@@ -20,6 +20,11 @@ interface SharedQuestionnairePageProps {
   params: Promise<{
     code: string
   }>
+}
+
+// Couple codes contain a dash (e.g. "594-42672"), shared codes are 8 uppercase alphanumeric
+function isCoupleCode(code: string): boolean {
+  return code.includes('-')
 }
 
 export default function SharedQuestionnairePage({ params }: SharedQuestionnairePageProps) {
@@ -41,11 +46,96 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     params.then(p => setResolvedParams(p))
   }, [params])
 
-  const loadSharedQuestionnaire = useCallback(async () => {
-    if (!resolvedParams?.code) return
-
+  // --- Load COUPLE questionnaire ---
+  const loadCoupleQuestionnaire = useCallback(async (code: string) => {
     try {
-      // Vérifier l'authentification
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        setNotAuthenticated(true)
+        setLoading(false)
+        return
+      }
+
+      // Fetch couple info
+      const coupleRes = await fetch(`/api/couple?code=${code}`)
+      const coupleData = await coupleRes.json()
+
+      if (!coupleData.success) {
+        toast.error(coupleData.error || 'Questionnaire couple non trouvé')
+        router.push('/dashboard/couple')
+        return
+      }
+
+      const couple = coupleData.couple
+
+      // If user is not yet partner, auto-join
+      if (couple.user_role === 'guest') {
+        const joinRes = await fetch('/api/couple/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ couple_code: code })
+        })
+        const joinData = await joinRes.json()
+        if (!joinData.success) {
+          toast.error(joinData.error || 'Impossible de rejoindre le questionnaire')
+          return
+        }
+        setUserRole('participant')
+      } else {
+        setUserRole(couple.user_role === 'creator' ? 'creator' : 'participant')
+      }
+
+      // Check if user already submitted responses
+      const respRes = await fetch(`/api/couple/responses?code=${code}`)
+      const respData = await respRes.json()
+
+      if (respData.success && respData.responses) {
+        const userResponse = respData.responses.find((r: { user_id: string }) => r.user_id === user.id)
+        if (userResponse) {
+          setAlreadyAnswered(true)
+          setIsCompleted(true)
+        }
+        if (respData.responses.length >= 2) {
+          setBothCompleted(true)
+          setIsCompleted(true)
+        }
+      }
+
+      // Load questions from DB
+      const { data: questionsRaw } = await supabase
+        .from('questions')
+        .select('id, text, category')
+        .order('order_index')
+
+      if (questionsRaw && questionsRaw.length > 0) {
+        setQuestions(questionsRaw.map(q => ({
+          id: q.id,
+          label: q.text || '',
+          type: q.category || ''
+        })))
+      } else {
+        // Fallback minimal questions
+        setQuestions([
+          { id: '1', label: 'Partagez-vous les mêmes valeurs religieuses fondamentales ?', type: 'bool' },
+          { id: '2', label: 'Êtes-vous d\'accord sur l\'importance de la prière quotidienne ?', type: 'bool' },
+          { id: '3', label: 'Avez-vous une vision similaire du rôle de la famille ?', type: 'bool' },
+          { id: '4', label: 'Partagez-vous les mêmes objectifs de vie ?', type: 'bool' },
+          { id: '5', label: 'Êtes-vous compatibles sur le plan de la communication ?', type: 'scale' }
+        ])
+      }
+    } catch (error) {
+      console.error('Error loading couple questionnaire:', error)
+      toast.error('Erreur lors du chargement')
+    } finally {
+      setLoading(false)
+    }
+  }, [router])
+
+  // --- Load SHARED questionnaire ---
+  const loadSharedQuestionnaire = useCallback(async (code: string) => {
+    try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
 
@@ -56,7 +146,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
       }
 
       // Charger le questionnaire partagé via l'API
-      const response = await fetch(`/api/questionnaire/shared?code=${resolvedParams.code}`)
+      const response = await fetch(`/api/questionnaire/shared?code=${code}`)
       const data = await response.json()
 
       if (!data.success) {
@@ -103,13 +193,18 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
     } finally {
       setLoading(false)
     }
-  }, [resolvedParams?.code, router])
+  }, [router])
 
   useEffect(() => {
     if (resolvedParams?.code) {
-      loadSharedQuestionnaire()
+      const code = resolvedParams.code
+      if (isCoupleCode(code)) {
+        loadCoupleQuestionnaire(code)
+      } else {
+        loadSharedQuestionnaire(code)
+      }
     }
-  }, [resolvedParams, loadSharedQuestionnaire])
+  }, [resolvedParams, loadCoupleQuestionnaire, loadSharedQuestionnaire])
 
   const handleResponse = (response: boolean | number) => {
     if (!questions || questions.length === 0 || currentQuestion >= questions.length) return
@@ -131,16 +226,33 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
       return
     }
 
+    const code = resolvedParams?.code
+    if (!code) return
+
     try {
-      const response = await fetch('/api/questionnaire/shared/responses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          share_code: resolvedParams?.code,
-          responses: finalResponses,
-          role: userRole
+      let response: Response
+      if (isCoupleCode(code)) {
+        // Couple: submit via couple API
+        response = await fetch('/api/couple/responses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            couple_code: code,
+            responses: finalResponses
+          })
         })
-      })
+      } else {
+        // Shared: submit via shared questionnaire API
+        response = await fetch('/api/questionnaire/shared/responses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            share_code: code,
+            responses: finalResponses,
+            role: userRole
+          })
+        })
+      }
 
       const data = await response.json()
 
