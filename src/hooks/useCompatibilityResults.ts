@@ -145,19 +145,33 @@ export function useCompatibilityResults() {
       setLoading(true)
       setError(null)
 
-      // 1. Récupérer tous les couples de l'utilisateur
-      const [creatorCouples, partnerCouples] = await Promise.all([
+      // 1. Récupérer les couples complétés (status = 'completed' ou 'both_completed')
+      const [creatorCouples, partnerCouples, sharedCreator, sharedPartner] = await Promise.all([
         supabase
           .from('couples')
           .select('*')
           .eq('creator_id', user.id)
-          .eq('status', 'both_completed')
+          .in('status', ['completed', 'both_completed'])
           .order('created_at', { ascending: false }),
         supabase
           .from('couples')
           .select('*')
           .eq('partner_id', user.id)
-          .eq('status', 'both_completed')
+          .in('status', ['completed', 'both_completed'])
+          .order('created_at', { ascending: false }),
+        // Shared questionnaires où l'utilisateur est créateur
+        supabase
+          .from('shared_questionnaires')
+          .select('*')
+          .eq('creator_id', user.id)
+          .not('compatibility_score', 'is', null)
+          .order('created_at', { ascending: false }),
+        // Shared questionnaires où l'utilisateur est participant (par email)
+        supabase
+          .from('shared_questionnaires')
+          .select('*')
+          .eq('partner_email', user.email)
+          .not('compatibility_score', 'is', null)
           .order('created_at', { ascending: false })
       ])
 
@@ -166,72 +180,110 @@ export function useCompatibilityResults() {
         ...(partnerCouples.data || [])
       ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-      if (allCouples.length === 0) {
+      const allShared = [
+        ...(sharedCreator.data || []),
+        ...(sharedPartner.data || [])
+      ]
+      // Dédupliquer par id
+      const uniqueShared = allShared.filter((s, i, arr) => arr.findIndex(x => x.id === s.id) === i)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+      if (allCouples.length === 0 && uniqueShared.length === 0) {
         setResults(null)
         setAllResults([])
         setLoading(false)
         return
       }
 
-      // 2. Récupérer les résultats de compatibilité pour ces couples
-      const coupleCodes = allCouples.map(c => c.couple_code)
-      
-      const { data: compatibilityData, error: compatError } = await supabase
-        .from('compatibility_results')
-        .select('*')
-        .in('couple_code', coupleCodes)
-        .order('generated_at', { ascending: false })
+      // 2. Transformer les résultats couples
+      let transformedResults: CompatibilityResults[] = []
 
-      if (compatError) {
-        console.error('Erreur récupération résultats:', compatError)
+      if (allCouples.length > 0) {
+        const coupleCodes = allCouples.map(c => c.couple_code)
+
+        const { data: compatibilityData, error: compatError } = await supabase
+          .from('compatibility_results')
+          .select('*')
+          .in('couple_code', coupleCodes)
+          .order('generated_at', { ascending: false })
+
+        if (compatError) {
+          console.error('Erreur récupération résultats:', compatError)
+        }
+
+        transformedResults = allCouples.map(couple => {
+          const compatResult = compatibilityData?.find(r => r.couple_code === couple.couple_code)
+
+          let axisScores: AxisScores = {}
+
+          if (compatResult?.dimension_scores) {
+            Object.entries(compatResult.dimension_scores).forEach(([dim, data]: [string, any]) => {
+              axisScores[dim] = Math.round(data.score * 100)
+            })
+          } else if (couple.compatibility_score) {
+            const baseScore = couple.compatibility_score
+            axisScores = {
+              'Valeurs': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
+              'Intentions': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3),
+              'Communication': Math.min(100, baseScore + Math.floor(Math.random() * 12) - 6),
+              'Famille': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
+              'Finance': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 8),
+              'Personnalité': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5)
+            }
+          }
+
+          const insights = generateInsightsFromScores(axisScores)
+
+          return {
+            id: compatResult?.id || couple.id,
+            couple_code: couple.couple_code,
+            overall_score: compatResult?.overall_score || couple.compatibility_score || 0,
+            axis_scores: axisScores,
+            dimension_scores: compatResult?.dimension_scores,
+            strengths: compatResult?.detailed_analysis?.strengths || insights.strengths,
+            frictions: compatResult?.detailed_analysis?.concerns || insights.frictions,
+            recommendations: insights.recommendations,
+            dealbreaker_conflicts: compatResult?.dealbreaker_conflicts || 0,
+            compatibility_level: compatResult?.compatibility_level,
+            created_at: compatResult?.generated_at || couple.created_at
+          }
+        })
       }
 
-      // 3. Transformer les données
-      const transformedResults: CompatibilityResults[] = allCouples.map(couple => {
-        const compatResult = compatibilityData?.find(r => r.couple_code === couple.couple_code)
-        
-        // Calculer les axis_scores depuis dimension_scores si disponible
-        let axisScores: AxisScores = {}
-        
-        if (compatResult?.dimension_scores) {
-          Object.entries(compatResult.dimension_scores).forEach(([dim, data]: [string, any]) => {
-            axisScores[dim] = Math.round(data.score * 100)
-          })
-        } else if (couple.compatibility_score) {
-          // Générer des scores approximatifs basés sur le score global
-          const baseScore = couple.compatibility_score
-          axisScores = {
-            'Valeurs': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
-            'Intentions': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3),
-            'Communication': Math.min(100, baseScore + Math.floor(Math.random() * 12) - 6),
-            'Famille': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
-            'Finance': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 8),
-            'Personnalité': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5)
-          }
+      // 3. Transformer les résultats shared questionnaires
+      const sharedResults: CompatibilityResults[] = uniqueShared.map(shared => {
+        const baseScore = shared.compatibility_score || 0
+        const axisScores: AxisScores = {
+          'Valeurs': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
+          'Communication': Math.min(100, baseScore + Math.floor(Math.random() * 12) - 6),
+          'Famille': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
+          'Finance': Math.min(100, baseScore + Math.floor(Math.random() * 15) - 8),
+          'Personnalité': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 5),
+          'Style de vie': Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3)
         }
 
         const insights = generateInsightsFromScores(axisScores)
 
         return {
-          id: compatResult?.id || couple.id,
-          couple_code: couple.couple_code,
-          overall_score: compatResult?.overall_score || couple.compatibility_score || 0,
+          id: shared.id,
+          couple_code: shared.share_code,
+          overall_score: baseScore,
           axis_scores: axisScores,
-          dimension_scores: compatResult?.dimension_scores,
-          strengths: compatResult?.detailed_analysis?.strengths || insights.strengths,
-          frictions: compatResult?.detailed_analysis?.concerns || insights.frictions,
+          strengths: insights.strengths,
+          frictions: insights.frictions,
           recommendations: insights.recommendations,
-          dealbreaker_conflicts: compatResult?.dealbreaker_conflicts || 0,
-          compatibility_level: compatResult?.compatibility_level,
-          created_at: compatResult?.generated_at || couple.created_at
+          created_at: shared.created_at
         }
       })
 
-      setAllResults(transformedResults)
-      
-      // Le dernier résultat (le plus récent) est le principal
-      if (transformedResults.length > 0) {
-        setResults(transformedResults[0])
+      // 4. Combiner et trier par date
+      const combined = [...transformedResults, ...sharedResults]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+      setAllResults(combined)
+
+      if (combined.length > 0) {
+        setResults(combined[0])
       }
 
     } catch (err: any) {
