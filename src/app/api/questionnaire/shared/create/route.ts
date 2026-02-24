@@ -27,12 +27,13 @@ export async function POST(request: NextRequest) {
     const creator_email = user.email
 
     // Générer un code de partage unique via Supabase
-    const { data: codeResult } = await supabaseAdmin
+    const { data: codeResult, error: rpcError } = await supabaseAdmin
       .rpc('generate_share_code')
-    
-    if (!codeResult) {
+
+    if (rpcError || !codeResult) {
+      console.error('❌ RPC generate_share_code error:', rpcError)
       return NextResponse.json(
-        { error: 'Impossible de générer un code de partage' },
+        { error: `Impossible de générer un code de partage: ${rpcError?.message || 'code vide'}` },
         { status: 500 }
       )
     }
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('❌ Error creating shared questionnaire:', error)
       return NextResponse.json(
-        { error: 'Erreur lors de la création du questionnaire partagé' },
+        { error: `Erreur lors de la création du questionnaire partagé: ${error.message}` },
         { status: 500 }
       )
     }
