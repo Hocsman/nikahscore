@@ -36,7 +36,9 @@ export class CompatibilityCalculator {
   // Pondération des dimensions (importance relative)
   private static DIMENSION_WEIGHTS = {
     'Spiritualité': 2.0,        // Le plus important dans un mariage islamique
+    'Vie conjugale': 1.9,       // Rôles, polygamie, hijab - sujets critiques
     'Famille': 1.8,             // Projets de vie très importants
+    'Finances': 1.6,            // Gestion financière, riba, mahr
     'Personnalité': 1.5,        // Compatibilité caractérielle
     'Communication': 1.4,       // Base de la relation
     'Ambitions': 1.2,          // Projets communs
@@ -282,6 +284,18 @@ export class CompatibilityCalculator {
         'Organisation de vie similaire',
         'Loisirs et activités complémentaires'
       ],
+      'Finances': [
+        'Vision financière commune',
+        'Position alignée sur le riba et la finance islamique',
+        'Attentes claires sur le mahr et le nafaqah',
+        'Transparence financière mutuelle'
+      ],
+      'Vie conjugale': [
+        'Vision des rôles conjugaux partagée',
+        'Position commune sur les sujets sensibles',
+        'Attentes intimes et sociales alignées',
+        'Répartition des responsabilités claire'
+      ],
       'Ambitions': [
         'Objectifs professionnels alignés',
         'Projets de vie communs',
@@ -289,7 +303,7 @@ export class CompatibilityCalculator {
         'Aspirations spirituelles communes'
       ]
     }
-    
+
     if (score >= 0.8) {
       return strengths[dimension] || [`Excellente compatibilité en ${dimension}`]
     } else if (score >= 0.6) {
@@ -326,13 +340,23 @@ export class CompatibilityCalculator {
         'Valeurs sociales opposées',
         'Organisation quotidienne conflictuelle'
       ],
+      'Finances': [
+        'Gestion financière incompatible',
+        'Désaccord sur le riba ou la finance islamique',
+        'Attentes divergentes sur le mahr et la prise en charge'
+      ],
+      'Vie conjugale': [
+        'Visions opposées sur les rôles dans le couple',
+        'Désaccord sur des sujets critiques (polygamie, travail, hijab)',
+        'Attentes conjugales incompatibles'
+      ],
       'Ambitions': [
         'Objectifs professionnels contradictoires',
         'Projets de vie incompatibles',
         'Priorités de vie différentes'
       ]
     }
-    
+
     if (score < 0.4) {
       return concerns[dimension] || [`Incompatibilités importantes en ${dimension}`]
     } else if (score < 0.6) {

@@ -50,8 +50,7 @@ export default function SettingsPage() {
         newsletter: false,
         marketing: false
     })
-    const [isSavingNotifications, setIsSavingNotifications] = useState(false)
-    const [notificationsSaved, setNotificationsSaved] = useState(false)
+    const [savingNotifKey, setSavingNotifKey] = useState<string | null>(null)
 
     // États pour la suppression de compte
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -118,30 +117,31 @@ export default function SettingsPage() {
         }
     }
 
-    // Sauvegarder les notifications
-    const handleSaveNotifications = async () => {
+    // Auto-save une notification quand un toggle change
+    const handleToggleNotification = async (key: keyof NotificationSettings, checked: boolean) => {
         if (!user) return
 
-        setIsSavingNotifications(true)
-        setNotificationsSaved(false)
+        const updated = { ...notifications, [key]: checked }
+        setNotifications(updated)
+        setSavingNotifKey(key)
 
         try {
             const { error } = await supabase
                 .from('profiles')
                 .update({
-                    notification_settings: notifications,
+                    notification_settings: updated,
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', user.id)
 
             if (error) throw error
-            setNotificationsSaved(true)
-            setTimeout(() => setNotificationsSaved(false), 3000)
+            toast.success('Préférence enregistrée')
         } catch (error) {
             console.error('Erreur sauvegarde notifications:', error)
-            toast.error('Erreur lors de la sauvegarde des préférences')
+            setNotifications(prev => ({ ...prev, [key]: !checked }))
+            toast.error('Erreur lors de la sauvegarde')
         } finally {
-            setIsSavingNotifications(false)
+            setSavingNotifKey(null)
         }
     }
 
@@ -328,9 +328,8 @@ export default function SettingsPage() {
                                     <Switch
                                         id="email-notif"
                                         checked={notifications.email_notifications}
-                                        onCheckedChange={(checked) => 
-                                            setNotifications(prev => ({ ...prev, email_notifications: checked }))
-                                        }
+                                        disabled={savingNotifKey === 'email_notifications'}
+                                        onCheckedChange={(checked) => handleToggleNotification('email_notifications', checked)}
                                     />
                                 </div>
 
@@ -344,9 +343,8 @@ export default function SettingsPage() {
                                     <Switch
                                         id="partner-activity"
                                         checked={notifications.partner_activity}
-                                        onCheckedChange={(checked) => 
-                                            setNotifications(prev => ({ ...prev, partner_activity: checked }))
-                                        }
+                                        disabled={savingNotifKey === 'partner_activity'}
+                                        onCheckedChange={(checked) => handleToggleNotification('partner_activity', checked)}
                                     />
                                 </div>
 
@@ -360,9 +358,8 @@ export default function SettingsPage() {
                                     <Switch
                                         id="budget-reminders"
                                         checked={notifications.budget_reminders}
-                                        onCheckedChange={(checked) => 
-                                            setNotifications(prev => ({ ...prev, budget_reminders: checked }))
-                                        }
+                                        disabled={savingNotifKey === 'budget_reminders'}
+                                        onCheckedChange={(checked) => handleToggleNotification('budget_reminders', checked)}
                                     />
                                 </div>
 
@@ -376,9 +373,8 @@ export default function SettingsPage() {
                                     <Switch
                                         id="newsletter"
                                         checked={notifications.newsletter}
-                                        onCheckedChange={(checked) => 
-                                            setNotifications(prev => ({ ...prev, newsletter: checked }))
-                                        }
+                                        disabled={savingNotifKey === 'newsletter'}
+                                        onCheckedChange={(checked) => handleToggleNotification('newsletter', checked)}
                                     />
                                 </div>
 
@@ -392,31 +388,14 @@ export default function SettingsPage() {
                                     <Switch
                                         id="marketing"
                                         checked={notifications.marketing}
-                                        onCheckedChange={(checked) => 
-                                            setNotifications(prev => ({ ...prev, marketing: checked }))
-                                        }
+                                        disabled={savingNotifKey === 'marketing'}
+                                        onCheckedChange={(checked) => handleToggleNotification('marketing', checked)}
                                     />
                                 </div>
 
-                                <Button 
-                                    className="w-full"
-                                    onClick={handleSaveNotifications}
-                                    disabled={isSavingNotifications}
-                                >
-                                    {isSavingNotifications ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            Enregistrement...
-                                        </>
-                                    ) : notificationsSaved ? (
-                                        <>
-                                            <Check className="w-4 h-4 mr-2" />
-                                            Préférences enregistrées !
-                                        </>
-                                    ) : (
-                                        'Enregistrer les préférences'
-                                    )}
-                                </Button>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                    Les préférences sont enregistrées automatiquement
+                                </p>
                             </CardContent>
                         </Card>
                     </TabsContent>
