@@ -131,7 +131,7 @@ export function useCompatibilityResults() {
       setError(null)
 
       // 1. Récupérer les couples complétés (status = 'completed' ou 'both_completed')
-      const [creatorCouples, partnerCouples, sharedCreator, sharedPartner] = await Promise.all([
+      const [creatorCouples, partnerCouples] = await Promise.all([
         supabase
           .from('couples')
           .select('*')
@@ -143,35 +143,43 @@ export function useCompatibilityResults() {
           .select('*')
           .eq('partner_id', user.id)
           .in('status', ['completed', 'both_completed'])
-          .order('created_at', { ascending: false }),
-        // Shared questionnaires où l'utilisateur est créateur
-        supabase
-          .from('shared_questionnaires')
-          .select('*')
-          .eq('creator_id', user.id)
-          .not('compatibility_score', 'is', null)
-          .order('created_at', { ascending: false }),
-        // Shared questionnaires où l'utilisateur est participant (par email)
-        supabase
-          .from('shared_questionnaires')
-          .select('*')
-          .eq('partner_email', user.email)
-          .not('compatibility_score', 'is', null)
           .order('created_at', { ascending: false })
       ])
+
+      // Shared questionnaires (non-bloquant si la table/colonne n'existe pas)
+      let uniqueShared: any[] = []
+      try {
+        const [sharedCreator, sharedPartner] = await Promise.all([
+          supabase
+            .from('shared_questionnaires')
+            .select('*')
+            .eq('creator_id', user.id)
+            .not('compatibility_score', 'is', null)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('shared_questionnaires')
+            .select('*')
+            .eq('partner_email', user.email || '')
+            .not('compatibility_score', 'is', null)
+            .order('created_at', { ascending: false })
+        ])
+
+        if (!sharedCreator.error && !sharedPartner.error) {
+          const allShared = [
+            ...(sharedCreator.data || []),
+            ...(sharedPartner.data || [])
+          ]
+          uniqueShared = allShared.filter((s, i, arr) => arr.findIndex(x => x.id === s.id) === i)
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        }
+      } catch {
+        // shared_questionnaires non disponible, on continue avec les couples
+      }
 
       const allCouples = [
         ...(creatorCouples.data || []),
         ...(partnerCouples.data || [])
       ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-
-      const allShared = [
-        ...(sharedCreator.data || []),
-        ...(sharedPartner.data || [])
-      ]
-      // Dédupliquer par id
-      const uniqueShared = allShared.filter((s, i, arr) => arr.findIndex(x => x.id === s.id) === i)
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
       if (allCouples.length === 0 && uniqueShared.length === 0) {
         setResults(null)
