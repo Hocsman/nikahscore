@@ -146,35 +146,8 @@ export function useCompatibilityResults() {
           .order('created_at', { ascending: false })
       ])
 
-      // Shared questionnaires (non-bloquant si la table/colonne n'existe pas)
-      let uniqueShared: any[] = []
-      try {
-        const [sharedCreator, sharedPartner] = await Promise.all([
-          supabase
-            .from('shared_questionnaires')
-            .select('*')
-            .eq('creator_id', user.id)
-            .not('compatibility_score', 'is', null)
-            .order('created_at', { ascending: false }),
-          supabase
-            .from('shared_questionnaires')
-            .select('*')
-            .eq('partner_email', user.email || '')
-            .not('compatibility_score', 'is', null)
-            .order('created_at', { ascending: false })
-        ])
-
-        if (!sharedCreator.error && !sharedPartner.error) {
-          const allShared = [
-            ...(sharedCreator.data || []),
-            ...(sharedPartner.data || [])
-          ]
-          uniqueShared = allShared.filter((s, i, arr) => arr.findIndex(x => x.id === s.id) === i)
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        }
-      } catch {
-        // shared_questionnaires non disponible, on continue avec les couples
-      }
+      // Note: shared_questionnaires désactivé temporairement (table non encore créée en production)
+      const uniqueShared: any[] = []
 
       const allCouples = [
         ...(creatorCouples.data || []),
