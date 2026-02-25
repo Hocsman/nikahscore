@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Calendar, CheckSquare, Plus, Trash2 } from 'lucide-react'
+import { Calendar, CheckSquare, Clock, Plus, Trash2 } from 'lucide-react'
 import FeatureGate from '@/components/premium/FeatureGate'
 import StripeCheckout from '@/components/stripe/StripeCheckout'
 import { createClient } from '@/lib/supabase/client'
@@ -22,11 +22,21 @@ interface TodoItem {
     created_at: string
 }
 
+interface BudgetSession {
+    id: string
+    title: string
+    scheduled_at: string
+    notes: string | null
+    status: string
+    created_at: string
+}
+
 export default function ActionsPage() {
     const { user } = useAuth()
     const [showBudgetModal, setShowBudgetModal] = useState(false)
     const [showTodoModal, setShowTodoModal] = useState(false)
     const [todos, setTodos] = useState<TodoItem[]>([])
+    const [sessions, setSessions] = useState<BudgetSession[]>([])
 
     const loadTodos = useCallback(async () => {
         if (!user) return
@@ -44,9 +54,28 @@ export default function ActionsPage() {
         }
     }, [user])
 
+    const loadSessions = useCallback(async () => {
+        if (!user) return
+        try {
+            const supabase = createClient()
+            const { data, error } = await supabase
+                .from('budget_sessions')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('scheduled_at', { ascending: true })
+            if (error) throw error
+            setSessions(data || [])
+        } catch (error) {
+            console.error('Error loading sessions:', error)
+        }
+    }, [user])
+
     useEffect(() => {
-        if (user) loadTodos()
-    }, [user, loadTodos])
+        if (user) {
+            loadTodos()
+            loadSessions()
+        }
+    }, [user, loadTodos, loadSessions])
 
     const handleToggleTodo = async (id: string, completed: boolean) => {
         try {
@@ -76,6 +105,38 @@ export default function ActionsPage() {
             toast.error('Erreur lors de la suppression')
         }
     }
+
+    const handleDeleteSession = async (id: string) => {
+        try {
+            const supabase = createClient()
+            const { error } = await supabase
+                .from('budget_sessions')
+                .delete()
+                .eq('id', id)
+            if (error) throw error
+            setSessions(sessions.filter(s => s.id !== id))
+            toast.success('Session supprimée')
+        } catch {
+            toast.error('Erreur lors de la suppression')
+        }
+    }
+
+    const formatSessionDate = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })
+    }
+
+    const formatSessionTime = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    }
+
+    const isSessionPast = (dateStr: string) => new Date(dateStr) < new Date()
 
     return (
         <DashboardLayout>
@@ -136,13 +197,59 @@ export default function ActionsPage() {
                                     </Button>
                                 </div>
 
-                                <Card>
-                                    <CardContent className="pt-6">
-                                        <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-                                            Aucune session planifiée. Créez votre première session budget !
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                                {sessions.length === 0 ? (
+                                    <Card>
+                                        <CardContent className="pt-6">
+                                            <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                                                Aucune session planifiée. Créez votre première session budget !
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {sessions.map((session) => (
+                                            <Card key={session.id} className={isSessionPast(session.scheduled_at) ? 'opacity-60' : ''}>
+                                                <CardContent className="pt-4 pb-4">
+                                                    <div className="flex items-start justify-between gap-3">
+                                                        <div className="flex-1">
+                                                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                                                                {session.title}
+                                                            </h3>
+                                                            <div className="flex items-center gap-3 mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                                <span className="flex items-center gap-1">
+                                                                    <Calendar className="w-3.5 h-3.5" />
+                                                                    {formatSessionDate(session.scheduled_at)}
+                                                                </span>
+                                                                <span className="flex items-center gap-1">
+                                                                    <Clock className="w-3.5 h-3.5" />
+                                                                    {formatSessionTime(session.scheduled_at)}
+                                                                </span>
+                                                            </div>
+                                                            {session.notes && (
+                                                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                                                    {session.notes}
+                                                                </p>
+                                                            )}
+                                                            {isSessionPast(session.scheduled_at) && (
+                                                                <span className="inline-block mt-2 text-xs px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                                                                    Passée
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleDeleteSession(session.id)}
+                                                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </FeatureGate>
                     </TabsContent>
@@ -229,7 +336,7 @@ export default function ActionsPage() {
                 <BudgetSessionModal
                     open={showBudgetModal}
                     onOpenChange={setShowBudgetModal}
-                    onSessionCreated={() => {}}
+                    onSessionCreated={loadSessions}
                 />
                 <TodoListModal
                     open={showTodoModal}
