@@ -101,6 +101,10 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
         if (respData.responses.length >= 2) {
           setBothCompleted(true)
           setIsCompleted(true)
+          // Charger le score depuis les données du couple
+          if (couple.compatibility_score) {
+            setCompatibilityScore(couple.compatibility_score)
+          }
         }
       }
 
