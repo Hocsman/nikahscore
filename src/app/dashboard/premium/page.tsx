@@ -9,7 +9,7 @@ import { Crown, Check, X, ArrowRight, Bot, Download, Calendar, CheckSquare } fro
 import StripeCheckout from '@/components/stripe/StripeCheckout'
 
 export default function PremiumPage() {
-    const { isPremium, isConseil, plan, planName } = useSubscription()
+    const { isPremium, isConseil, planName, subscription } = useSubscription()
 
     const plans = [
         {
@@ -101,7 +101,11 @@ export default function PremiumPage() {
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-gray-600 dark:text-gray-400">Prochain paiement</span>
-                                <span className="text-sm font-medium dark:text-gray-200">15 janvier 2025</span>
+                                <span className="text-sm font-medium dark:text-gray-200">
+                                    {subscription?.current_period_end
+                                        ? new Date(subscription.current_period_end).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                                        : 'Date non disponible'}
+                                </span>
                             </div>
                             <Button variant="outline" className="w-full" asChild>
                                 <a href="https://billing.stripe.com/p/login/test_example" target="_blank" rel="noopener noreferrer">

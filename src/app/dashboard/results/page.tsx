@@ -222,7 +222,7 @@ export default function ResultsPage() {
                                 </Badge>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 flex items-center justify-center gap-1">
                                     <TrendingUp className="w-4 h-4 text-green-500" />
-                                    Basé sur 9 dimensions d'analyse
+                                    Basé sur {Object.keys(displayResults.axis_scores).length || 8} dimensions d'analyse
                                 </p>
                             </div>
                             
