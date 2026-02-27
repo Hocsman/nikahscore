@@ -33,6 +33,18 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Charger le mapping UUID → order_index une seule fois
+    const { data: questionMapping } = await supabaseAdmin
+      .from('questions')
+      .select('id, order_index')
+
+    const uuidToIndex: Record<string, number> = {}
+    if (questionMapping) {
+      questionMapping.forEach((q: { id: string; order_index: number }) => {
+        uuidToIndex[q.id] = q.order_index
+      })
+    }
+
     let recalculated = 0
     const results: any[] = []
 
@@ -66,12 +78,29 @@ export async function POST(request: NextRequest) {
         continue
       }
 
+      // Remapper les UUIDs vers les order_index (IDs numériques attendus par l'algorithme)
+      let mappedCreator = creatorResp.answers
+      let mappedPartner = partnerResp.answers
+
+      if (Object.keys(uuidToIndex).length > 0) {
+        mappedCreator = {} as Record<number, boolean | number>
+        mappedPartner = {} as Record<number, boolean | number>
+        for (const [uuid, answer] of Object.entries(creatorResp.answers)) {
+          const idx = uuidToIndex[uuid]
+          if (idx !== undefined) (mappedCreator as any)[idx] = answer
+        }
+        for (const [uuid, answer] of Object.entries(partnerResp.answers)) {
+          const idx = uuidToIndex[uuid]
+          if (idx !== undefined) (mappedPartner as any)[idx] = answer
+        }
+      }
+
       // Calculer la compatibilité
       const compatibilityResult = CompatibilityCalculator.calculateCompatibility(
-        creatorResp.answers,
-        partnerResp.answers
+        mappedCreator,
+        mappedPartner
       )
-      const compatibilityScore = Math.round(compatibilityResult.overall_score)
+      const compatibilityScore = Math.round(compatibilityResult.overall_score * 100)
 
       // Mettre à jour le score sur le couple
       await supabaseAdmin

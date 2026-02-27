@@ -80,6 +80,7 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
         const joinData = await joinRes.json()
         if (!joinData.success) {
           toast.error(joinData.error || 'Impossible de rejoindre le questionnaire')
+          setLoading(false)
           return
         }
         setUserRole('participant')
@@ -370,12 +371,20 @@ export default function SharedQuestionnairePage({ params }: SharedQuestionnaireP
                     compatibilityScore >= 40 ? "Compatibilité modérée" :
                       "Différences importantes à explorer"}
               </p>
-              <Button
-                onClick={() => router.push('/questionnaire/shared')}
-                variant="outline"
-              >
-                Créer un Nouveau Questionnaire
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  onClick={() => router.push('/dashboard/results')}
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                >
+                  Voir les résultats détaillés
+                </Button>
+                <Button
+                  onClick={() => router.push('/questionnaire/shared')}
+                  variant="outline"
+                >
+                  Créer un Nouveau Questionnaire
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
