@@ -146,28 +146,34 @@ export function useCompatibilityResults() {
           .order('created_at', { ascending: false })
       ])
 
-      // Récupérer les shared questionnaires complétés
-      const [sharedAsCreator, sharedAsPartner] = await Promise.all([
-        supabase
-          .from('shared_questionnaires')
-          .select('*')
-          .eq('creator_id', user.id)
-          .not('compatibility_score', 'is', null)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('shared_questionnaires')
-          .select('*')
-          .eq('partner_email', user.email)
-          .not('compatibility_score', 'is', null)
-          .order('created_at', { ascending: false })
-      ])
+      // Récupérer les shared questionnaires complétés (tolérant aux erreurs si table incomplète)
+      let uniqueShared: any[] = []
+      try {
+        const [sharedAsCreator, sharedAsPartner] = await Promise.all([
+          supabase
+            .from('shared_questionnaires')
+            .select('*')
+            .eq('creator_id', user.id)
+            .not('compatibility_score', 'is', null)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('shared_questionnaires')
+            .select('*')
+            .eq('partner_email', user.email)
+            .not('compatibility_score', 'is', null)
+            .order('created_at', { ascending: false })
+        ])
 
-      // Dédupliquer par id
-      const sharedMap = new Map<string, any>()
-      for (const s of [...(sharedAsCreator.data || []), ...(sharedAsPartner.data || [])]) {
-        if (!sharedMap.has(s.id)) sharedMap.set(s.id, s)
+        if (!sharedAsCreator.error && !sharedAsPartner.error) {
+          const sharedMap = new Map<string, any>()
+          for (const s of [...(sharedAsCreator.data || []), ...(sharedAsPartner.data || [])]) {
+            if (!sharedMap.has(s.id)) sharedMap.set(s.id, s)
+          }
+          uniqueShared = Array.from(sharedMap.values())
+        }
+      } catch {
+        // Table shared_questionnaires indisponible — on continue sans
       }
-      const uniqueShared = Array.from(sharedMap.values())
 
       const allCouples = [
         ...(creatorCouples.data || []),
