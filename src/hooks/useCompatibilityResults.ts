@@ -146,8 +146,28 @@ export function useCompatibilityResults() {
           .order('created_at', { ascending: false })
       ])
 
-      // Note: shared_questionnaires désactivé temporairement (table non encore créée en production)
-      const uniqueShared: any[] = []
+      // Récupérer les shared questionnaires complétés
+      const [sharedAsCreator, sharedAsPartner] = await Promise.all([
+        supabase
+          .from('shared_questionnaires')
+          .select('*')
+          .eq('creator_id', user.id)
+          .not('compatibility_score', 'is', null)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('shared_questionnaires')
+          .select('*')
+          .eq('partner_email', user.email)
+          .not('compatibility_score', 'is', null)
+          .order('created_at', { ascending: false })
+      ])
+
+      // Dédupliquer par id
+      const sharedMap = new Map<string, any>()
+      for (const s of [...(sharedAsCreator.data || []), ...(sharedAsPartner.data || [])]) {
+        if (!sharedMap.has(s.id)) sharedMap.set(s.id, s)
+      }
+      const uniqueShared = Array.from(sharedMap.values())
 
       const allCouples = [
         ...(creatorCouples.data || []),

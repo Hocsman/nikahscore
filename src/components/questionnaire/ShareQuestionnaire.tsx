@@ -57,9 +57,27 @@ export default function ShareQuestionnaire({ questionnaireId, userId }: ShareQue
       setShareCode(code)
       toast.success('Lien de partage généré avec succès ! 🎉')
 
-      // TODO: Envoyer email au partenaire si email fourni
+      // Envoyer email au partenaire si email fourni
       if (partnerEmail) {
-        toast.info(`Email envoyé à ${partnerEmail}`)
+        const shareUrl = `${window.location.origin}/questionnaire/invite/${code}`
+        try {
+          const emailRes = await fetch('/api/questionnaire/shared/send-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: partnerEmail,
+              shareCode: code,
+              shareUrl
+            })
+          })
+          if (emailRes.ok) {
+            toast.success(`Invitation envoyée à ${partnerEmail}`)
+          } else {
+            toast.info('Lien généré, mais l\'email n\'a pas pu être envoyé')
+          }
+        } catch {
+          toast.info('Lien généré, mais l\'email n\'a pas pu être envoyé')
+        }
       }
     } catch (error) {
       console.error('Error sharing questionnaire:', error)
