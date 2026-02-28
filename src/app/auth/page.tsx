@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
+import { validateEmail } from '@/lib/validations'
 import { 
   Mail, 
   Lock, 
@@ -51,6 +52,39 @@ export default function AuthPage() {
     password: '',
     confirmPassword: ''
   })
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
+
+  const validateField = (name: string, value: string) => {
+    const errors = { ...fieldErrors }
+
+    switch (name) {
+      case 'email':
+        if (!value) {
+          errors.email = 'L\'adresse email est requise'
+        } else if (!validateEmail(value)) {
+          errors.email = 'Format d\'email invalide'
+        } else {
+          delete errors.email
+        }
+        break
+      case 'firstName':
+        if (!isLogin && !value.trim()) {
+          errors.firstName = 'Le prénom est requis'
+        } else {
+          delete errors.firstName
+        }
+        break
+    }
+
+    setFieldErrors(errors)
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setTouchedFields(prev => ({ ...prev, [name]: true }))
+    validateField(name, value)
+  }
 
   // Définir le mode par défaut basé sur l'URL
   useEffect(() => {
@@ -69,11 +103,13 @@ export default function AuthPage() {
   }, [user, loading, router, redirectUrl])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
     setError('')
+
+    if (touchedFields[name]) {
+      validateField(name, value)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -204,12 +240,24 @@ export default function AuthPage() {
                         placeholder="Votre prénom"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                        onBlur={handleBlur}
+                        className={`pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 ${touchedFields.firstName && fieldErrors.firstName ? 'border-red-400 focus-visible:ring-red-500/30 focus-visible:border-red-500' : ''}`}
                         required={!isLogin}
                         disabled={loading}
                         autoComplete="given-name"
                       />
+                      {touchedFields.firstName && formData.firstName.trim() && !fieldErrors.firstName && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        </div>
+                      )}
                     </div>
+                    {touchedFields.firstName && fieldErrors.firstName && (
+                      <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {fieldErrors.firstName}
+                      </p>
+                    )}
                   </div>
 
                   {/* Nom (optionnel) */}
@@ -247,13 +295,35 @@ export default function AuthPage() {
                     placeholder="votre@email.com"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="pl-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                    onBlur={handleBlur}
+                    className={`pl-12 pr-12 h-12 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 ${
+                      touchedFields.email && fieldErrors.email
+                        ? 'border-red-400 focus-visible:ring-red-500/30 focus-visible:border-red-500'
+                        : touchedFields.email && !fieldErrors.email && formData.email
+                        ? 'border-green-400 focus-visible:ring-green-500/30 focus-visible:border-green-500'
+                        : ''
+                    }`}
                     required
                     disabled={loading}
                     autoComplete="email"
                     inputMode="email"
                   />
+                  {touchedFields.email && formData.email && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {fieldErrors.email ? (
+                        <AlertCircle className="w-5 h-5 text-red-400" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                      )}
+                    </div>
+                  )}
                 </div>
+                {touchedFields.email && fieldErrors.email && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {fieldErrors.email}
+                  </p>
+                )}
               </div>
 
               {/* Mot de passe */}
@@ -411,6 +481,8 @@ export default function AuthPage() {
                   setError('')
                   setSuccess('')
                   setFormData({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' })
+                  setFieldErrors({})
+                  setTouchedFields({})
                 }}
                 className="text-blue-600 hover:text-blue-700 font-medium"
                 disabled={loading}

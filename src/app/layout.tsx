@@ -8,6 +8,7 @@ import { ClientProviders } from '@/components/ClientProviders'
 import { ConditionalNavbar } from '@/components/ConditionalNavbar'
 import { Analytics } from '@vercel/analytics/react'
 import { StructuredData } from '@/components/StructuredData'
+import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import { GoogleTagManager } from '@next/third-parties/google'
 import Script from 'next/script'
 
@@ -113,6 +114,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <ClientProviders>
+          <OfflineBanner />
           <div className="relative flex min-h-screen flex-col">
             <ConditionalNavbar />
             <main className="flex-1">
