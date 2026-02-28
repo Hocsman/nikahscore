@@ -52,7 +52,7 @@ export function StructuredData() {
             {
                 '@type': 'Offer',
                 name: 'Plan Premium',
-                price: '19.90',
+                price: '9.99',
                 priceCurrency: 'EUR',
                 availability: 'https://schema.org/InStock',
                 url: 'https://nikahscore.com/pricing',
@@ -60,7 +60,7 @@ export function StructuredData() {
             {
                 '@type': 'Offer',
                 name: 'Plan Conseil Premium',
-                price: '49.90',
+                price: '49.99',
                 priceCurrency: 'EUR',
                 availability: 'https://schema.org/InStock',
                 url: 'https://nikahscore.com/pricing',

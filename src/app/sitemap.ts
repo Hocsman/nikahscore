@@ -18,6 +18,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
         // Pages principales
         {
+            url: `${baseUrl}/about`,
+            lastModified: currentDate,
+            changeFrequency: 'monthly',
+            priority: 0.8,
+        },
+        {
             url: `${baseUrl}/pricing`,
             lastModified: currentDate,
             changeFrequency: 'weekly',
