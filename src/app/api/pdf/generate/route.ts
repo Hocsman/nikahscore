@@ -13,23 +13,24 @@ export const runtime = 'nodejs' // Forcer l'utilisation de Node.js runtime
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { user_id, couple_code } = body
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-    if (!user_id) {
+    if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: 'user_id requis' },
-        { status: 400 }
+        { success: false, error: 'Non authentifié' },
+        { status: 401 }
       )
     }
 
-    const supabase = await createClient()
+    const body = await request.json()
+    const { couple_code } = body
 
     // Vérifier que l'utilisateur est Premium
     const { data: userProfile } = await supabase
       .from('profiles')
       .select('subscription_status, subscription_plan')
-      .eq('id', user_id)
+      .eq('id', user.id)
       .single()
 
     const isPremium = userProfile?.subscription_status === 'active' &&

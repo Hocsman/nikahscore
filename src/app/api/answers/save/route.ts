@@ -65,38 +65,49 @@ export async function POST(request: NextRequest) {
 
     // Préparer les réponses
     const responsesToInsert = [];
-    let processedCount = 0;
-    
+
     if (Array.isArray(answers)) {
+      // Récupérer toutes les catégories de questions en une seule requête
+      const questionIds = answers
+        .filter(a => a.questionId && a.value !== null && a.value !== undefined)
+        .map(a => a.questionId);
+
+      const { data: questions } = await supabaseAdmin
+        .from('questions')
+        .select('id, category')
+        .in('id', questionIds);
+
+      // Créer un map questionId → category pour lookup rapide
+      const categoryMap: Record<string, string> = {};
+      if (questions) {
+        for (const q of questions) {
+          categoryMap[q.id] = q.category;
+        }
+      }
+
       for (const answer of answers) {
         if (!answer.questionId || answer.value === null || answer.value === undefined) {
           continue;
         }
-        
-        // Récupérer le type de question
-        const { data: question } = await supabaseAdmin
-          .from('questions')
-          .select('category')
-          .eq('id', answer.questionId)
-          .single();
 
-        if (!question) {
+        const category = categoryMap[answer.questionId];
+        if (!category) {
           continue;
         }
 
-      const responseData: any = {
-        pair_id: pairId,
-        question_id: answer.questionId, // UUID - pas de conversion nécessaire
-        respondent: realRespondent,
-      };        // Assigner selon le type
-        if (question.category === 'bool') {
+        const responseData: any = {
+          pair_id: pairId,
+          question_id: answer.questionId,
+          respondent: realRespondent,
+        };
+
+        if (category === 'bool') {
           responseData.answer_boolean = Boolean(answer.value);
-        } else if (question.category === 'scale') {
+        } else if (category === 'scale') {
           responseData.answer_value = Number(answer.value);
         }
 
         responsesToInsert.push(responseData);
-        processedCount++;
       }
     }
 

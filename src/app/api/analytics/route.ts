@@ -4,8 +4,18 @@ import { AnalyticsEventData } from '@/lib/analytics'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non authentifié' },
+        { status: 401 }
+      )
+    }
+
     const eventData: AnalyticsEventData = await request.json()
-    
+
     // Validation des données
     if (!eventData.event || !eventData.sessionId || !eventData.timestamp) {
       return NextResponse.json(
@@ -14,15 +24,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Connexion Supabase
-    const supabase = await createClient()
-
-    // Insérer l'événement dans la base de données
+    // Insérer l'événement avec l'ID utilisateur authentifié
     const { error } = await supabase
       .from('analytics_events')
       .insert([{
         event_type: eventData.event,
-        user_id: eventData.userId,
+        user_id: user.id,
         session_id: eventData.sessionId,
         timestamp: new Date(eventData.timestamp).toISOString(),
         properties: eventData.properties || {},
