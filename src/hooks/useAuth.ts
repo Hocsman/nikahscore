@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
 
 interface AuthUser {
   id: string
@@ -22,41 +21,40 @@ export function useAuth() {
   useEffect(() => {
     let mounted = true
     
-    // Récupérer la session actuelle
-    const getSession = async () => {
+    // Récupérer l'utilisateur authentifié (vérifié côté serveur)
+    const fetchUser = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
+        const { data: { user: authUser }, error } = await supabase.auth.getUser()
+
         if (!mounted) return
-        
+
         if (error) {
-          console.error('❌ useAuth: Erreur session:', error)
+          console.error('❌ useAuth: Erreur getUser:', error)
           setLoading(false)
           return
         }
-        
-        if (session?.user) {
-          // Récupérer le prénom et nom depuis user_metadata
-          const firstName = session.user.user_metadata?.first_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Utilisateur'
-          const lastName = session.user.user_metadata?.last_name || null
+
+        if (authUser) {
+          const firstName = authUser.user_metadata?.first_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Utilisateur'
+          const lastName = authUser.user_metadata?.last_name || null
 
           setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            name: firstName, // Pour la rétrocompatibilité
+            id: authUser.id,
+            email: authUser.email || '',
+            name: firstName,
             firstName: firstName,
             lastName: lastName
           })
         }
-        
+
         setLoading(false)
       } catch (err) {
-        console.error('❌ useAuth: Erreur getSession:', err)
+        console.error('❌ useAuth: Erreur getUser:', err)
         if (mounted) setLoading(false)
       }
     }
 
-    getSession()
+    fetchUser()
 
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

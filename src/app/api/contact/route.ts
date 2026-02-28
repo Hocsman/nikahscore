@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function POST(request: Request) {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
@@ -22,8 +31,13 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
-    
-    
+
+    // Échapper les entrées utilisateur pour éviter le XSS dans le HTML
+    const safeName = escapeHtml(name)
+    const safeEmail = escapeHtml(email)
+    const safeSubject = escapeHtml(subject)
+    const safeMessage = escapeHtml(message)
+
     // 1. Envoi de l'email à l'équipe NikahScore
     const { data: adminEmailData, error: adminEmailError } = await resend.emails.send({
       from: 'NikahScore Contact <contact@nikahscore.com>', // ✅ Domaine vérifié
@@ -128,15 +142,15 @@ export async function POST(request: Request) {
             <div class="info-box">
               <div class="info-row">
                 <span class="info-label">👤 Nom:</span>
-                <span class="info-value">${name}</span>
+                <span class="info-value">${safeName}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">📧 Email:</span>
-                <span class="info-value"><a href="mailto:${email}" style="color: #EC4899;">${email}</a></span>
+                <span class="info-value"><a href="mailto:${safeEmail}" style="color: #EC4899;">${safeEmail}</a></span>
               </div>
               <div class="info-row">
                 <span class="info-label">📋 Sujet:</span>
-                <span class="info-value">${subject}</span>
+                <span class="info-value">${safeSubject}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">📅 Date:</span>
@@ -150,19 +164,19 @@ export async function POST(request: Request) {
             
             <div class="message-box">
               <div class="message-title">📝 Message:</div>
-              <div class="message-content">${message}</div>
+              <div class="message-content">${safeMessage}</div>
             </div>
             
             <div style="text-align: center; margin-top: 30px;">
-              <a href="mailto:${email}?subject=Re: ${encodeURIComponent(subject)}" class="reply-button">
-                Répondre à ${name}
+              <a href="mailto:${safeEmail}?subject=Re: ${encodeURIComponent(subject)}" class="reply-button">
+                Répondre à ${safeName}
               </a>
             </div>
           </div>
           
           <div class="footer">
             <p style="margin: 0;">
-              💡 <strong>Astuce:</strong> Cliquez sur "Répondre" dans votre client email pour répondre directement à ${email}
+              💡 <strong>Astuce:</strong> Cliquez sur "Répondre" dans votre client email pour répondre directement à ${safeEmail}
             </p>
             <p style="margin: 10px 0 0 0; font-size: 12px;">
               © ${new Date().getFullYear()} NikahScore - Plateforme de Rencontre Halal
@@ -264,7 +278,7 @@ export async function POST(request: Request) {
           
           <div class="content">
             <p style="font-size: 16px; margin-top: 0;">
-              Bonjour <strong>${name}</strong> 👋
+              Bonjour <strong>${safeName}</strong> 👋
             </p>
             
             <p>
@@ -273,7 +287,7 @@ export async function POST(request: Request) {
             
             <div class="highlight-box">
               <p style="margin: 0; font-weight: 600; color: #92400E;">
-                📋 ${subject}
+                📋 ${safeSubject}
               </p>
             </div>
             
@@ -287,7 +301,7 @@ export async function POST(request: Request) {
                 RÉSUMÉ DE VOTRE MESSAGE:
               </p>
               <p style="margin: 0; color: #374151; font-style: italic;">
-                "${message.length > 200 ? message.substring(0, 200) + '...' : message}"
+                "${safeMessage.length > 200 ? safeMessage.substring(0, 200) + '...' : safeMessage}"
               </p>
             </div>
             

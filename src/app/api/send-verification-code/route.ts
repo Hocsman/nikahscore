@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-
-// Stockage temporaire des codes (en production, utiliser Redis ou base de données)
-const verificationCodes = new Map<string, { code: string, expires: number, action: string }>()
+import crypto from 'crypto'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 // Générer un code à 6 chiffres
 function generateVerificationCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  return crypto.randomInt(100000, 999999).toString()
+}
+
+// Hasher le code pour ne pas le stocker en clair
+function hashCode(code: string): string {
+  return crypto.createHash('sha256').update(code).digest('hex')
 }
 
 export async function POST(request: NextRequest) {
@@ -21,14 +25,52 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Générer le code
-    const code = generateVerificationCode()
-    const expires = Date.now() + 10 * 60 * 1000 // Expire dans 10 minutes
-    
-    // Stocker le code
-    verificationCodes.set(email, { code, expires, action })
+    const supabase = createAdminClient()
 
-    const actionText = action === 'download' 
+    // Rate limiting : max 3 codes par email par heure
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { count } = await supabase
+      .from('verification_codes')
+      .select('*', { count: 'exact', head: true })
+      .eq('email', email)
+      .gte('created_at', oneHourAgo)
+
+    if (count && count >= 3) {
+      return NextResponse.json(
+        { error: 'Trop de tentatives. Réessayez dans une heure.' },
+        { status: 429 }
+      )
+    }
+
+    // Supprimer les anciens codes pour cet email
+    await supabase
+      .from('verification_codes')
+      .delete()
+      .eq('email', email)
+
+    // Générer et stocker le nouveau code
+    const code = generateVerificationCode()
+    const codeHash = hashCode(code)
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+
+    const { error: insertError } = await supabase
+      .from('verification_codes')
+      .insert({
+        email,
+        code_hash: codeHash,
+        action,
+        expires_at: expiresAt
+      })
+
+    if (insertError) {
+      console.error('Erreur insertion code:', insertError)
+      return NextResponse.json(
+        { error: 'Erreur serveur' },
+        { status: 500 }
+      )
+    }
+
+    const actionText = action === 'download'
       ? 'télécharger votre rapport PDF NikahScore'
       : 'partager vos résultats NikahScore'
 
@@ -47,7 +89,7 @@ export async function POST(request: NextRequest) {
         </head>
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f8fafc; margin: 0; padding: 20px;">
           <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); overflow: hidden;">
-            
+
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); padding: 40px 20px; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">🔐 Code de Vérification</h1>
@@ -57,9 +99,9 @@ export async function POST(request: NextRequest) {
             <!-- Content -->
             <div style="padding: 40px 30px;">
               <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 22px;">Bonjour,</h2>
-              
+
               <p style="color: #6b7280; margin: 0 0 25px 0; font-size: 16px; line-height: 1.6;">
-                Vous avez demandé à <strong>${actionText}</strong>. 
+                Vous avez demandé à <strong>${actionText}</strong>.
                 Utilisez le code de vérification ci-dessous pour confirmer votre identité :
               </p>
 
@@ -96,7 +138,7 @@ export async function POST(request: NextRequest) {
               </div>
 
               <p style="color: #6b7280; margin: 25px 0 0 0; font-size: 14px; line-height: 1.6;">
-                Si vous rencontrez des difficultés, n'hésitez pas à nous contacter à 
+                Si vous rencontrez des difficultés, n'hésitez pas à nous contacter à
                 <a href="mailto:support@nikahscore.com" style="color: #3b82f6; text-decoration: none;">support@nikahscore.com</a>
               </p>
             </div>
@@ -122,7 +164,7 @@ export async function POST(request: NextRequest) {
       `
     })
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Code de vérification envoyé'
     })
@@ -147,34 +189,45 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const stored = verificationCodes.get(email)
-    
-    if (!stored) {
+    const supabase = createAdminClient()
+    const codeHash = hashCode(code)
+
+    // Chercher le code correspondant
+    const { data: stored, error: fetchError } = await supabase
+      .from('verification_codes')
+      .select('*')
+      .eq('email', email)
+      .eq('code_hash', codeHash)
+      .eq('action', action)
+      .single()
+
+    if (fetchError || !stored) {
       return NextResponse.json(
         { error: 'Code non trouvé ou expiré' },
         { status: 400 }
       )
     }
 
-    if (stored.expires < Date.now()) {
-      verificationCodes.delete(email)
+    // Vérifier l'expiration
+    if (new Date(stored.expires_at) < new Date()) {
+      await supabase
+        .from('verification_codes')
+        .delete()
+        .eq('id', stored.id)
+
       return NextResponse.json(
         { error: 'Code expiré' },
         { status: 400 }
       )
     }
 
-    if (stored.code !== code || stored.action !== action) {
-      return NextResponse.json(
-        { error: 'Code incorrect' },
-        { status: 400 }
-      )
-    }
-
     // Code valide, le supprimer
-    verificationCodes.delete(email)
+    await supabase
+      .from('verification_codes')
+      .delete()
+      .eq('id', stored.id)
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Code validé avec succès'
     })
