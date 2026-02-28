@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 
 interface PDFExportOptions {
   filename?: string
@@ -28,6 +26,12 @@ export function usePDFExport() {
     setError(null)
 
     try {
+      // Import dynamique des librairies lourdes (jsPDF ~300KB, html2canvas ~200KB)
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas')
+      ])
+
       // Trouver l'élément à capturer
       const element = document.getElementById(elementId)
       if (!element) {

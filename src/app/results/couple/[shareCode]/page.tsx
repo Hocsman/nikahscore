@@ -7,11 +7,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Users, CheckCircle, AlertCircle, TrendingUp, MessageCircle, BookOpen, Calendar, Clock, Copy, Mail, Loader2, Download } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import FeatureGate from '@/components/premium/FeatureGate'
-import CoupleRadarChart from '@/components/couple/CoupleRadarChart'
 import QuestionComparison from '@/components/couple/QuestionComparison'
 import CoupleStatistics from '@/components/couple/CoupleStatistics'
 import { usePDFExport } from '@/hooks/usePDFExport'
+
+// Lazy load des composants lourds (recharts ~500KB)
+const CoupleRadarChart = dynamic(() => import('@/components/couple/CoupleRadarChart'), {
+  ssr: false,
+  loading: () => <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-purple-400" /></div>
+})
 
 interface CoupleResultsPageProps {
   params: Promise<{ shareCode: string }>

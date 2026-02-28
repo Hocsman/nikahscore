@@ -6,16 +6,20 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Heart, Users, TrendingUp, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Heart, Users, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import FeatureGate from '@/components/premium/FeatureGate'
-import ResultsChartRadar from '@/components/results/ResultsChartRadar'
 import ResultsDetailedAnalysis from '@/components/results/ResultsDetailedAnalysis'
 import ResultsComparison from '@/components/results/ResultsComparison'
 import ResultsRecommendations from '@/components/results/ResultsRecommendations'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from '@/hooks/use-toast'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+
+// Lazy load du radar chart (recharts ~500KB)
+const ResultsChartRadar = dynamic(() => import('@/components/results/ResultsChartRadar'), {
+  ssr: false,
+  loading: () => <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-blue-400" /></div>
+})
 
 interface CompatibilityResult {
   id: string

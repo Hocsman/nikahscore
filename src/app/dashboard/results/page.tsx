@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import ActivityTimeline from '@/components/dashboard/ActivityTimeline'
 import QuestionnaireHistoryCard from '@/components/dashboard/QuestionnaireHistoryCard'
-import ResultsChartRadar from '@/components/results/ResultsChartRadar'
+import dynamic from 'next/dynamic'
 import ResultsDetailedAnalysis from '@/components/results/ResultsDetailedAnalysis'
 import ResultsRecommendations from '@/components/results/ResultsRecommendations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,18 +12,19 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-    BarChart3, 
-    Download, 
-    TrendingUp, 
-    Heart, 
+import {
+    BarChart3,
+    Download,
+    TrendingUp,
+    Heart,
     AlertTriangle,
     CheckCircle2,
     XCircle,
     Lightbulb,
     PieChart,
     Activity,
-    FileQuestion
+    FileQuestion,
+    Loader2
 } from 'lucide-react'
 import { useUserStats } from '@/hooks/useUserStats'
 import { useSubscription } from '@/hooks/useSubscription'
@@ -32,6 +33,12 @@ import FeatureGate from '@/components/premium/FeatureGate'
 import StripeCheckout from '@/components/stripe/StripeCheckout'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import Link from 'next/link'
+
+// Lazy load du radar chart (recharts ~500KB)
+const ResultsChartRadar = dynamic(() => import('@/components/results/ResultsChartRadar'), {
+    ssr: false,
+    loading: () => <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-blue-400" /></div>
+})
 
 export default function ResultsPage() {
     const { questionnaires, loading: statsLoading } = useUserStats()
