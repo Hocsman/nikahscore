@@ -113,11 +113,17 @@ export default function RootLayout({
         )}
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-pink-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-medium focus:shadow-lg"
+        >
+          Aller au contenu principal
+        </a>
         <ClientProviders>
           <OfflineBanner />
           <div className="relative flex min-h-screen flex-col">
             <ConditionalNavbar />
-            <main className="flex-1">
+            <main id="main-content" className="flex-1" aria-label="Contenu principal">
               {children}
             </main>
           </div>

@@ -612,7 +612,7 @@ export default function QuestionnairePage() {
           </div>
 
           <div className="relative">
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Progression du questionnaire">
               <motion.div
                 className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full relative"
                 initial={{ width: 0 }}

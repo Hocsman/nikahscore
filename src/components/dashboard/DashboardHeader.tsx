@@ -81,17 +81,19 @@ export default function DashboardHeader({
                             size="icon"
                             onClick={onMenuToggle}
                             className="md:hidden"
+                            aria-label="Ouvrir le menu"
                         >
-                            <Menu className="w-5 h-5" />
+                            <Menu className="w-5 h-5" aria-hidden="true" />
                         </Button>
                     )}
 
                     {/* Search Bar */}
                     <div className="relative hidden md:flex items-center max-w-md flex-1">
-                        <Search className="absolute left-3 w-4 h-4 text-gray-400 dark:text-gray-500" />
+                        <Search className="absolute left-3 w-4 h-4 text-gray-400 dark:text-gray-500" aria-hidden="true" />
                         <button
                             type="button"
                             onClick={() => setIsSearchOpen(true)}
+                            aria-label="Rechercher"
                             className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-left text-gray-500 dark:text-gray-400 hover:border-pink-300 dark:hover:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors"
                         >
                             Rechercher... ({isMac ? '⌘' : 'Ctrl+'}K)
@@ -111,6 +113,7 @@ export default function DashboardHeader({
                         size="icon"
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         className="hidden md:flex"
+                        aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
                     >
                         {theme === 'dark' ? (
                             <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
@@ -132,7 +135,7 @@ export default function DashboardHeader({
                                 disabled={isGeneratingPDF}
                                 className="hidden md:flex"
                             >
-                                <Download className="w-4 h-4 mr-2" />
+                                <Download className="w-4 h-4 mr-2" aria-hidden="true" />
                                 {isGeneratingPDF ? 'Génération...' : 'Export PDF'}
                             </Button>
                         </FeatureGate>
@@ -145,7 +148,7 @@ export default function DashboardHeader({
                                 size="sm"
                                 className="hidden md:flex bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700"
                             >
-                                <Bot className="w-4 h-4 mr-2" />
+                                <Bot className="w-4 h-4 mr-2" aria-hidden="true" />
                                 Coach AI
                             </Button>
                         </Link>
@@ -154,8 +157,8 @@ export default function DashboardHeader({
                     {/* Notifications */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="relative">
-                                <Bell className="w-5 h-5 text-gray-600" />
+                            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+                                <Bell className="w-5 h-5 text-gray-600" aria-hidden="true" />
                                 {notificationsCount > 0 && (
                                     <Badge
                                         variant="destructive"
@@ -228,7 +231,7 @@ export default function DashboardHeader({
                     {/* User Menu */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                            <Button variant="ghost" className="relative h-10 w-10 rounded-full" aria-label="Menu utilisateur">
                                 <Avatar className="h-10 w-10">
                                     <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-600 text-white">
                                         {userInitials}

@@ -229,12 +229,13 @@ export default function AuthPage() {
                 >
                   {/* Prénom (requis) */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
+                    <label htmlFor="firstName" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Prénom <span className="text-pink-600">*</span>
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                       <Input
+                        id="firstName"
                         type="text"
                         name="firstName"
                         placeholder="Votre prénom"
@@ -245,16 +246,18 @@ export default function AuthPage() {
                         required={!isLogin}
                         disabled={loading}
                         autoComplete="given-name"
+                        aria-invalid={touchedFields.firstName && !!fieldErrors.firstName}
+                        aria-describedby={touchedFields.firstName && fieldErrors.firstName ? 'firstName-error' : undefined}
                       />
                       {touchedFields.firstName && formData.firstName.trim() && !fieldErrors.firstName && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />
                         </div>
                       )}
                     </div>
                     {touchedFields.firstName && fieldErrors.firstName && (
-                      <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
+                      <p id="firstName-error" role="alert" className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" aria-hidden="true" />
                         {fieldErrors.firstName}
                       </p>
                     )}
@@ -262,12 +265,13 @@ export default function AuthPage() {
 
                   {/* Nom (optionnel) */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
+                    <label htmlFor="lastName" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Nom <span className="text-gray-400 text-xs">(optionnel)</span>
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                       <Input
+                        id="lastName"
                         type="text"
                         name="lastName"
                         placeholder="Votre nom de famille"
@@ -284,12 +288,13 @@ export default function AuthPage() {
 
               {/* Email */}
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Adresse email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                   <Input
+                    id="email"
                     type="email"
                     name="email"
                     placeholder="votre@email.com"
@@ -307,20 +312,22 @@ export default function AuthPage() {
                     disabled={loading}
                     autoComplete="email"
                     inputMode="email"
+                    aria-invalid={touchedFields.email && !!fieldErrors.email}
+                    aria-describedby={touchedFields.email && fieldErrors.email ? 'email-error' : undefined}
                   />
                   {touchedFields.email && formData.email && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       {fieldErrors.email ? (
-                        <AlertCircle className="w-5 h-5 text-red-400" />
+                        <AlertCircle className="w-5 h-5 text-red-400" aria-hidden="true" />
                       ) : (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />
                       )}
                     </div>
                   )}
                 </div>
                 {touchedFields.email && fieldErrors.email && (
-                  <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
+                  <p id="email-error" role="alert" className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" aria-hidden="true" />
                     {fieldErrors.email}
                   </p>
                 )}
@@ -328,12 +335,13 @@ export default function AuthPage() {
 
               {/* Mot de passe */}
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Mot de passe
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                   <Input
+                    id="password"
                     type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="••••••••"
@@ -426,8 +434,10 @@ export default function AuthPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center space-x-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg"
+                  role="alert"
+                  aria-live="assertive"
                 >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   <span>{error}</span>
                 </motion.div>
               )}
@@ -437,8 +447,10 @@ export default function AuthPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center space-x-2 text-green-600 text-sm bg-green-50 p-3 rounded-lg"
+                  role="status"
+                  aria-live="polite"
                 >
-                  <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   <span>{success}</span>
                 </motion.div>
               )}

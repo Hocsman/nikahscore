@@ -39,7 +39,7 @@ export function Navbar() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <Heart className="w-5 h-5 text-white" />
+            <Heart className="w-5 h-5 text-white" aria-hidden="true" />
           </motion.div>
           <span className="font-bold text-xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
             NikahScore
@@ -47,7 +47,7 @@ export function Navbar() {
         </Link>
 
         {/* Navigation Desktop */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex items-center space-x-6" aria-label="Navigation principale">
           {user && (
             <Link href="/questionnaire" className="text-sm font-medium hover:text-primary transition-colors">
               Questionnaire
@@ -73,8 +73,8 @@ export function Navbar() {
               {/* Notifications */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative">
-                    <Bell className="w-5 h-5" />
+                  <Button variant="ghost" size="sm" className="relative" aria-label="Notifications">
+                    <Bell className="w-5 h-5" aria-hidden="true" />
                     {unreadCount > 0 && (
                       <Badge
                         variant="destructive"
@@ -107,8 +107,8 @@ export function Navbar() {
               {/* Menu utilisateur */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="w-5 h-5" />
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2" aria-label="Menu utilisateur">
+                    <User className="w-5 h-5" aria-hidden="true" />
                     <span className="hidden md:inline">{user.firstName || user.name || user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -126,8 +126,9 @@ export function Navbar() {
             </div>
           ) : loading ? (
             // Indicateur de chargement pendant que useAuth charge
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2" role="status">
               <div className="w-8 h-8 border-2 border-gray-300 border-t-purple-600 rounded-full animate-spin"></div>
+              <span className="sr-only">Chargement...</span>
             </div>
           ) : (
             // Boutons Connexion / S'inscrire si pas connecté
@@ -147,8 +148,10 @@ export function Navbar() {
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={isMenuOpen}
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
             </Button>
           </div>
         </div>
@@ -162,7 +165,7 @@ export function Navbar() {
           exit={{ opacity: 0, y: -20 }}
           className="md:hidden border-t bg-background"
         >
-          <nav className="container py-4 flex flex-col space-y-3">
+          <nav className="container py-4 flex flex-col space-y-3" aria-label="Navigation principale">
             {user && (
               <Link
                 href="/questionnaire"

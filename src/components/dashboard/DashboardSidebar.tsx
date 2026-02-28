@@ -117,7 +117,7 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
             </div>
 
             {/* Navigation Menu */}
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto" aria-label="Menu du tableau de bord">
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href
                     const Icon = item.icon
@@ -127,6 +127,7 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
                         <Link
                             key={item.href}
                             href={isLocked ? '/pricing' : item.href}
+                            aria-current={isActive ? 'page' : undefined}
                             className={`
                 relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group
                 ${isActive
@@ -136,7 +137,7 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
                 ${isCollapsed ? 'justify-center' : ''}
               `}
                         >
-                            <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100'}`} />
+                            <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100'}`} aria-hidden="true" />
 
                             <AnimatePresence mode="wait">
                                 {!isCollapsed && (
@@ -161,7 +162,7 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
                                         )}
 
                                         {isLocked && (
-                                            <Crown className="w-4 h-4 ml-auto text-yellow-500" />
+                                            <Crown className="w-4 h-4 ml-auto text-yellow-500" aria-hidden="true" />
                                         )}
                                     </motion.div>
                                 )}
@@ -169,7 +170,7 @@ export default function DashboardSidebar({ isCollapsed = false, onToggle }: Dash
 
                             {/* Tooltip for collapsed state */}
                             {isCollapsed && (
-                                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                <div role="tooltip" className="absolute left-full ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                                     {item.label}
                                 </div>
                             )}
