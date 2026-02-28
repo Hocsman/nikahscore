@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function DELETE() {
     try {
@@ -80,15 +81,15 @@ export async function DELETE() {
             console.error('Erreur suppression profil:', profileError)
         }
 
-        // 7. Supprimer l'utilisateur auth (nécessite un service role)
-        // Note: Cette partie nécessite le client admin Supabase avec SUPABASE_SERVICE_ROLE_KEY
-        // Pour l'instant, on déconnecte simplement l'utilisateur
-        // L'utilisateur auth sera supprimé par un job ou manuellement
+        // 7. Supprimer l'utilisateur auth via le client admin (service role)
+        const supabaseAdmin = createAdminClient()
+        const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
-        console.log(`✅ Données utilisateur ${userId} supprimées avec succès`)
+        if (authDeleteError) {
+            console.error('Erreur suppression auth user:', authDeleteError)
+        }
 
-        // Déconnecter l'utilisateur
-        await supabase.auth.signOut()
+        console.log(`✅ Compte utilisateur ${userId} entièrement supprimé (données + auth)`)
 
         return NextResponse.json({
             success: true,

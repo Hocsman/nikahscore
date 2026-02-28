@@ -22,9 +22,12 @@ interface SharedQuestionnaire {
   share_code: string
   creator_id: string
   partner_name: string | null
+  partner_email: string | null
+  creator_email: string | null
   status: string
   creator_questionnaire_id: string | null
   partner_questionnaire_id: string | null
+  created_at: string
 }
 
 interface Question {
@@ -88,8 +91,10 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
           return
         }
 
-        // Vérifier expiration
-        if (new Date(data.expires_at) < new Date()) {
+        // Vérifier expiration (30 jours après création)
+        const expiresAt = new Date(data.created_at)
+        expiresAt.setDate(expiresAt.getDate() + 30)
+        if (expiresAt < new Date()) {
           setError('Ce lien a expiré')
           return
         }
@@ -315,15 +320,15 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
     }
 
     const handleSendReminder = async () => {
-      if (!sharedData.partner_name) return
-      
+      if (!sharedData.partner_email) return
+
       setSendingEmail(true)
       try {
         const response = await fetch('/api/questionnaire/shared/send-link', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: sharedData.partner_name, // Assuming partner_name contains email
+            email: sharedData.partner_email,
             shareCode: shareCode
           })
         })
@@ -422,7 +427,7 @@ export default function CoupleResultsPage({ params }: CoupleResultsPageProps) {
               </div>
 
               {/* Bouton email de rappel */}
-              {sharedData.partner_name && (
+              {sharedData.partner_email && (
                 <Button
                   onClick={handleSendReminder}
                   disabled={sendingEmail || emailSent}
