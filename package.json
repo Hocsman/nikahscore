@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "seed": "tsx scripts/dev-seed.ts"
+    "seed": "tsx scripts/dev-seed.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -66,6 +69,9 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.8.0",
@@ -73,13 +79,16 @@
     "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
+    "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.52.0",
     "eslint-config-next": "^14.0.0",
+    "jsdom": "^28.1.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.3.0",
     "tsx": "^4.1.0",
-    "typescript": "^5.2.0"
+    "typescript": "^5.2.0",
+    "vitest": "^4.0.18"
   },
   "overrides": {
     "lucide-react": {
