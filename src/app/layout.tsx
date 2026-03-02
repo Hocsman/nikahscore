@@ -11,6 +11,9 @@ import { StructuredData } from '@/components/StructuredData'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import { GoogleTagManager } from '@next/third-parties/google'
 import Script from 'next/script'
+import { cookies } from 'next/headers'
+import { LOCALE_COOKIE_NAME, resolveLocale } from '@/i18n/config'
+import { getTranslation } from '@/i18n/messages'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -88,13 +91,17 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const cookieStore = await cookies()
+  const locale = resolveLocale(cookieStore.get(LOCALE_COOKIE_NAME)?.value)
+  const skipToContentText = getTranslation(locale, 'common.skipToContent', 'Aller au contenu principal')
+
   return (
-    <html lang="fr" className={inter.variable} suppressHydrationWarning>
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <head>
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
           <Script
@@ -117,9 +124,9 @@ export default function RootLayout({
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-pink-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-medium focus:shadow-lg"
         >
-          Aller au contenu principal
+          {skipToContentText}
         </a>
-        <ClientProviders>
+        <ClientProviders initialLocale={locale}>
           <OfflineBanner />
           <div className="relative flex min-h-screen flex-col">
             <ConditionalNavbar />

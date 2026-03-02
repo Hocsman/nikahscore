@@ -1,6 +1,12 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import {
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE_NAME,
+  normalizeLocale,
+  type AppLocale,
+} from '@/i18n/config'
 
 // Routes qui nécessitent une authentification
 const PROTECTED_ROUTES = [
@@ -10,7 +16,46 @@ const PROTECTED_ROUTES = [
   '/admin',
 ]
 
+const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365
+
+function getLocaleFromAcceptLanguage(acceptLanguage: string | null): AppLocale | null {
+  if (!acceptLanguage) return null
+
+  const requestedLocales = acceptLanguage
+    .split(',')
+    .map((entry) => entry.trim().split(';')[0])
+    .filter(Boolean)
+
+  for (const requestedLocale of requestedLocales) {
+    const normalized = normalizeLocale(requestedLocale)
+    if (normalized) {
+      return normalized
+    }
+  }
+
+  return null
+}
+
+function resolveRequestLocale(req: NextRequest): AppLocale {
+  const localeFromCookie = normalizeLocale(req.cookies.get(LOCALE_COOKIE_NAME)?.value)
+  if (localeFromCookie) return localeFromCookie
+
+  return getLocaleFromAcceptLanguage(req.headers.get('accept-language')) ?? DEFAULT_LOCALE
+}
+
+function setLocaleCookie(response: NextResponse, locale: AppLocale) {
+  response.cookies.set({
+    name: LOCALE_COOKIE_NAME,
+    value: locale,
+    path: '/',
+    sameSite: 'lax',
+    maxAge: ONE_YEAR_IN_SECONDS,
+  })
+}
+
 export async function middleware(req: NextRequest) {
+  const locale = resolveRequestLocale(req)
+
   let response = NextResponse.next({
     request: {
       headers: req.headers,
@@ -74,7 +119,9 @@ export async function middleware(req: NextRequest) {
   if (isProtectedRoute && !user) {
     const redirectUrl = new URL('/auth', req.url)
     redirectUrl.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(redirectUrl)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    setLocaleCookie(redirectResponse, locale)
+    return redirectResponse
   }
 
   // Protection admin : vérifier le rôle
@@ -86,10 +133,13 @@ export async function middleware(req: NextRequest) {
       .maybeSingle()
 
     if (!adminRole) {
-      return NextResponse.redirect(new URL('/', req.url))
+      const redirectResponse = NextResponse.redirect(new URL('/', req.url))
+      setLocaleCookie(redirectResponse, locale)
+      return redirectResponse
     }
   }
 
+  setLocaleCookie(response, locale)
   return response
 }
 

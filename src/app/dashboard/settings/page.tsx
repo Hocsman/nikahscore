@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
     Dialog,
     DialogContent,
@@ -22,6 +23,8 @@ import { User, Bell, Palette, Database, Sun, Moon, Loader2, Check, AlertTriangle
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { useI18n } from '@/contexts/I18nContext'
+import { LOCALE_LABELS, SUPPORTED_LOCALES, type AppLocale } from '@/i18n/config'
 
 interface NotificationSettings {
     email_notifications: boolean
@@ -34,6 +37,7 @@ interface NotificationSettings {
 export default function SettingsPage() {
     const { user } = useAuth()
     const { theme, setTheme } = useTheme()
+    const { locale, setLocale, t } = useI18n()
     const router = useRouter()
     const supabase = createClient()
 
@@ -213,6 +217,15 @@ export default function SettingsPage() {
             setIsDeleting(false)
             setShowDeleteDialog(false)
         }
+    }
+
+    const handleLanguageChange = (nextLocale: string) => {
+        const selectedLocale = nextLocale as AppLocale
+
+        if (selectedLocale === locale) return
+
+        setLocale(selectedLocale)
+        toast.success(t('settings.preferences.language.saved', 'Langue mise a jour'))
     }
 
     return (
@@ -440,15 +453,23 @@ export default function SettingsPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="language">Langue</Label>
-                                    <Input
-                                        id="language"
-                                        defaultValue="Français"
-                                        disabled
-                                        className="bg-gray-50 dark:bg-gray-800"
-                                    />
+                                    <Label htmlFor="language">
+                                        {t('settings.preferences.language.label', 'Langue')}
+                                    </Label>
+                                    <Select value={locale} onValueChange={handleLanguageChange}>
+                                        <SelectTrigger id="language" className="bg-gray-50 dark:bg-gray-800">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {SUPPORTED_LOCALES.map((supportedLocale) => (
+                                                <SelectItem key={supportedLocale} value={supportedLocale}>
+                                                    {LOCALE_LABELS[supportedLocale]}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        Autres langues bientôt disponibles
+                                        {t('settings.preferences.language.help', 'Autres langues disponibles progressivement.')}
                                     </p>
                                 </div>
                             </CardContent>
