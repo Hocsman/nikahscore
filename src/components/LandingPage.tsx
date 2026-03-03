@@ -306,7 +306,7 @@ export default function LandingPage() {
                 <Link href="/" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Accueil
                 </Link>
-                <Link href="/questionnaire" className="text-gray-300 hover:text-pink-400 transition-colors block">
+                <Link href="/questionnaire/shared" className="text-gray-300 hover:text-pink-400 transition-colors block">
                   Questionnaire
                 </Link>
                 <Link href="/pricing" className="text-gray-300 hover:text-pink-400 transition-colors block">
