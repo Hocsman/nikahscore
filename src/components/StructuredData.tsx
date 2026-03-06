@@ -12,11 +12,6 @@ export function StructuredData() {
         alternateName: 'NikahScore - Compatibilité Matrimoniale',
         url: 'https://nikahscore.com',
         description: 'Plateforme de compatibilité matrimoniale islamique avec questionnaire scientifique et analyse détaillée.',
-        potentialAction: {
-            '@type': 'SearchAction',
-            target: 'https://nikahscore.com/search?q={search_term_string}',
-            'query-input': 'required name=search_term_string',
-        },
     }
 
     const organizationSchema = {
