@@ -41,18 +41,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly',
             priority: 0.6,
         },
-        // Pages d'authentification
+        // Page d'authentification
         {
-            url: `${baseUrl}/auth/login`,
+            url: `${baseUrl}/auth`,
             lastModified: currentDate,
             changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/auth/register`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
+            priority: 0.6,
         },
         // Pages légales
         {
