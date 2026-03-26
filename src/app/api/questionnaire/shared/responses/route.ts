@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import logger from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     const verifiedRole = isCreator ? 'creator' : 'participant'
 
     if (verifiedRole !== role) {
-      console.warn(`Role mismatch: client sent "${role}", server verified "${verifiedRole}" for user ${user.id}`)
+      logger.warn(`Role mismatch: client sent "${role}", server verified "${verifiedRole}" for user ${user.id}`)
     }
 
     // Déterminer les champs à mettre à jour selon le rôle vérifié

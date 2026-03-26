@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { headers } from 'next/headers'
+import logger from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
         break
 
       default:
-        console.log(`Événement non géré: ${event.type}`)
+        logger.log(`Événement non géré: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
@@ -118,7 +119,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabas
     if (profileError) {
       console.error('Erreur mise à jour profil:', profileError)
     } else {
-      console.log(`✅ Plan ${plan} activé pour utilisateur ${userId}`)
+      logger.log(`✅ Plan ${plan} activé pour utilisateur ${userId}`)
     }
 
     // Mettre à jour aussi la table user_subscriptions pour l'historique
@@ -170,7 +171,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription, supa
     const plan = subscription.metadata?.plan
 
     if (!userId || !plan) {
-      console.log('Métadonnées manquantes dans la subscription:', subscription.id)
+      logger.log('Métadonnées manquantes dans la subscription:', subscription.id)
       return
     }
 
@@ -248,7 +249,7 @@ async function handleSubscriptionCanceled(subscription: Stripe.Subscription, sup
       if (profileError) {
         console.error('Erreur mise à jour profil après annulation:', profileError)
       } else {
-        console.log(`✅ Plan annulé pour utilisateur ${userSub.user_id}`)
+        logger.log(`✅ Plan annulé pour utilisateur ${userSub.user_id}`)
       }
     }
 

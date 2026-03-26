@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Bell, Search, Moon, Sun, Menu, Download, Bot } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import Link from 'next/link'
@@ -34,11 +33,10 @@ export default function DashboardHeader({
     onExportPDF,
     isGeneratingPDF = false
 }: DashboardHeaderProps) {
-    const { user } = useAuth()
+    const { user, signOut } = useAuth()
     const { isPremium, isConseil } = useSubscription()
     const { theme, setTheme } = useTheme()
     const router = useRouter()
-    const [notificationsCount] = useState(3) // TODO: Connect to real notifications
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isMac, setIsMac] = useState(true)
 
@@ -61,7 +59,7 @@ export default function DashboardHeader({
     }, [])
 
     const handleSignOut = async () => {
-        // TODO: Implement sign out
+        await signOut()
         router.push('/')
     }
 
@@ -154,79 +152,10 @@ export default function DashboardHeader({
                         </Link>
                     )}
 
-                    {/* Notifications */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-                                <Bell className="w-5 h-5 text-gray-600" aria-hidden="true" />
-                                {notificationsCount > 0 && (
-                                    <Badge
-                                        variant="destructive"
-                                        className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs"
-                                    >
-                                        {notificationsCount}
-                                    </Badge>
-                                )}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-80 dark:bg-gray-800 dark:border-gray-700">
-                            <DropdownMenuLabel className="dark:text-gray-200">Notifications</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-
-                            {/* Notification Items */}
-                            <div className="max-h-96 overflow-y-auto">
-                                <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer dark:hover:bg-gray-700">
-                                    <div className="flex items-start gap-3 w-full">
-                                        <div className="w-2 h-2 bg-pink-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                Nouveau résultat disponible
-                                            </p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                                Votre score de compatibilité est prêt
-                                            </p>
-                                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Il y a 2 heures</p>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer">
-                                    <div className="flex items-start gap-3 w-full">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-gray-900">
-                                                Partenaire a répondu
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-0.5">
-                                                Marie a complété le questionnaire
-                                            </p>
-                                            <p className="text-xs text-gray-400 mt-1">Hier</p>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer">
-                                    <div className="flex items-start gap-3 w-full">
-                                        <div className="w-2 h-2 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-gray-900">
-                                                Session budget ce week-end
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-0.5">
-                                                N'oubliez pas votre rendez-vous samedi
-                                            </p>
-                                            <p className="text-xs text-gray-400 mt-1">Il y a 2 jours</p>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
-                            </div>
-
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="justify-center text-sm text-pink-600 font-medium cursor-pointer">
-                                Voir toutes les notifications
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/* Notifications (placeholder - pas encore de système de notifs) */}
+                    <Button variant="ghost" size="icon" aria-label="Notifications" disabled>
+                        <Bell className="w-5 h-5 text-gray-400" aria-hidden="true" />
+                    </Button>
 
                     {/* User Menu */}
                     <DropdownMenu>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from './useAuth'
+import logger from '@/lib/logger'
 
 export interface Achievement {
   id: string
@@ -115,7 +116,7 @@ export function useAchievements() {
       // Trouver l'achievement
       const achievement = achievements.find(a => a.code === achievementCode)
       if (!achievement) {
-        console.warn('Achievement not found:', achievementCode)
+        logger.warn('Achievement not found:', achievementCode)
         return
       }
 

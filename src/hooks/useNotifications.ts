@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
+import logger from '@/lib/logger'
 
 interface Notification {
   id: string
@@ -138,7 +139,7 @@ export function useNotifications() {
   // Demander la permission pour les notifications push
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
-      console.log('Ce navigateur ne supporte pas les notifications')
+      logger.log('Ce navigateur ne supporte pas les notifications')
       return false
     }
 

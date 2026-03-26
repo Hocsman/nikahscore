@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import logger from '@/lib/logger'
 
 export async function DELETE() {
     try {
@@ -18,7 +19,7 @@ export async function DELETE() {
 
         const userId = user.id
 
-        console.log(`🗑️ Début suppression compte pour utilisateur ${userId}`)
+        logger.log(`🗑️ Début suppression compte pour utilisateur ${userId}`)
 
         // 1. Supprimer les réponses aux questionnaires
         const { error: responsesError } = await supabase
@@ -58,7 +59,7 @@ export async function DELETE() {
                 .delete()
                 .eq('user_id', userId)
         } catch (e) {
-            console.log('Table user_subscriptions peut-être inexistante')
+            logger.log('Table user_subscriptions peut-être inexistante')
         }
 
         // 5. Supprimer les événements analytics
@@ -68,7 +69,7 @@ export async function DELETE() {
                 .delete()
                 .eq('user_id', userId)
         } catch (e) {
-            console.log('Table analytics_events peut-être inexistante')
+            logger.log('Table analytics_events peut-être inexistante')
         }
 
         // 6. Supprimer le profil
@@ -89,7 +90,7 @@ export async function DELETE() {
             console.error('Erreur suppression auth user:', authDeleteError)
         }
 
-        console.log(`✅ Compte utilisateur ${userId} entièrement supprimé (données + auth)`)
+        logger.log(`✅ Compte utilisateur ${userId} entièrement supprimé (données + auth)`)
 
         return NextResponse.json({
             success: true,

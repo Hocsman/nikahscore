@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { AnalyticsEventData } from '@/lib/analytics'
+import logger from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
         })
       }
     } catch (funcError) {
-      console.log('Function not available, using direct query')
+      logger.log('Function not available, using direct query')
     }
 
     // Fallback : requête directe (si permissions le permettent)

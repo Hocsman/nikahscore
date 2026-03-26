@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import logger from '@/lib/logger'
 
 function escapeHtml(str: string): string {
   return str
@@ -347,7 +348,7 @@ export async function POST(request: Request) {
     
     // On ne bloque pas si l'email de confirmation échoue
     if (userEmailError) {
-      console.warn('⚠️ Erreur Resend (email utilisateur):', userEmailError)
+      logger.warn('⚠️ Erreur Resend (email utilisateur):', userEmailError)
     } else {
     }
     

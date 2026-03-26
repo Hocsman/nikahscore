@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { useAdmin } from '@/hooks/useAdmin'
 import { redirect } from 'next/navigation'
+import logger from '@/lib/logger'
 
 // Lazy load du composant lourd contenant recharts (~500KB)
 const AdminAnalyticsContent = dynamic(
@@ -48,8 +49,6 @@ interface FunnelData {
   fill: string
 }
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00']
-
 export default function AdminAnalyticsPage() {
   const { user, loading } = useAuth()
   const { isAdmin, loading: adminLoading } = useAdmin()
@@ -81,40 +80,44 @@ export default function AdminAnalyticsPage() {
   const loadAnalyticsData = async () => {
     try {
       setIsLoading(true)
-      
-      // Simulation de données analytics (remplacer par vraie API)
-      const mockAnalytics: AnalyticsData = {
-        totalUsers: 1250,
-        activeUsers: 890,
-        questionnairesCompleted: 742,
-        conversionRate: 23.5,
-        monthlyGrowth: 15.2,
-        revenueGrowth: 28.7
-      }
 
-      const mockChartData: ChartData[] = [
-        { date: '2024-01', users: 120, conversions: 28, revenue: 1200 },
-        { date: '2024-02', users: 180, conversions: 42, revenue: 1800 },
-        { date: '2024-03', users: 250, conversions: 65, revenue: 2500 },
-        { date: '2024-04', users: 320, conversions: 84, revenue: 3200 },
-        { date: '2024-05', users: 450, conversions: 118, revenue: 4500 },
-        { date: '2024-06', users: 580, conversions: 152, revenue: 5800 }
-      ]
+      const res = await fetch('/api/analytics')
+      if (!res.ok) throw new Error('Erreur API analytics')
+      const json = await res.json()
+      const data = json.data
 
-      const mockFunnelData: FunnelData[] = [
-        { name: 'Visiteurs', value: 1000, fill: '#8884d8' },
-        { name: 'Inscriptions', value: 650, fill: '#82ca9d' },
-        { name: 'Questionnaires', value: 420, fill: '#ffc658' },
-        { name: 'Conversions', value: 180, fill: '#ff7300' }
-      ]
+      const overview = data?.overview || {}
+      const funnel = data?.funnel || {}
+      const eventsByType = overview.eventsByType || {}
 
-      setAnalyticsData(mockAnalytics)
-      setChartData(mockChartData)
-      setFunnelData(mockFunnelData)
-      
+      const totalUsers = overview.uniqueUsers || 0
+      const questionnairesCompleted = eventsByType['questionnaire_completed'] || 0
+      const questionnairesStarted = eventsByType['questionnaire_started'] || 0
+
+      setAnalyticsData({
+        totalUsers,
+        activeUsers: overview.uniqueSessions || 0,
+        questionnairesCompleted,
+        conversionRate: questionnairesStarted > 0
+          ? parseFloat(((questionnairesCompleted / questionnairesStarted) * 100).toFixed(1))
+          : 0,
+        monthlyGrowth: 0,
+        revenueGrowth: 0,
+      })
+
+      // Pas de données temporelles dans l'API actuelle, on laisse vide
+      setChartData([])
+
+      setFunnelData([
+        { name: 'Sessions', value: overview.uniqueSessions || 0, fill: '#8884d8' },
+        { name: 'Inscrits', value: totalUsers, fill: '#82ca9d' },
+        { name: 'Questionnaires', value: funnel.questionnaire_started || 0, fill: '#ffc658' },
+        { name: 'Complétés', value: funnel.questionnaire_completed || 0, fill: '#ff7300' },
+      ])
+
     } catch (err) {
       setError('Erreur lors du chargement des analytics')
-      console.error('Analytics error:', err)
+      logger.error('Analytics error:', err)
     } finally {
       setIsLoading(false)
     }

@@ -72,7 +72,7 @@ export function useUserStats() {
       // 2. Transformer les données pour l'historique
       const history: QuestionnaireHistory[] = (couplesData || []).map(couple => {
         const isCreator = couple.creator_id === user.id
-        const partnerEmail = null // TODO: récupérer l'email du partenaire depuis auth.users
+        const partnerEmail = couple.partner_email || null
 
         return {
           id: couple.id,
